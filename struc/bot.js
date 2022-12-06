@@ -20,7 +20,7 @@ client.commands = new Collection();
 client.subCommands = new Collection();
 
 const { connect } = require("mongoose");
-connect(client.config.MongoDBConnect, {}).then(() =>
+connect(client.config.MongoDBConnect).then(() =>
   console.log("The Client is now Connected to MongoDB!")
 );
 
