@@ -4,6 +4,8 @@ const {
   Partials,
   Collection,
 } = require("discord.js");
+const mongoose = require("mongoose");
+
 const { Guilds, GuildMembers, GuildMessages } = GatewayIntentBits;
 const { User, Message, GuildMember, ThreadMember } = Partials;
 
@@ -19,11 +21,49 @@ client.events = new Collection();
 client.commands = new Collection();
 client.subCommands = new Collection();
 
-const { connect } = require("mongoose");
-connect(client.config.MongoDBConnect).then(() =>
-  console.log("The Client is now Connected to MongoDB!")
-);
+mongoose
+  .connect(client.config.MongoDBConnect)
+  .then(() => console.log("MongoDB Connection Successful"));
 
 loadEvents(client);
 
+// ———————————————[Login Into Bot]———————————————
 client.login(client.config.token);
+
+// ———————————————[Error Handling]———————————————
+process.on("unhandledRejection", (reason, p) => {
+  console.log(chalk.gray("—————————————————————————————————"));
+  console.log(
+    chalk.white("["),
+    chalk.red.bold("AntiCrash"),
+    chalk.white("]"),
+    chalk.gray(" : "),
+    chalk.white.bold("Unhandled Rejection/Catch")
+  );
+  console.log(chalk.gray("—————————————————————————————————"));
+  console.log(reason, p);
+});
+process.on("uncaughtException", (err, origin) => {
+  console.log(chalk.gray("—————————————————————————————————"));
+  console.log(
+    chalk.white("["),
+    chalk.red.bold("AntiCrash"),
+    chalk.white("]"),
+    chalk.gray(" : "),
+    chalk.white.bold("Uncaught Exception/Catch")
+  );
+  console.log(chalk.gray("—————————————————————————————————"));
+  console.log(err, origin);
+});
+process.on("uncaughtExceptionMonitor", (err, origin) => {
+  console.log(chalk.gray("—————————————————————————————————"));
+  console.log(
+    chalk.white("["),
+    chalk.red.bold("AntiCrash"),
+    chalk.white("]"),
+    chalk.gray(" : "),
+    chalk.white.bold("Uncaught Exception/Catch (Monitor)")
+  );
+  console.log(chalk.gray("—————————————————————————————————"));
+  console.log(err, origin);
+});
