@@ -8,7 +8,7 @@ const setupDB = require("../../src/models/setupDB");
 module.exports = {
   name: "guildBanRemove",
   async execute(ban, client) {
-    let setupData = await setupDB.findOne({ GuildID: ban.guild.id });
+    let setupData = await setupDB.findOne({ GuildID: client.guild.id });
     if (!setupData) return;
     if (!setupData.logChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.logChannelID}`);

@@ -1,4 +1,4 @@
-const { EmbedBuilder } = require("discord.js");
+const { EmbedBuilder, AutoModerationRuleEventType } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
 module.exports = {
   name: "voiceStateUpdate",

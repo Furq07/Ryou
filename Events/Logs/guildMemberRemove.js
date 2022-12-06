@@ -1,14 +1,14 @@
 const { EmbedBuilder, AuditLogEvent } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
 module.exports = {
-  name: "channelUpdate",
-  async execute(member, client) {
+  name: "guildMemberRemove",
+  async execute(interaction, member, client) {
     let setupData = await setupDB.findOne({ GuildID: member.guild.id });
     if (!setupData) return;
     if (!setupData.logChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.logChannelID}`);
     if (member.bannable !== true) {
-      member.guild
+      interaction.guild
         .fetchAuditLogs({ type: AuditLogEvent.MemberKick })
         .then((audit) => {
           let kickReason = audit.entries.first().reason;

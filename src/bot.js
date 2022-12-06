@@ -6,14 +6,33 @@ const {
 } = require("discord.js");
 const mongoose = require("mongoose");
 const chalk = require("chalk");
-const { loadEvents } = require("../Handlers/eventHandler");
-const { Guilds, GuildMembers, GuildMessages } = GatewayIntentBits;
+
+const {
+  Guilds,
+  GuildMembers,
+  GuildMessages,
+  MessageContent,
+  GuildVoiceStates,
+  GuildBans,
+  GuildInvites,
+} = GatewayIntentBits;
 const { User, Message, GuildMember, ThreadMember } = Partials;
 
 const client = new Client({
-  intents: [Guilds, GuildMembers, GuildMessages],
+  intents: [
+    Guilds,
+    GuildMembers,
+    GuildMessages,
+    MessageContent,
+    GuildVoiceStates,
+    GuildBans,
+    GuildInvites,
+    GuildVoiceStates,
+  ],
   partials: [User, Message, GuildMember, ThreadMember],
 });
+
+const { loadEvents } = require("../Handlers/eventHandler");
 
 client.config = require("./config.json");
 client.events = new Collection();
