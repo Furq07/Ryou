@@ -5,6 +5,7 @@ const {
   Collection,
 } = require("discord.js");
 const mongoose = require("mongoose");
+const chalk = require("chalk");
 
 const { Guilds, GuildMembers, GuildMessages } = GatewayIntentBits;
 const { User, Message, GuildMember, ThreadMember } = Partials;
@@ -51,18 +52,6 @@ process.on("uncaughtException", (err, origin) => {
     chalk.white("]"),
     chalk.gray(" : "),
     chalk.white.bold("Uncaught Exception/Catch")
-  );
-  console.log(chalk.gray("—————————————————————————————————"));
-  console.log(err, origin);
-});
-process.on("uncaughtExceptionMonitor", (err, origin) => {
-  console.log(chalk.gray("—————————————————————————————————"));
-  console.log(
-    chalk.white("["),
-    chalk.red.bold("AntiCrash"),
-    chalk.white("]"),
-    chalk.gray(" : "),
-    chalk.white.bold("Uncaught Exception/Catch (Monitor)")
   );
   console.log(chalk.gray("—————————————————————————————————"));
   console.log(err, origin);

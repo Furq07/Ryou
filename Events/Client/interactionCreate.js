@@ -1,13 +1,19 @@
-const { PermissionsBitField, ComponentType } = require("discord.js");
+const {
+  PermissionsBitField,
+  ComponentType,
+  EmbedBuilder,
+} = require("discord.js");
+const ecoDB = require("../../src/models/ecoDB");
+const setupDB = require("../../src/models/setupDB");
+const cooldownDB = require("../../src/models/cooldownDB");
 module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
-    const { options, commandName, guild, member, channel } = interaction;
+    const { commandName, guild, member, channel } = interaction;
     const { commands, subCommands, user } = client;
     if (interaction.isChatInputCommand()) {
       // < ===========[Initiate InteractionCreate]=========== >
       const cmd = commands.get(commandName);
-      const subcmd = options.getSubcommand();
       if (!cmd)
         return interaction.reply({
           content: "This command is outdated!",
@@ -190,8 +196,11 @@ module.exports = {
       }
       // < ===========[Execute Function]=========== >
       async function commandExecute() {
-        if (subcmd) {
-          const subCommandFile = subCommands.get(`${commandName}.${subcmd}`);
+        const subCommand = interaction.options.getSubcommand(false);
+        if (subCommand) {
+          const subCommandFile = subCommands.get(
+            `${commandName}.${subCommand}`
+          );
           if (!subCommandFile)
             return interaction.reply({
               content: "This sub-command is outdated!",
