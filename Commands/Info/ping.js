@@ -2,7 +2,7 @@ module.exports = {
   name: "ping",
   description: "Ping Pong",
 
-  execute(interaction) {
+  async execute(interaction) {
     interaction.reply({ content: "Pong", ephemeral: true });
   },
 };
