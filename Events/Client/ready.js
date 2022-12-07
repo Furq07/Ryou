@@ -8,12 +8,13 @@ module.exports = {
   name: "ready",
   once: true,
   execute(client) {
+    const { guilds, user, commands } = client;
     loadCommands(client);
     // [-------------------[Status & Presence Initiation]-------------------]
-    client.user.setPresence({
+    user.setPresence({
       activities: [
         {
-          name: `${client.guilds.cache.size} Servers`,
+          name: `${guilds.cache.size} Servers`,
           type: ActivityType.Watching,
         },
       ],
@@ -21,30 +22,28 @@ module.exports = {
     });
 
     // [-------------------[Bot Startup Message]-------------------]
-    const supportServer = client.guilds.cache.get(`1006970377500622860`);
+    const supportServer = guilds.cache.get(`1006970377500622860`);
     console.log("————————————————————————————————");
     console.log(chalk.green.bold("Success!"));
-    console.log(chalk.gray("Connected To"), chalk.yellow(`${client.user.tag}`));
+    console.log(chalk.gray("Connected To"), chalk.yellow(`${user.tag}`));
     console.log(chalk.gray("Connected To"), chalk.yellow(`MongoDB`));
     console.log(
       chalk.white("Watching"),
-      chalk.red(
-        `${client.guilds.cache.reduce((a, b) => a + b.memberCount, 0)}`
-      ),
+      chalk.red(`${guilds.cache.reduce((a, b) => a + b.memberCount, 0)}`),
       chalk.white(
         `${
-          client.guilds.cache.reduce((a, b) => a + b.memberCount, 0) > 1
+          guilds.cache.reduce((a, b) => a + b.memberCount, 0) > 1
             ? "Users,"
             : "User,"
         }`
       ),
-      chalk.red(`${client.guilds.cache.size}`),
-      chalk.white(`${client.guilds.cache.size > 1 ? "Servers." : "Server."}`)
+      chalk.red(`${guilds.cache.size}`),
+      chalk.white(`${guilds.cache.size > 1 ? "Servers." : "Server."}`)
     );
     console.log(
       chalk.white(`Prefix:` + chalk.red(` /`)),
       chalk.white("||"),
-      chalk.red(`${client.commands.size}`),
+      chalk.red(`${commands.size}`),
       chalk.white(`Commands`)
     );
     console.log(

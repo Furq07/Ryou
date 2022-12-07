@@ -1,9 +1,10 @@
 module.exports = {
   name: "interactionCreate",
   async execute(interaction) {
+    const { options, commandName } = interaction;
     if (interaction.isAutocomplete()) {
-      if (interaction.commandName === "sell") {
-        const focusedValue = interaction.options.getFocused();
+      if (commandName === "sell") {
+        const focusedValue = options.getFocused();
         const choices = [
           "Boar",
           "Bug",

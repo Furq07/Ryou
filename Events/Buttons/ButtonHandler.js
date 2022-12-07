@@ -3,13 +3,13 @@ module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
     if (!interaction.isButton()) return;
-    const { customId } = interaction;
+    const { customId, guild, message } = interaction;
     if (["unban-button", "send-invite-button"].includes(customId)) {
       switch (customId) {
         case "unban-button":
-          interaction.message.embeds.forEach(async (embed) => {
+          message.embeds.forEach(async (embed) => {
             const userID = embed.fields[1].value;
-            interaction.guild.members
+            guild.members
               .unban(`${userID}`)
               .then(() => {
                 interaction.update({
@@ -24,7 +24,7 @@ module.exports = {
                   ],
                 });
               })
-              .catch((err) => {
+              .catch(() => {
                 return interaction.reply({
                   ephemeral: true,
                   content: "This user is already unbanned",
@@ -34,9 +34,9 @@ module.exports = {
 
           break;
         case "send-invite-button":
-          interaction.message.embeds.forEach(async (embed) => {
+          message.embeds.forEach(async (embed) => {
             const userID = embed.fields[0].value;
-            let invite = await interaction.message.channel.createInvite({
+            let invite = await message.channel.createInvite({
               maxAge: 0,
               maxUses: 1,
             });

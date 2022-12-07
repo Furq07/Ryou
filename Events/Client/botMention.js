@@ -11,13 +11,15 @@ module.exports = {
   name: "messageCreate",
 
   execute(message, client) {
+    const { author, content, guild, channel } = message;
+    const { user } = client;
     // [-------------------[Bot Mention Function]-------------------]
-    const collector = message.channel.createMessageComponentCollector({
+    const collector = channel.createMessageComponentCollector({
       componentType: ComponentType.Button,
       time: 300000,
     });
-    if (message.author.bot) return;
-    if (message.content.includes("<@1006852642498162708>")) {
+    if (author.bot) return;
+    if (content.includes("<@1006852642498162708>")) {
       const Buttons = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
           .setCustomId("mentionCmdList")
@@ -35,21 +37,21 @@ module.exports = {
         .setTitle("Do you need Something?")
         .setDescription(
           `
-        **${message.author} I wonder why you Mentioned me?**
+        **${author} I wonder why you Mentioned me?**
 
         Click on the Command Button to see a list of commands.
         Would you want to join our support server, perhaps? then click the Support Server button!
         `
         )
         .setFooter({
-          iconURL: client.user.displayAvatarURL({ dynamic: true }),
+          iconURL: user.displayAvatarURL({ dynamic: true }),
           text: "Ryou",
         })
-        .setThumbnail(message.guild.iconURL({ dynamic: true }));
+        .setThumbnail(guild.iconURL({ dynamic: true }));
       message.reply({ embeds: [embed], components: [Buttons] });
 
       collector.on("collect", async (collected) => {
-        if (collected.user.id !== message.author.id) {
+        if (collected.user.id !== author.id) {
           collected.reply({
             content: `These Buttons aren't for You!`,
             ephemeral: true,
@@ -68,10 +70,10 @@ module.exports = {
                   Ye... Not Gonna Happen, My Author is Too Lazy to Write an Whole list of commands *Again*`
                 )
                 .setFooter({
-                  iconURL: client.user.displayAvatarURL({ dynamic: true }),
+                  iconURL: user.displayAvatarURL({ dynamic: true }),
                   text: "Ryou",
                 })
-                .setThumbnail(message.guild.iconURL({ dynamic: true })),
+                .setThumbnail(guild.iconURL({ dynamic: true })),
             ],
             ephemeral: true,
           });

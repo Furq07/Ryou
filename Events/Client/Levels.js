@@ -12,7 +12,7 @@ module.exports = {
     let channelToSend = channel;
     if (!guild || member.bot) return;
     const levelData = await levelDB.findOne({ MemberID: member.id });
-    const setupData = await setupDB.findOne({ GuildID: member.guild.id });
+    const setupData = await setupDB.findOne({ GuildID: guild.id });
     if (!setupData) return;
     if (channel.id == setupData.JTCSettingID) {
       guild.channels.cache.forEach((Channel) => {

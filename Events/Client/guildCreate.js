@@ -5,6 +5,7 @@ const setupDB = require("../../src/models/setupDB");
 module.exports = {
   name: "guildCreate",
   execute(guild, client) {
+    const { user } = client;
     // [-------------------[Join Message]-------------------]
     let channelToSend;
     const embed = new EmbedBuilder()
@@ -12,7 +13,7 @@ module.exports = {
       .setTitle("Thank You for Adding Me!")
       .setThumbnail(guild.iconURL({ dynamic: true }))
       .setFooter({
-        iconURL: client.user.displayAvatarURL({ dynamic: true }),
+        iconURL: user.displayAvatarURL({ dynamic: true }),
         text: "Ryou",
       });
     guild.channels.cache.forEach((channel) => {
