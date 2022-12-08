@@ -48,7 +48,7 @@ loadEvents(client)
     )
   );
 
-mongoose.set("strictQuery", true);
+mongoose.set("strictQuery", false);
 mongoose
   .connect(client.config.MongoDBConnect)
   .then(() => console.log(chalk.gray("Connected To"), chalk.yellow(`MongoDB`)))
