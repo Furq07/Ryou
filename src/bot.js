@@ -6,7 +6,6 @@ const {
 } = require("discord.js");
 const mongoose = require("mongoose");
 const chalk = require("chalk");
-
 const {
   Guilds,
   GuildMembers,
@@ -17,7 +16,7 @@ const {
   GuildInvites,
 } = GatewayIntentBits;
 const { User, Message, GuildMember, ThreadMember } = Partials;
-
+const { loadEvents } = require("../src/Handlers/eventHandler");
 const client = new Client({
   intents: [
     Guilds,
@@ -32,19 +31,28 @@ const client = new Client({
   partials: [User, Message, GuildMember, ThreadMember],
 });
 
-const { loadEvents } = require("../Handlers/eventHandler");
-
 client.config = require("./config.json");
 client.events = new Collection();
 client.commands = new Collection();
 client.subCommands = new Collection();
 
+loadEvents(client)
+  .then(() =>
+    console.log(chalk.gray("Events Initiation:"), chalk.green("Successful"))
+  )
+  .catch((err) =>
+    console.log(
+      chalk.gray("Events Initiation:"),
+      chalk.red("Failed"),
+      chalk.gray(`\n${err}`)
+    )
+  );
+
+mongoose.set("strictQuery", true);
 mongoose
   .connect(client.config.MongoDBConnect)
-  .then(() => console.log("MongoDB Connection Successful"));
-
-loadEvents(client);
-
+  .then(() => console.log(chalk.gray("Connected To"), chalk.yellow(`MongoDB`)))
+  .catch((err) => console.error(err));
 // ———————————————[Login Into Bot]———————————————
 client.login(client.config.token);
 

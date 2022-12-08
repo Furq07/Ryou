@@ -1,4 +1,4 @@
-const { loadEvents } = require("../../../Handlers/eventHandler");
+const { loadEvents } = require("../../../src/Handlers/eventHandler");
 module.exports = {
   subCommand: "reload.events",
   async execute(interaction, client) {

@@ -1,8 +1,5 @@
 async function loadCommands(client) {
   const { loadFiles } = require("./fileLoader");
-  const ascii = require("ascii-table");
-  const table = new ascii().setHeading("Commands", "Status");
-
   await client.commands.clear();
   await client.subCommands.clear();
 
@@ -19,12 +16,9 @@ async function loadCommands(client) {
     client.commands.set(command.name, command);
 
     commandsArray.push(command);
-
-    table.addRow(command.name, "✅");
   });
 
   client.application.commands.set(commandsArray);
-  return console.log(table.toString(), "\nCommands Loaded.");
 }
 
 module.exports = { loadCommands };

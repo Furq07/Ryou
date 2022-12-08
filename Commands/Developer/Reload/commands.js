@@ -1,4 +1,4 @@
-const { loadCommands } = require("../../../Handlers/commandHandler");
+const { loadCommands } = require("../../../src/Handlers/commandHandler");
 module.exports = {
   subCommand: "reload.commands",
   async execute(interaction, client) {
