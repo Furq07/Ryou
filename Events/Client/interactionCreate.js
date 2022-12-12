@@ -14,6 +14,7 @@ module.exports = {
     if (interaction.isChatInputCommand()) {
       // < ===========[Initiate InteractionCreate]=========== >
       const cmd = commands.get(commandName);
+      const subCommand = interaction.options.getSubcommand(false);
       if (!cmd)
         return interaction.reply({
           content: "This command is outdated!",
@@ -196,7 +197,6 @@ module.exports = {
       }
       // < ===========[Execute Function]=========== >
       async function commandExecute() {
-        const subCommand = interaction.options.getSubcommand(false);
         if (subCommand) {
           const subCommandFile = subCommands.get(
             `${commandName}.${subCommand}`
@@ -210,7 +210,7 @@ module.exports = {
         } else await cmd.execute(interaction, client);
       }
       // < ===========[Cooldown System]=========== >
-      if (cmd.cooldown) {
+      if (cmd.cooldown || subCommand.cooldown) {
         const currentTime = Date.now();
         const cooldownAmount = cmd.cooldown * 1000;
         cooldownDB.findOne(

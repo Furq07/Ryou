@@ -16,7 +16,7 @@ module.exports = {
     },
     {
       name: "commands",
-      description: "Reloads Events",
+      description: "Reloads Commands",
       type: ApplicationCommandOptionType.Subcommand,
     },
   ],
