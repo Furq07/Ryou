@@ -55,19 +55,20 @@ module.exports = {
           ViewChannel: true,
         })
         .then(async () => {
-          if (!jtcusers) {
-            await setupDB.updateOne(
-              {
-                GuildID: interaction.guild.id,
-                "JTCInfo.owner": interaction.user.id,
+          const jtcusers = userLimitIsFound.users.find((element) => {
+            return element.id;
+          });
+          await setupDB.updateOne(
+            {
+              GuildID: interaction.guild.id,
+              "JTCInfo.owner": interaction.user.id,
+            },
+            {
+              $addToSet: {
+                "JTCInfo.$.users": { id: user.id, added: true },
               },
-              {
-                $addToSet: {
-                  "JTCInfo.$.users": { id: user.id },
-                },
-              }
-            );
-          }
+            }
+          );
           if (userLimitIsFound.users) {
             var size = Object.keys(userLimitIsFound.users).length;
           }
@@ -123,22 +124,57 @@ module.exports = {
           ViewChannel: true,
         })
         .then(async () => {
-          if (userLimitIsFound.users !== user.id) {
+          if (userLimitIsFound.users) {
+            var size = Object.keys(userLimitIsFound.users).length;
+          }
+          const userFound = userLimitIsFound.users.find((element) => {
+            if (element.id === user.id) {
+              return element;
+            }
+          });
+          console.log(userFound);
+          if (userFound) {
+            if (userFound.added === false) {
+              await setupDB
+                .updateOne(
+                  {
+                    GuildID: interaction.guild.id,
+                    "JTCInfo.owner": interaction.user.id,
+                  },
+                  {
+                    $pull: {
+                      "JTCInfo.$.users": { id: user.id },
+                    },
+                  }
+                )
+                .then(async () => {
+                  await setupDB.updateOne(
+                    {
+                      GuildID: interaction.guild.id,
+                      "JTCInfo.owner": interaction.user.id,
+                    },
+                    {
+                      $addToSet: {
+                        "JTCInfo.$.users": { id: user.id, added: true },
+                      },
+                    }
+                  );
+                });
+            }
+          } else {
             await setupDB.updateOne(
               {
                 GuildID: interaction.guild.id,
                 "JTCInfo.owner": interaction.user.id,
               },
               {
-                $addToSet: {
-                  "JTCInfo.$.users": { id: user.id },
+                $push: {
+                  "JTCInfo.$.users": { id: user.id, added: true },
                 },
               }
             );
           }
-          if (userLimitIsFound.users) {
-            var size = Object.keys(userLimitIsFound.users).length;
-          }
+
           if (size == 0) {
             size = 1;
           } else {

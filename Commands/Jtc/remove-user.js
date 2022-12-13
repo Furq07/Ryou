@@ -54,6 +54,17 @@ module.exports = {
           ViewChannel: false,
         })
         .then(async () => {
+          await setupDB.updateOne(
+            {
+              GuildID: interaction.guild.id,
+              "JTCInfo.owner": userLimitIsFound.owner,
+            },
+            {
+              $set: {
+                "JTCInfo.$.users.$.id.added": true,
+              },
+            }
+          );
           if (userLimitIsFound.users) {
             var size = Object.keys(userLimitIsFound.users).length;
           }
@@ -110,6 +121,43 @@ module.exports = {
           Speak: false,
         })
         .then(async () => {
+          const userFound = userLimitIsFound.users.find((element) => {
+            if (element.id === user.id) {
+              return element;
+            }
+          });
+
+          if (userFound) {
+            await setupDB
+              .updateOne(
+                {
+                  GuildID: interaction.guild.id,
+                  "JTCInfo.owner": interaction.user.id,
+                },
+                {
+                  $pull: {
+                    "JTCInfo.$.users": { id: user.id },
+                  },
+                }
+              )
+              .then(async () => {
+                await setupDB.updateOne(
+                  {
+                    GuildID: interaction.guild.id,
+                    "JTCInfo.owner": interaction.user.id,
+                  },
+                  {
+                    $addToSet: {
+                      "JTCInfo.$.users": {
+                        id: user.id,
+                        added: false,
+                      },
+                    },
+                  }
+                );
+              });
+          }
+
           if (userLimitIsFound.users) {
             var size = Object.keys(userLimitIsFound.users).length;
           }

@@ -527,6 +527,29 @@ module.exports = {
                 .permissionOverwrites.edit(collected.guild.roles.everyone.id, {
                   ViewChannel: false,
                 });
+              const jtcusers2 = userLimitIsFound5.users.map((a) => a.id);
+
+              var size2 = Object.keys(userLimitIsFound5.users).length;
+              if (jtcusers2) {
+                for (let i = 0; i < size2; i++) {
+                  console.log(jtcusers2[i]);
+                  if (
+                    !interaction.guild.channels.cache
+                      .get(userLimitIsFound5.channels)
+                      .permissionsFor(
+                        collected.guild.members.cache.get(`${jtcusers2[i]}`)
+                      )
+                      .has("Connect")
+                  ) {
+                    collected.guild.channels.cache
+                      .get(userLimitIsFound5.channels)
+                      .permissionOverwrites.edit(jtcusers2[i], {
+                        ViewChannel: false,
+                      });
+                  }
+                }
+              }
+
               await setupDB.updateOne(
                 {
                   GuildID: interaction.guild.id,
@@ -538,7 +561,7 @@ module.exports = {
                   },
                 }
               );
-              collected.update({
+              await collected.update({
                 embeds: [
                   new EmbedBuilder()
                     .setColor("#800000")
@@ -620,16 +643,16 @@ module.exports = {
                 .permissionOverwrites.edit(collected.guild.roles.everyone.id, {
                   ViewChannel: true,
                 });
-              const jtcusers = userLimitIsFound6.users.find((element) => {
-                return element.id;
-              });
-              console.log(jtcusers);
+              const jtcusers = userLimitIsFound6.users.map((a) => a.id);
+              var size = Object.keys(userLimitIsFound6.users).length;
               if (jtcusers) {
-                collected.guild.channels.cache
-                  .get(userLimitIsFound6.channels)
-                  .permissionOverwrites.edit(jtcusers.id, {
-                    ViewChannel: true,
-                  });
+                for (let i = 0; i < size; i++) {
+                  collected.guild.channels.cache
+                    .get(userLimitIsFound6.channels)
+                    .permissionOverwrites.edit(jtcusers[i], {
+                      ViewChannel: true,
+                    });
+                }
               }
 
               await setupDB.updateOne(
