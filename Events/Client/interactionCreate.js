@@ -9,12 +9,12 @@ const cooldownDB = require("../../src/models/cooldownDB");
 module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
-    const { commandName, guild, member, channel } = interaction;
+    const { commandName, guild, member, channel, options } = interaction;
     const { commands, subCommands, user } = client;
     if (interaction.isChatInputCommand()) {
       // < ===========[Initiate InteractionCreate]=========== >
       const cmd = commands.get(commandName);
-      const subCommand = interaction.options.getSubcommand(false);
+
       if (!cmd)
         return interaction.reply({
           content: "This command is outdated!",
@@ -195,6 +195,10 @@ module.exports = {
           return;
         });
       }
+      const subCommand = options.getSubcommand(false);
+      let subCommandFile;
+      if (subCommand)
+        subCommandFile = subCommands.get(`${commandName}.${subCommand}`);
       // < ===========[Execute Function]=========== >
       async function commandExecute() {
         if (subCommand) {
@@ -210,11 +214,13 @@ module.exports = {
         } else await cmd.execute(interaction, client);
       }
       // < ===========[Cooldown System]=========== >
-      if (cmd.cooldown || subCommand.cooldown) {
+      if (subCommandFile.cooldown || cmd.cooldown) {
+        const finalCmd = subCommandFile || cmd;
+        const cmdName = subCommandFile.subCommand || cmd.name;
         const currentTime = Date.now();
-        const cooldownAmount = cmd.cooldown * 1000;
+        const cooldownAmount = finalCmd.cooldown * 1000;
         cooldownDB.findOne(
-          { MemberID: interaction.member.id, Cmd: cmd.name },
+          { MemberID: member.id, Cmd: cmdName },
           async (err, data) => {
             if (data) {
               const expirationTime = data.Time + cooldownAmount;
@@ -302,7 +308,7 @@ module.exports = {
               } else {
                 await cooldownDB.findOneAndDelete({
                   MemberID: member.id,
-                  Cmd: cmd.name,
+                  Cmd: cmdName,
                 });
                 commandExecute();
               }
@@ -310,9 +316,9 @@ module.exports = {
               commandExecute();
               new cooldownDB({
                 MemberID: member.id,
-                Cmd: cmd.name,
+                Cmd: cmdName,
                 Time: currentTime,
-                Cooldown: cmd.cooldown,
+                Cooldown: finalCmd.cooldown,
               }).save();
             }
           }
