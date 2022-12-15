@@ -195,12 +195,9 @@ module.exports = {
           return;
         });
       }
-      const subCommand = options.getSubcommand(false);
-      let subCommandFile;
-      if (subCommand)
-        subCommandFile = subCommands.get(`${commandName}.${subCommand}`);
       // < ===========[Execute Function]=========== >
       async function commandExecute() {
+        const subCommand = options.getSubcommand(false);
         if (subCommand) {
           const subCommandFile = subCommands.get(
             `${commandName}.${subCommand}`
@@ -213,8 +210,8 @@ module.exports = {
           await subCommandFile.execute(interaction, client);
         } else await cmd.execute(interaction, client);
       }
+      // < ===========[Cooldown System]=========== >
       if (cmd.cooldown) {
-        // < ===========[Cooldown System]=========== >
         const currentTime = Date.now();
         const cooldownAmount = cmd.cooldown * 1000;
         cooldownDB.findOne(
