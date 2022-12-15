@@ -2,7 +2,6 @@ const { EmbedBuilder } = require("discord.js");
 const invDB = require("../../../src/models/invDB");
 module.exports = {
   subCommand: "go.digging",
-  cooldown: 600,
   async execute(interaction, client) {
     const { member, options } = interaction;
     const work = options.getString("work");

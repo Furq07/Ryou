@@ -1,6 +1,7 @@
 const { ApplicationCommandOptionType } = require("discord.js");
 module.exports = {
   name: "go",
+  cooldown: 600,
   description: "Work side jobs to do random stuff to earn some Yur!",
   category: "Eco",
   options: [
