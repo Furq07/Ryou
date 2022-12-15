@@ -200,7 +200,7 @@ module.exports = {
               );
             }
           }
-          interaction.reply({
+          await interaction.reply({
             content: `Successfully removed ${user} from your custom vc`,
             ephemeral: true,
           });
