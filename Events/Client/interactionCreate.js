@@ -213,14 +213,12 @@ module.exports = {
           await subCommandFile.execute(interaction, client);
         } else await cmd.execute(interaction, client);
       }
-      // < ===========[Cooldown System]=========== >
-      if (subCommandFile.cooldown || cmd.cooldown) {
-        const finalCmd = subCommandFile || cmd;
-        const cmdName = subCommandFile.subCommand || cmd.name;
+      if (cmd.cooldown) {
+        // < ===========[Cooldown System]=========== >
         const currentTime = Date.now();
-        const cooldownAmount = finalCmd.cooldown * 1000;
+        const cooldownAmount = cmd.cooldown * 1000;
         cooldownDB.findOne(
-          { MemberID: member.id, Cmd: cmdName },
+          { MemberID: member.id, Cmd: cmd.name },
           async (err, data) => {
             if (data) {
               const expirationTime = data.Time + cooldownAmount;
@@ -308,7 +306,7 @@ module.exports = {
               } else {
                 await cooldownDB.findOneAndDelete({
                   MemberID: member.id,
-                  Cmd: cmdName,
+                  Cmd: cmd.name,
                 });
                 commandExecute();
               }
@@ -316,9 +314,9 @@ module.exports = {
               commandExecute();
               new cooldownDB({
                 MemberID: member.id,
-                Cmd: cmdName,
+                Cmd: cmd.name,
                 Time: currentTime,
-                Cooldown: finalCmd.cooldown,
+                Cooldown: cmd.cooldown,
               }).save();
             }
           }
