@@ -1,6 +1,7 @@
 {
-    "token": "MTAwNjg1MjY0MjQ5ODE2MjcwOA.GCiXFP.iHUetJ0W5Szjy4aARAylmv-yhD8kY7PIU_Lg-0",
-    "MongoDBConnect": "mongodb+srv://Ryou:R273169you@database.wopvio4.mongodb.net/Ryou",
-    "ecoIcon": "<:Yur:1034414003071500320>",
-    "ecoRuby": "<:Ruby:1034416992813326417>"
+  "token": "MTAwNjg1MjY0MjQ5ODE2MjcwOA.GCiXFP.iHUetJ0W5Szjy4aARAylmv-yhD8kY7PIU_Lg-0",
+  "token2": "MTA1MjkyMDU5MDM4NzkxNjg2MQ.GM_-KH.jVfM6Du0NzF2ddFzjC-4LS6e_K_QOq4kLopkIg",
+  "MongoDBConnect": "mongodb+srv://Ryou:R273169you@database.wopvio4.mongodb.net/Ryou",
+  "ecoIcon": "<:Yur:1034414003071500320>",
+  "ecoRuby": "<:Ruby:1034416992813326417>"
 }
