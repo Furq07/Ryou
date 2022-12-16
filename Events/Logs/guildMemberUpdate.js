@@ -3,7 +3,7 @@ const setupDB = require("../../src/models/setupDB");
 
 module.exports = {
   name: "guildMemberUpdate",
-  async execute(member, client) {
+  async execute(oldMember, newMember, client) {
     let setupData = await setupDB.findOne({ GuildID: oldMember.guild.id });
     if (!setupData) return;
     if (!setupData.logChannelID) return;

@@ -132,7 +132,6 @@ module.exports = {
               return element;
             }
           });
-          console.log(userFound);
           if (userFound) {
             if (userFound.added === false) {
               await setupDB
@@ -210,7 +209,7 @@ module.exports = {
           }
         });
 
-      interaction
+      await interaction
         .reply({
           content: `Successfully added ${user} to your custom vc`,
           ephemeral: true,

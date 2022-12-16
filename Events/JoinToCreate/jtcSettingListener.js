@@ -10,6 +10,7 @@ const {
   ModalBuilder,
   TextInputBuilder,
   SelectMenuBuilder,
+  UserManager,
 } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
 module.exports = {
@@ -527,27 +528,40 @@ module.exports = {
                 .permissionOverwrites.edit(collected.guild.roles.everyone.id, {
                   ViewChannel: false,
                 });
-              const jtcusers2 = userLimitIsFound5.users.map((a) => a.id);
-
               var size2 = Object.keys(userLimitIsFound5.users).length;
-              if (jtcusers2) {
-                for (let i = 0; i < size2; i++) {
-                  console.log(jtcusers2[i]);
-                  if (
-                    !interaction.guild.channels.cache
-                      .get(userLimitIsFound5.channels)
-                      .permissionsFor(
-                        collected.guild.members.cache.get(`${jtcusers2[i]}`)
-                      )
-                      .has("Connect")
-                  ) {
-                    collected.guild.channels.cache
-                      .get(userLimitIsFound5.channels)
-                      .permissionOverwrites.edit(jtcusers2[i], {
-                        ViewChannel: false,
-                      });
+
+              const jtcusers2 = userLimitIsFound5.users.map((a) => ({
+                id: a.id,
+                added: a.added === false,
+              }));
+              var size2 = Object.keys(userLimitIsFound5.users).length;
+              try {
+                if (jtcusers2) {
+                  for (let i = 0; i < size2; i++) {
+                    const { guild } = interaction;
+                    guild.members.fetch(`${jtcusers2[i].id}`).then((user) => {
+                      if (
+                        !interaction.guild.channels.cache
+                          .get(userLimitIsFound5.channels)
+                          .permissionsFor(user.id)
+                          .has("Connect")
+                      ) {
+                        collected.guild.channels.cache
+                          .get(userLimitIsFound5.channels)
+                          .permissionOverwrites.edit(user, {
+                            ViewChannel: false,
+                          })
+                          .then(() => {
+                            return;
+                          });
+                      } else {
+                        return;
+                      }
+                    });
                   }
                 }
+              } catch (err) {
+                return;
               }
 
               await setupDB.updateOne(
@@ -643,15 +657,24 @@ module.exports = {
                 .permissionOverwrites.edit(collected.guild.roles.everyone.id, {
                   ViewChannel: true,
                 });
-              const jtcusers = userLimitIsFound6.users.map((a) => a.id);
+              const jtcusers = userLimitIsFound6.users.map((a) => ({
+                id: a.id,
+                added: a.added === false,
+              }));
               var size = Object.keys(userLimitIsFound6.users).length;
               if (jtcusers) {
                 for (let i = 0; i < size; i++) {
-                  collected.guild.channels.cache
-                    .get(userLimitIsFound6.channels)
-                    .permissionOverwrites.edit(jtcusers[i], {
-                      ViewChannel: true,
-                    });
+                  // console.log(jtcusers[i]);
+                  // console.log(jtcusers[i].added);
+                  // console.log(jtcusers[i].id);
+                  const { guild } = interaction;
+                  guild.members.fetch(`${jtcusers[i].id}`).then((user) => {
+                    collected.guild.channels.cache
+                      .get(userLimitIsFound6.channels)
+                      .permissionOverwrites.edit(user, {
+                        ViewChannel: true,
+                      });
+                  });
                 }
               }
 
