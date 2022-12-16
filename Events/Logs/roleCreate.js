@@ -16,7 +16,7 @@ module.exports = {
           embeds: [
             new EmbedBuilder()
               .setColor("#800000")
-              .setDescription(`A role was created`)
+              .setDescription(`A new role was created`)
               .addFields(
                 {
                   name: "Name:",

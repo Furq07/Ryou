@@ -11,7 +11,7 @@ module.exports = {
       embeds: [
         new EmbedBuilder()
           .setColor("#800000")
-          .setDescription(`A invite was created`)
+          .setDescription(`A server invitation was created`)
           .addFields(
             {
               name: "Creator:",

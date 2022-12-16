@@ -159,13 +159,13 @@ module.exports = {
             { ChannelID: channel.id },
             { ClaimedID: member.id }
           );
-          channel.permissionOverwrites.edit({
-            id: member.id,
-            allow: [PermissionFlagsBits.SendMessages],
+          channel.permissionOverwrites.edit(member, {
+            SendMessages: true,
           });
-          channel.permissionOverwrites.edit({
-            id: ticketData.MemberID,
-            allow: [PermissionFlagsBits.SendMessages],
+          guild.members.fetch(`${ticketData.MemberID}`).then((user) => {
+            channel.permissionOverwrites.edit(user, {
+              SendMessages: true,
+            });
           });
           interaction.reply({
             embeds: [
@@ -186,14 +186,20 @@ module.exports = {
             { ChannelID: channel.id },
             { LockStatus: true }
           );
-          channel.permissionOverwrites.edit({
-            id: ticketData.MemberID,
-            deny: [PermissionFlagsBits.SendMessages],
+          guild.members.fetch(`${ticketData.MemberID}`).then((user) => {
+            channel.permissionOverwrites.edit(user, {
+              SendMessages: false,
+            });
           });
           interaction.reply({
             embeds: [embed.setDescription("🔒 | This Ticket has Been Locked!")],
           });
-          channel.setParent(setupData.TicketLockedID);
+          const Locked = guild.channels.find(
+            (c) => c.id == ticketData.TicketLockedID && c.type == "category"
+          );
+          channel.setParent(Locked, {
+            lockPermissions: false,
+          });
           break;
         case "TicketUnlock":
           if (ticketData.LockStatus === false)
@@ -206,14 +212,20 @@ module.exports = {
             { ChannelID: channel.id },
             { LockStatus: false }
           );
-          channel.permissionOverwrites.edit({
-            id: ticketData.MemberID,
-            allow: [PermissionFlagsBits.SendMessages],
+          guild.members.fetch(`${ticketData.MemberID}`).then((user) => {
+            channel.permissionOverwrites.edit(user, {
+              SendMessages: true,
+            });
           });
           interaction.reply({
             embeds: [embed.setDescription("🔓 | This Ticket is now Unlocked.")],
           });
-          channel.setParent(OpenedID);
+          const Opened = guild.channels.find(
+            (c) => c.id == ticketData.TicketOpenedID && c.type == "category"
+          );
+          channel.setParent(Opened, {
+            lockPermissions: false,
+          });
           break;
         case "TicketClose":
           const attachment = await createTranscript(channel, {

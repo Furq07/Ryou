@@ -20,7 +20,7 @@ module.exports = {
             embeds: [
               new EmbedBuilder()
                 .setColor("#800000")
-                .setDescription(`A channel name was changed`)
+                .setDescription(`A channel's name has been changed.`)
                 .addFields(
                   {
                     name: "Before:",

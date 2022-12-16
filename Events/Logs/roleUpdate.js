@@ -65,7 +65,7 @@ module.exports = {
               embeds: [
                 new EmbedBuilder()
                   .setColor("#800000")
-                  .setDescription(`A role permisisons were updated`)
+                  .setDescription(`Role permission(s) have been updated.`)
                   .addFields(
                     { name: "Name:", value: `${oldRole.name}`, inline: true },
                     { name: "ID:", value: `${oldRole.id}`, inline: true },
@@ -101,7 +101,7 @@ module.exports = {
               embeds: [
                 new EmbedBuilder()
                   .setColor("#800000")
-                  .setDescription(`A role permisisons were updated`)
+                  .setDescription(`Role permission(s) have been updated`)
                   .addFields(
                     { name: "Name:", value: `${oldRole.name}`, inline: true },
                     { name: "ID:", value: `${oldRole.id}`, inline: true },

@@ -17,7 +17,8 @@ module.exports = {
 
       if (!cmd)
         return interaction.reply({
-          content: "This command is outdated!",
+          content:
+            "This command is not available, Please reload your Discord, if that doesn't work, Join our Support Server!",
           ephemeral: true,
         });
       // < ==============[Data Imports]============== >

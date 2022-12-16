@@ -16,7 +16,7 @@ module.exports = {
       embeds: [
         new EmbedBuilder()
           .setColor("#800000")
-          .setDescription(`A user was Unbanned`)
+          .setDescription(`A user has been unbanned`)
           .addFields(
             {
               name: "User:",

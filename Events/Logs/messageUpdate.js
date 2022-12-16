@@ -15,7 +15,7 @@ module.exports = {
         embeds: [
           new EmbedBuilder()
             .setColor("#800000")
-            .setDescription(`A strange message was edited`)
+            .setDescription(`A message was edited`)
             .addFields(
               {
                 name: "User:",

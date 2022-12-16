@@ -22,7 +22,7 @@ module.exports = {
           embeds: [
             new EmbedBuilder()
               .setColor("#800000")
-              .setDescription(`A user was banned`)
+              .setDescription(`A user has been banned`)
               .addFields(
                 {
                   name: "User:",

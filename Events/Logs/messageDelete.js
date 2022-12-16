@@ -12,7 +12,7 @@ module.exports = {
         embeds: [
           new EmbedBuilder()
             .setColor("#800000")
-            .setDescription(`A strange message was deleted`)
+            .setDescription(`A message was deleted`)
             .addFields(
               {
                 name: "User:",
