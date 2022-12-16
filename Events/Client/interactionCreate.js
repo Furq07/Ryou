@@ -12,15 +12,6 @@ module.exports = {
     const { commandName, guild, member, channel, options } = interaction;
     const { commands, subCommands, user } = client;
     if (interaction.isChatInputCommand()) {
-      // < ===========[Initiate InteractionCreate]=========== >
-      const cmd = commands.get(commandName);
-
-      if (!cmd)
-        return interaction.reply({
-          content:
-            "This command is not available, Please reload your Discord, if that doesn't work, Join our Support Server!",
-          ephemeral: true,
-        });
       // < ==============[Data Imports]============== >
       const collector = channel.createMessageComponentCollector({
         componentType: ComponentType.Button,
@@ -36,13 +27,29 @@ module.exports = {
           text: "Ryou",
         })
         .setThumbnail(guild.iconURL({ dynamic: true }));
+      // < ===========[Initiate InteractionCreate]=========== >
+      const cmd = commands.get(commandName);
+
+      if (!cmd)
+        return interaction.reply({
+          embeds: [
+            embed.setDescription(
+              "Looks like this Command has Expired, Please try Refreshing your Discord!"
+            ),
+          ],
+          ephemeral: true,
+        });
       // < ===========[Developer Only System]=========== >
       if (
         cmd.dev &&
         !["579382548258357419", "564103070334844960"].includes(member.id)
       )
         return interaction.reply({
-          content: "This is an Developer Only Command!",
+          embeds: [
+            embed.setDescription(
+              "This Command is made for Developers Only, Please Refrain from using it!"
+            ),
+          ],
         });
       // < ==============[Filters]============== >
       if (
@@ -53,9 +60,9 @@ module.exports = {
         return interaction.reply({
           embeds: [
             embed.setDescription(
-              `I would greatly appreciate it,
-                If you could give me Administrator Permission,
-                So I can manage the server.`
+              `It Looks like I don't have Administrator Permissions,
+              I need them to be able to completely Handle the Server,
+              I would really Appreciate if you could give me the Permissions!`
             ),
           ],
           ephemeral: true,
@@ -155,7 +162,11 @@ module.exports = {
         collector.on("collect", async (collected) => {
           if (collected.user.id !== member.id) {
             collected.reply({
-              content: `These Buttons aren't for You!`,
+              embeds: [
+                embed.setDescription(
+                  "I don't Believe these Buttons are for you, Please Refrain from using it!"
+                ),
+              ],
               ephemeral: true,
             });
             return;
@@ -167,7 +178,7 @@ module.exports = {
                   embed
                     .setTitle("Lets go!")
                     .setDescription(
-                      "Now you can go ahead and use Economy Commands!"
+                      "Alright, Now you can go ahead and use all Economy Commands!"
                     ),
                 ],
                 components: [],
@@ -205,7 +216,11 @@ module.exports = {
           );
           if (!subCommandFile)
             return interaction.reply({
-              content: "This sub-command is outdated!",
+              embeds: [
+                embed.setDescription(
+                  "Looks like this Command has Expired, Please try Refreshing your Discord!"
+                ),
+              ],
               ephemeral: true,
             });
           await subCommandFile.execute(interaction, client);
