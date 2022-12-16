@@ -129,7 +129,11 @@ module.exports = {
             });
           });
       });
-    } else if (["TicketClose", "TicketLock", "TicketUnlock", "TicketClaim"]) {
+    } else if (
+      ["TicketClose", "TicketLock", "TicketUnlock", "TicketClaim"].includes(
+        customId
+      )
+    ) {
       if (!member.roles.cache.find((r) => r.id === setupData.staffRoleID))
         return interaction.reply({
           content: "These Buttons are Staff Only, Please Resist from using it!",
