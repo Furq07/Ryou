@@ -492,12 +492,12 @@ module.exports = {
               content:
                 "Your channel is already hidden to everyone except for the users you have added yourself",
               ephemeral: true,
-            });
-          interaction.reply({
+            }).catch(() => { return });
+          await interaction.reply({
             embeds: [
               new EmbedBuilder()
                 .setColor("#800000")
-                .setTitle("hide your custom vc")
+                .setTitle("Hide your custom vc")
                 .setDescription(
                   `You are going to hide your custom vc for everyone except for the users you have addred yourself \n\n**Vc Information**\n**Name**: <#${userLimitIsFound5.channels}>\n**ID**: ${userLimitIsFound5.channels}\n**User Limit**: ${userLimitIsFound5.userLimit}\nClick the **Yes** button below to start the process and press **No** to stop the process`
                 ),
@@ -535,33 +535,27 @@ module.exports = {
                 added: a.added === false,
               }));
               var size2 = Object.keys(userLimitIsFound5.users).length;
-              try {
-                if (jtcusers2) {
-                  for (let i = 0; i < size2; i++) {
-                    const { guild } = interaction;
-                    guild.members.fetch(`${jtcusers2[i].id}`).then((user) => {
-                      if (
-                        !interaction.guild.channels.cache
-                          .get(userLimitIsFound5.channels)
-                          .permissionsFor(user.id)
-                          .has("Connect")
-                      ) {
-                        collected.guild.channels.cache
-                          .get(userLimitIsFound5.channels)
-                          .permissionOverwrites.edit(user, {
-                            ViewChannel: false,
-                          })
-                          .then(() => {
-                            return;
-                          });
-                      } else {
-                        return;
-                      }
-                    });
-                  }
+              if (jtcusers2) {
+                for (let i = 0; i < size2; i++) {
+                  const { guild } = interaction;
+
+                  guild.members.fetch(`${jtcusers2[i].id}`).then((user) => {
+                    if (
+                      !interaction.guild.channels.cache
+                        .get(`${userLimitIsFound5.channels}`)
+                        .permissionsFor(`${user.id}`)
+                        .has("Connect")
+                    ) {
+                      collected.guild.channels.cache
+                        .get(userLimitIsFound5.channels)
+                        .permissionOverwrites.edit(user, {
+                          ViewChannel: false,
+                        })
+                    }
+                  }).catch(() => {
+                    return
+                  });
                 }
-              } catch (err) {
-                return;
               }
 
               await setupDB.updateOne(
@@ -664,20 +658,18 @@ module.exports = {
               var size = Object.keys(userLimitIsFound6.users).length;
               if (jtcusers) {
                 for (let i = 0; i < size; i++) {
-                  // console.log(jtcusers[i]);
-                  // console.log(jtcusers[i].added);
-                  // console.log(jtcusers[i].id);
                   const { guild } = interaction;
                   guild.members.fetch(`${jtcusers[i].id}`).then((user) => {
                     collected.guild.channels.cache
-                      .get(userLimitIsFound6.channels)
+                      .get(`${userLimitIsFound6.channels}`)
                       .permissionOverwrites.edit(user, {
                         ViewChannel: true,
-                      });
+                      })
+                  }).catch(() => {
+
                   });
                 }
               }
-
               await setupDB.updateOne(
                 {
                   GuildID: interaction.guild.id,
