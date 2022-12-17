@@ -230,110 +230,85 @@ module.exports = {
       if (cmd.cooldown) {
         const currentTime = Date.now();
         const cooldownAmount = cmd.cooldown * 1000;
-        cooldownDB.findOne(
-          { MemberID: member.id, Cmd: cmd.name },
-          async (err, data) => {
-            if (data) {
-              const expirationTime = data.Time + cooldownAmount;
+        const cooldownData = await cooldownDB.findOne({
+          MemberID: member.id,
+          Cmd: cmd.name,
+        });
+        if (cooldownData) {
+          const expirationTime = cooldownData.Time + cooldownAmount;
 
-              if (currentTime < expirationTime) {
-                const timeLeft = (expirationTime - currentTime) / 1000;
+          if (currentTime < expirationTime) {
+            const timeLeft = (expirationTime - currentTime) / 1000;
 
-                const embed = new EmbedBuilder()
-                  .setColor("#800000")
-                  .setTitle(`Whoopsi`)
-                  .setDescription(
-                    `Looks Like You have to wait For a Bit,
-              Before Using this Command Again!`
-                  )
-                  .setThumbnail(guild.iconURL({ dynamic: true }))
-                  .setFooter({
-                    text: "Ryou - Cooldown",
-                    iconURL: user.displayAvatarURL({ dynamic: true }),
-                  });
-                if (timeLeft.toFixed(1) >= 604800) {
-                  let week = (timeLeft.toFixed(1) / 604800).toLocaleString();
-                  if (week.includes(".")) week = week.split(".")[0];
-                  const word = `Week${week >= "1209600" ? "s" : ""}`;
-                  return interaction.reply({
-                    embeds: [
-                      embed.setFields({
-                        name: "Time:",
-                        value: `${week} ${word}`,
-                      }),
-                    ],
-                    ephemeral: true,
-                  });
-                } else if (timeLeft.toFixed(1) >= 86400) {
-                  let day = (timeLeft.toFixed(1) / 86400).toLocaleString();
-                  if (day.includes(".")) day = day.split(".")[0];
-                  const word = `Day${day >= "172800" ? "s" : ""}`;
-                  return interaction.reply({
-                    embeds: [
-                      embed.setFields({
-                        name: "Time:",
-                        value: `${day} ${word}`,
-                      }),
-                    ],
-                    ephemeral: true,
-                  });
-                } else if (timeLeft.toFixed(1) >= 3600) {
-                  let hour = (timeLeft.toFixed(1) / 3600).toLocaleString();
-                  if (hour.includes(".")) hour = hour.split(".")[0];
-                  const word = `Hour${hour >= "7200" ? "s" : ""}`;
-                  return interaction.reply({
-                    embeds: [
-                      embed.setFields({
-                        name: "Time:",
-                        value: `${hour} ${word}`,
-                      }),
-                    ],
-                    ephemeral: true,
-                  });
-                } else if (timeLeft.toFixed(1) >= 60) {
-                  let minute = (timeLeft.toFixed(1) / 60).toLocaleString();
-                  if (minute.includes(".")) minute = minute.split(".")[0];
-                  const word = `Minute${minute >= "120" ? "s" : ""}`;
-                  return interaction.reply({
-                    embeds: [
-                      embed.setFields({
-                        name: "Time:",
-                        value: `${minute} ${word}`,
-                      }),
-                    ],
-                    ephemeral: true,
-                  });
-                } else {
-                  let second = timeLeft.toFixed(1).toLocaleString();
-                  if (second.includes(".")) second = second.split(".")[0];
-                  return interaction.reply({
-                    embeds: [
-                      embed.setFields({
-                        name: "Time:",
-                        value: `${second} Seconds`,
-                      }),
-                    ],
-                    ephemeral: true,
-                  });
-                }
-              } else {
-                await cooldownDB.findOneAndDelete({
-                  MemberID: member.id,
-                  Cmd: cmd.name,
-                });
-                commandExecute();
-              }
+            const embed = new EmbedBuilder()
+              .setColor("#800000")
+              .setTitle(`Whoopsi`)
+              .setDescription(
+                `Looks like you have to wait a Bit,
+                    Before you can use \`${cmd.name}\` again!`
+              )
+              .setThumbnail(guild.iconURL({ dynamic: true }))
+              .setFooter({
+                text: "Ryou - Cooldown",
+                iconURL: user.displayAvatarURL({ dynamic: true }),
+              });
+            if (timeLeft.toFixed(1) >= 604800) {
+              let week = (timeLeft.toFixed(1) / 604800).toLocaleString();
+              if (week.includes(".")) week = week.split(".")[0];
+              const word = `Week${week >= "1209600" ? "s" : ""}`;
+              embed.setFields({
+                name: "Time:",
+                value: `${week} ${word}`,
+              });
+            } else if (timeLeft.toFixed(1) >= 86400) {
+              let day = (timeLeft.toFixed(1) / 86400).toLocaleString();
+              if (day.includes(".")) day = day.split(".")[0];
+              const word = `Day${day >= "172800" ? "s" : ""}`;
+              embed.setFields({
+                name: "Time:",
+                value: `${day} ${word}`,
+              });
+            } else if (timeLeft.toFixed(1) >= 3600) {
+              let hour = (timeLeft.toFixed(1) / 3600).toLocaleString();
+              if (hour.includes(".")) hour = hour.split(".")[0];
+              const word = `Hour${hour >= "7200" ? "s" : ""}`;
+              embed.setFields({
+                name: "Time:",
+                value: `${hour} ${word}`,
+              });
+            } else if (timeLeft.toFixed(1) >= 60) {
+              let minute = (timeLeft.toFixed(1) / 60).toLocaleString();
+              if (minute.includes(".")) minute = minute.split(".")[0];
+              const word = `Minute${minute >= "120" ? "s" : ""}`;
+              embed.setFields({
+                name: "Time:",
+                value: `${minute} ${word}`,
+              });
             } else {
-              commandExecute();
-              new cooldownDB({
-                MemberID: member.id,
-                Cmd: cmd.name,
-                Time: currentTime,
-                Cooldown: cmd.cooldown,
-              }).save();
+              let second = timeLeft.toFixed(1).toLocaleString();
+              if (second.includes(".")) second = second.split(".")[0];
+              embed.setFields({
+                name: "Time:",
+                value: `${second} Seconds`,
+              });
             }
+            interaction.reply({ embeds: [embed], ephemeral: true });
+          } else {
+            await cooldownDB.findOneAndDelete({
+              MemberID: member.id,
+              Cmd: cmd.name,
+            });
+            commandExecute();
           }
-        );
+        } else {
+          commandExecute();
+          new cooldownDB({
+            MemberID: member.id,
+            Cmd: cmd.name,
+            Time: currentTime,
+            Cooldown: cmd.cooldown,
+          }).save();
+        }
       } else {
         commandExecute();
       }
