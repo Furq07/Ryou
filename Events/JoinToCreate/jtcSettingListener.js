@@ -488,11 +488,15 @@ module.exports = {
               .permissionsFor(interaction.guild.roles.everyone.id)
               .has("ViewChannel")
           )
-            return interaction.reply({
-              content:
-                "Your channel is already hidden to everyone except for the users you have added yourself",
-              ephemeral: true,
-            }).catch(() => { return });
+            return interaction
+              .reply({
+                content:
+                  "Your channel is already hidden to everyone except for the users you have added yourself",
+                ephemeral: true,
+              })
+              .catch(() => {
+                return;
+              });
           await interaction.reply({
             embeds: [
               new EmbedBuilder()
@@ -539,22 +543,25 @@ module.exports = {
                 for (let i = 0; i < size2; i++) {
                   const { guild } = interaction;
 
-                  guild.members.fetch(`${jtcusers2[i].id}`).then((user) => {
-                    if (
-                      !interaction.guild.channels.cache
-                        .get(`${userLimitIsFound5.channels}`)
-                        .permissionsFor(`${user.id}`)
-                        .has("Connect")
-                    ) {
-                      collected.guild.channels.cache
-                        .get(userLimitIsFound5.channels)
-                        .permissionOverwrites.edit(user, {
-                          ViewChannel: false,
-                        })
-                    }
-                  }).catch(() => {
-                    return
-                  });
+                  guild.members
+                    .fetch(`${jtcusers2[i].id}`)
+                    .then((user) => {
+                      if (
+                        !interaction.guild.channels.cache
+                          .get(`${userLimitIsFound5.channels}`)
+                          .permissionsFor(`${user.id}`)
+                          .has("Connect")
+                      ) {
+                        collected.guild.channels.cache
+                          .get(userLimitIsFound5.channels)
+                          .permissionOverwrites.edit(user, {
+                            ViewChannel: false,
+                          });
+                      }
+                    })
+                    .catch(() => {
+                      return;
+                    });
                 }
               }
 
@@ -659,15 +666,16 @@ module.exports = {
               if (jtcusers) {
                 for (let i = 0; i < size; i++) {
                   const { guild } = interaction;
-                  guild.members.fetch(`${jtcusers[i].id}`).then((user) => {
-                    collected.guild.channels.cache
-                      .get(`${userLimitIsFound6.channels}`)
-                      .permissionOverwrites.edit(user, {
-                        ViewChannel: true,
-                      })
-                  }).catch(() => {
-
-                  });
+                  guild.members
+                    .fetch(`${jtcusers[i].id}`)
+                    .then((user) => {
+                      collected.guild.channels.cache
+                        .get(`${userLimitIsFound6.channels}`)
+                        .permissionOverwrites.edit(user, {
+                          ViewChannel: true,
+                        });
+                    })
+                    .catch(() => {});
                 }
               }
               await setupDB.updateOne(
@@ -706,197 +714,6 @@ module.exports = {
               });
             }
           });
-          break;
-        case "resetup-jtc-button":
-          // future purposes
-          // const channels = serverID?.channels
-          //   ? JSON.parse(JSON.stringify(serverID.channels)).guild.channels
-          //   : [];
-          const jtcCategory = interaction.guild.channels.cache.get(
-            setupData.JTCCategoryID
-          );
-          const jtcSettingChannel = interaction.guild.channels.cache.get(
-            setupData.JTCSettingID
-          );
-          const jtcChannel = interaction.guild.channels.cache.get(
-            setupData.JTCChannelID
-          );
-          if (setupData.JTCInfo.length !== 0) {
-            await interaction.deferUpdate({ ephemeral: true });
-            await setupData.JTCInfo.forEach(async (owner) => {
-              await interaction.editReply({
-                components: [
-                  new ActionRowBuilder().addComponents(
-                    new ButtonBuilder()
-                      .setCustomId("idk")
-                      .setLabel("Resetting...")
-                      .setStyle(ButtonStyle.Success)
-                      .setDisabled(true)
-                  ),
-                ],
-              });
-              // await setupDB.updateMany(
-              //   {
-              //     GuildID: interaction.guild.id,
-              //   },
-              //   { $pull: { JTCInfo: { channels: owner.channels } } }
-              // );
-
-              await jtcSettingChannel.delete().catch((err) => {
-                return;
-              });
-              await jtcChannel.delete().catch((err) => {
-                return;
-              });
-              await jtcCategory.delete().then(async (err) => {
-                // resetup jtc
-                const everyone = interaction.guild.roles.cache.find(
-                  (x) => x.name === "@everyone"
-                );
-                await interaction.guild.channels
-                  .create({
-                    name: "Custom Vcs",
-                    type: ChannelType.GuildCategory,
-                    permissionOverwrites: [
-                      {
-                        id: everyone.id,
-                        allow: [
-                          PermissionFlagsBits.Connect,
-                          PermissionFlagsBits.Speak,
-                          PermissionFlagsBits.ViewChannel,
-                        ],
-                      },
-                    ],
-                  })
-                  .then(async (categoryName) => {
-                    await interaction.guild.channels
-                      .create({
-                        name: "jtc-setting",
-                        type: ChannelType.GuildText,
-                        parent: categoryName,
-                        permissionOverwrites: [
-                          {
-                            id: everyone.id,
-                            deny: [PermissionFlagsBits.SendMessages],
-                            allow: [PermissionFlagsBits.ViewChannel],
-                          },
-                        ],
-                      })
-                      .then(async (channel) => {
-                        await setupDB.findOneAndUpdate(
-                          { GuildID: channel.guild.id },
-                          { JTCSettingID: channel.id }
-                        );
-                        channel.send({
-                          embeds: [
-                            new EmbedBuilder()
-                              .setColor("#800000")
-                              .setTitle("Join to Create Setting/Accessibility")
-                              .setDescription(
-                                "You can manage your custom voice channels through the buttons below"
-                              ),
-                          ],
-                          components: [
-                            new ActionRowBuilder().addComponents(
-                              new ButtonBuilder()
-                                .setCustomId("jtc-delete-vc-button")
-                                .setLabel("Delete Vc")
-                                .setStyle(ButtonStyle.Primary),
-                              new ButtonBuilder()
-                                .setCustomId("jtc-rename-vc-button")
-                                .setLabel("Rename Vc")
-                                .setStyle(ButtonStyle.Primary),
-                              new ButtonBuilder()
-                                .setCustomId("jtc-user-limit-button")
-                                .setLabel("User Limit")
-                                .setStyle(ButtonStyle.Primary),
-                              new ButtonBuilder()
-                                .setCustomId("jtc-lock-channel-button")
-                                .setLabel("Lock Vc")
-                                .setStyle(ButtonStyle.Primary),
-                              new ButtonBuilder()
-                                .setCustomId("jtc-unlock-channel-button")
-                                .setLabel("Unlock Vc")
-                                .setStyle(ButtonStyle.Primary)
-                            ),
-                            new ActionRowBuilder().addComponents(
-                              new ButtonBuilder()
-                                .setCustomId("jtc-add-user-button")
-                                .setLabel("Add User")
-                                .setStyle(ButtonStyle.Primary),
-                              new ButtonBuilder()
-                                .setCustomId("jtc-remove-user-button")
-                                .setLabel("Remove User")
-                                .setStyle(ButtonStyle.Primary),
-                              new ButtonBuilder()
-                                .setCustomId("jtc-hide-button")
-                                .setLabel("Hide Vc")
-                                .setStyle(ButtonStyle.Primary),
-                              new ButtonBuilder()
-                                .setCustomId("jtc-unhide-button")
-                                .setLabel("Unhide vc")
-                                .setStyle(ButtonStyle.Primary)
-                            ),
-                          ],
-                        });
-                        await interaction.guild.channels
-                          .create({
-                            name: `Join to Create`,
-                            type: ChannelType.GuildVoice,
-                            parent: categoryName,
-                            userLimit: 1,
-                          })
-                          .then(async (channel) => {
-                            await setupDB.findOneAndUpdate(
-                              { GuildID: interaction.guild.id },
-                              { JTCChannelID: channel.id }
-                            );
-                            await setupDB.findOneAndUpdate(
-                              { GuildID: interaction.guild.id },
-                              { JTCCategoryID: categoryName.id }
-                            );
-                            channel.setPosition(2);
-                            setupData.JTCInfo.forEach(async (owner) => {
-                              await interaction.guild.channels.cache
-                                .find((r) => r.id === owner.channels)
-                                .setParent(categoryName.id, {
-                                  lockPermissions: false,
-                                });
-                            });
-                            await interaction
-                              .editReply({
-                                content:
-                                  "Successfully resetuped the Join to Create",
-                                components: [
-                                  new ActionRowBuilder().addComponents(
-                                    new ButtonBuilder()
-                                      .setCustomId("idk2")
-                                      .setLabel("Resetuped")
-                                      .setStyle(ButtonStyle.Success)
-                                      .setDisabled(true)
-                                  ),
-                                ],
-                              })
-                              .catch((err) => {
-                                return;
-                              });
-                          });
-                      });
-                  })
-                  .catch(() => {
-                    return;
-                  });
-              });
-
-
-            });
-          } else {
-            interaction.update({
-              content: `Resetup requires atleast 1 or more than 1 custom vc, To make one just hope into <#${setupData.JTCChannelID}>`,
-              ephemeral: true,
-              components: [],
-            });
-          }
           break;
       }
     }

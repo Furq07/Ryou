@@ -80,7 +80,6 @@ module.exports = {
         });
       // < ==============[Join Message]============== >
       if (!setupData) {
-        interaction.reply({ content: "Whoopsi", ephemeral: true });
         const joinEmbed = new EmbedBuilder()
           .setColor("#800000")
           .setTitle("Thank You for Adding Me!")
@@ -89,7 +88,7 @@ module.exports = {
             iconURL: user.displayAvatarURL({ dynamic: true }),
             text: "Ryou",
           });
-        channel.send({
+        interaction.reply({
           embeds: [
             joinEmbed.setDescription(
               `
