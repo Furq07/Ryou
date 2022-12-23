@@ -44,16 +44,14 @@ module.exports = {
       new ButtonBuilder()
         .setCustomId("CommunityRole")
         .setLabel("Community Role")
-        .setEmoji("❎")
+
         .setStyle(ButtonStyle.Danger),
       new ButtonBuilder()
         .setCustomId("StaffRole")
         .setLabel("Staff Role")
-        .setEmoji("❎")
         .setStyle(ButtonStyle.Danger),
       new ButtonBuilder()
         .setCustomId("AdminRole")
-        .setEmoji("❎")
         .setLabel("Admin Role")
         .setStyle(ButtonStyle.Danger)
     );
@@ -66,16 +64,13 @@ module.exports = {
         new ButtonBuilder()
           .setCustomId("CommunityRole")
           .setLabel("Community Role")
-          .setEmoji("❎")
           .setStyle(ButtonStyle.Danger),
         new ButtonBuilder()
           .setCustomId("StaffRole")
           .setLabel("Staff Role")
-          .setEmoji("❎")
           .setStyle(ButtonStyle.Danger),
         new ButtonBuilder()
           .setCustomId("AdminRole")
-          .setEmoji("❎")
           .setLabel("Admin Role")
           .setStyle(ButtonStyle.Danger),
         new ButtonBuilder()
