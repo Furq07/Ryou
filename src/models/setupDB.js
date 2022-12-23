@@ -4,8 +4,10 @@ module.exports = mongoose.model(
   "setupDB",
   new mongoose.Schema({
     GuildID: String,
-    mainRoleID: String,
-    staffRoleID: String,
+    CommunityRoleID: String,
+    StaffRoleID: String,
+    AdminRoleID: String,
+    BotRoleID: String,
     TicketParentID: String,
     TicketOpenedID: String,
     TicketLockedID: String,

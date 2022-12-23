@@ -34,6 +34,7 @@ client.config = require("./config.json");
 client.events = new Collection();
 client.commands = new Collection();
 client.subCommands = new Collection();
+client.setMaxListeners(0);
 
 loadEvents(client)
   .then(() =>
