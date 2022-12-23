@@ -99,7 +99,6 @@ module.exports = {
                   ],
                 })
                 .then(async (channel) => {
-                  console.log(channel.id);
                   await setupDB.findOneAndUpdate(
                     { GuildID: channel.guild.id },
                     { JTCSettingID: channel.id }
