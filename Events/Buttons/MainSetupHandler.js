@@ -176,25 +176,8 @@ module.exports = {
                     ],
                   });
                 }
-                const Buttons = new ActionRowBuilder().addComponents(
-                  new ButtonBuilder()
-                    .setCustomId("JTCSetup")
-                    .setLabel("Join to Create")
-                    .setStyle(ButtonStyle.Success),
-                  new ButtonBuilder()
-                    .setCustomId("VerificationSetup")
-                    .setLabel("Verification")
-                    .setStyle(ButtonStyle.Danger),
-                  new ButtonBuilder()
-                    .setCustomId("LogsSetup")
-                    .setLabel("Logs")
-                    .setStyle(ButtonStyle.Danger),
-                  new ButtonBuilder()
-                    .setCustomId("TicketSetup")
-                    .setLabel("Ticket")
-                    .setStyle(ButtonStyle.Danger)
-                );
-                msg.edit({
+                const MainMsg = await msg.edit({
+                  fetchReply: true,
                   embeds: [
                     new EmbedBuilder()
                       .setTitle("__Main Setup Menu__")
@@ -204,15 +187,48 @@ module.exports = {
                       })
                       .setDescription(
                         `This is the Main Setup Menu, you can choose what you want for your server and leave things that you don't need!
-                    
-                    Simply go ahead and click on the Buttons and Complete them, when you have setup the things you want, you can just click on the Confirm Button!`
+                      
+                      Simply go ahead and click on the Buttons and Complete them, when you have setup the things you want, you can just click on the Confirm Button!`
                       )
                       .setFooter({
                         text: "Ryou - Utility",
                         iconURL: client.user.displayAvatarURL(),
                       }),
                   ],
-                  components: [Buttons],
+                  components: [
+                    new ActionRowBuilder().addComponents(
+                      new ButtonBuilder()
+                        .setCustomId("JTCSetup")
+                        .setLabel("Join to Create")
+                        .setStyle(ButtonStyle.Danger),
+                      new ButtonBuilder()
+                        .setCustomId("VerificationSetup")
+                        .setLabel("Verification")
+                        .setStyle(ButtonStyle.Danger),
+                      new ButtonBuilder()
+                        .setCustomId("LogsSetup")
+                        .setLabel("Logs")
+                        .setStyle(ButtonStyle.Danger),
+                      new ButtonBuilder()
+                        .setCustomId("TicketSetup")
+                        .setLabel("Ticket")
+                        .setStyle(ButtonStyle.Danger)
+                    ),
+                  ],
+                });
+                const data = MainMsg.components[0];
+                const newActionRow = ActionRowBuilder.from(data);
+                if (setupData.JTCChannelID) {
+                  newActionRow.components[0].setStyle(ButtonStyle.Success);
+                } else if (setupData.VerificationChannelID) {
+                  newActionRow.components[1].setStyle(ButtonStyle.Success);
+                } else if (setupData.LogChannelID) {
+                  newActionRow.components[2].setStyle(ButtonStyle.Success);
+                } else if (setupData.TicketParentID) {
+                  newActionRow.components[3].setStyle(ButtonStyle.Success);
+                }
+                MainMsg.edit({
+                  components: [newActionRow],
                 });
               });
           }
@@ -418,25 +434,8 @@ module.exports = {
                   ],
                 });
               }
-              const Buttons = new ActionRowBuilder().addComponents(
-                new ButtonBuilder()
-                  .setCustomId("JTCSetup")
-                  .setLabel("Join to Create")
-                  .setStyle(ButtonStyle.Success),
-                new ButtonBuilder()
-                  .setCustomId("VerificationSetup")
-                  .setLabel("Verification")
-                  .setStyle(ButtonStyle.Danger),
-                new ButtonBuilder()
-                  .setCustomId("LogsSetup")
-                  .setLabel("Logs")
-                  .setStyle(ButtonStyle.Danger),
-                new ButtonBuilder()
-                  .setCustomId("TicketSetup")
-                  .setLabel("Ticket")
-                  .setStyle(ButtonStyle.Danger)
-              );
-              msg.edit({
+              const MainMsg = await msg.edit({
+                fetchReply: true,
                 embeds: [
                   new EmbedBuilder()
                     .setTitle("__Main Setup Menu__")
@@ -446,15 +445,48 @@ module.exports = {
                     })
                     .setDescription(
                       `This is the Main Setup Menu, you can choose what you want for your server and leave things that you don't need!
-              
-              Simply go ahead and click on the Buttons and Complete them, when you have setup the things you want, you can just click on the Confirm Button!`
+                    
+                    Simply go ahead and click on the Buttons and Complete them, when you have setup the things you want, you can just click on the Confirm Button!`
                     )
                     .setFooter({
                       text: "Ryou - Utility",
                       iconURL: client.user.displayAvatarURL(),
                     }),
                 ],
-                components: [Buttons],
+                components: [
+                  new ActionRowBuilder().addComponents(
+                    new ButtonBuilder()
+                      .setCustomId("JTCSetup")
+                      .setLabel("Join to Create")
+                      .setStyle(ButtonStyle.Danger),
+                    new ButtonBuilder()
+                      .setCustomId("VerificationSetup")
+                      .setLabel("Verification")
+                      .setStyle(ButtonStyle.Danger),
+                    new ButtonBuilder()
+                      .setCustomId("LogsSetup")
+                      .setLabel("Logs")
+                      .setStyle(ButtonStyle.Danger),
+                    new ButtonBuilder()
+                      .setCustomId("TicketSetup")
+                      .setLabel("Ticket")
+                      .setStyle(ButtonStyle.Danger)
+                  ),
+                ],
+              });
+              const data = MainMsg.components[0];
+              const newActionRow = ActionRowBuilder.from(data);
+              if (setupData.JTCChannelID) {
+                newActionRow.components[0].setStyle(ButtonStyle.Success);
+              } else if (setupData.VerificationChannelID) {
+                newActionRow.components[1].setStyle(ButtonStyle.Success);
+              } else if (setupData.LogChannelID) {
+                newActionRow.components[2].setStyle(ButtonStyle.Success);
+              } else if (setupData.TicketParentID) {
+                newActionRow.components[3].setStyle(ButtonStyle.Success);
+              }
+              MainMsg.edit({
+                components: [newActionRow],
               });
             } else {
               interaction.reply({
@@ -631,7 +663,7 @@ module.exports = {
           text: "Ryou - Utility",
           iconURL: client.user.displayAvatarURL(),
         });
-      interaction.update({
+      msg.edit({
         embeds: [embed],
         components: [],
       });
@@ -645,25 +677,8 @@ module.exports = {
           ],
         });
       }
-      const Buttons = new ActionRowBuilder().addComponents(
-        new ButtonBuilder()
-          .setCustomId("JTCSetup")
-          .setLabel("Join to Create")
-          .setStyle(ButtonStyle.Danger),
-        new ButtonBuilder()
-          .setCustomId("VerificationSetup")
-          .setLabel("Verification")
-          .setStyle(ButtonStyle.Danger),
-        new ButtonBuilder()
-          .setCustomId("LogsSetup")
-          .setLabel("Logs")
-          .setStyle(ButtonStyle.Danger),
-        new ButtonBuilder()
-          .setCustomId("TicketSetup")
-          .setLabel("Ticket")
-          .setStyle(ButtonStyle.Danger)
-      );
-      msg.edit({
+      const MainMsg = await msg.edit({
+        fetchReply: true,
         embeds: [
           new EmbedBuilder()
             .setTitle("__Main Setup Menu__")
@@ -673,15 +688,48 @@ module.exports = {
             })
             .setDescription(
               `This is the Main Setup Menu, you can choose what you want for your server and leave things that you don't need!
-      
-                Simply go ahead and click on the Buttons and Complete them, when you have setup the things you want, you can just click on the Confirm Button!`
+              
+              Simply go ahead and click on the Buttons and Complete them, when you have setup the things you want, you can just click on the Confirm Button!`
             )
             .setFooter({
               text: "Ryou - Utility",
               iconURL: client.user.displayAvatarURL(),
             }),
         ],
-        components: [Buttons],
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId("JTCSetup")
+              .setLabel("Join to Create")
+              .setStyle(ButtonStyle.Danger),
+            new ButtonBuilder()
+              .setCustomId("VerificationSetup")
+              .setLabel("Verification")
+              .setStyle(ButtonStyle.Danger),
+            new ButtonBuilder()
+              .setCustomId("LogsSetup")
+              .setLabel("Logs")
+              .setStyle(ButtonStyle.Danger),
+            new ButtonBuilder()
+              .setCustomId("TicketSetup")
+              .setLabel("Ticket")
+              .setStyle(ButtonStyle.Danger)
+          ),
+        ],
+      });
+      const data = MainMsg.components[0];
+      const newActionRow = ActionRowBuilder.from(data);
+      if (setupData.JTCChannelID) {
+        newActionRow.components[0].setStyle(ButtonStyle.Success);
+      } else if (setupData.VerificationChannelID) {
+        newActionRow.components[1].setStyle(ButtonStyle.Success);
+      } else if (setupData.LogChannelID) {
+        newActionRow.components[2].setStyle(ButtonStyle.Success);
+      } else if (setupData.TicketParentID) {
+        newActionRow.components[3].setStyle(ButtonStyle.Success);
+      }
+      MainMsg.edit({
+        components: [newActionRow],
       });
     }
   },
