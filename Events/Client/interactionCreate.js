@@ -112,9 +112,9 @@ module.exports = {
       }
       if (!cmd.name.includes("setup")) {
         if (
-          setupData.mainRoleID === undefined ||
-          setupData.staffRoleID === undefined ||
-          setupData.logChannelID === undefined
+          setupData.CommunityRoleID === undefined ||
+          setupData.StaffRoleID === undefined ||
+          setupData.LogChannelID === undefined
         )
           return interaction.reply({
             embeds: [
