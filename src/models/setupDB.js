@@ -19,6 +19,7 @@ module.exports = mongoose.model(
     VerificationType: String,
     VerificationChannelID: String,
     verificationCategoryID: String,
+    VerificationMessageID: String,
     JTCInfo: Array,
     LogSettings: Array,
   })
