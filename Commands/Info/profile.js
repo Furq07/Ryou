@@ -9,7 +9,7 @@ const {
   TextInputBuilder,
   TextInputStyle,
 } = require("discord.js");
-const profileDB = require("../../structure/models/profileDB");
+const profileDB = require("../../src/models/profileDB");
 module.exports = {
   name: "profile",
   description: "This is an profile command.",
