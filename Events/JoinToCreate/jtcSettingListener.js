@@ -4,13 +4,9 @@ const {
   ButtonStyle,
   EmbedBuilder,
   ComponentType,
-  ChannelType,
-  PermissionFlagsBits,
   TextInputStyle,
   ModalBuilder,
   TextInputBuilder,
-  SelectMenuBuilder,
-  UserManager,
 } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
 module.exports = {

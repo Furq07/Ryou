@@ -149,7 +149,8 @@ module.exports = {
         case "VerificationSetup":
           break;
         case "LogsSetup":
-          interaction.update({
+          const LogMsg = await interaction.update({
+            fetchReply: true,
             embeds: [
               new EmbedBuilder()
                 .setColor("#800000")
@@ -171,85 +172,70 @@ module.exports = {
                 new ButtonBuilder()
                   .setCustomId("LogChannelCreateSetup")
                   .setLabel("Create Channel")
-                  .setEmoji("❎")
                   .setStyle(ButtonStyle.Danger),
                 new ButtonBuilder()
                   .setCustomId("LogChannelDeleteSetup")
                   .setLabel("Delete Channel")
-                  .setEmoji("❎")
                   .setStyle(ButtonStyle.Danger),
                 new ButtonBuilder()
                   .setCustomId("LogVCJoinSetup")
                   .setLabel("Join VC")
-                  .setEmoji("❎")
                   .setStyle(ButtonStyle.Danger)
               ),
               new ActionRowBuilder().addComponents(
                 new ButtonBuilder()
                   .setCustomId("LogVCLeaveSetup")
                   .setLabel("Leave VC")
-                  .setEmoji("❎")
                   .setStyle(ButtonStyle.Danger),
                 new ButtonBuilder()
                   .setCustomId("LogChannelUpdateSetup")
                   .setLabel("Channel Update")
-                  .setEmoji("❎")
                   .setStyle(ButtonStyle.Danger),
                 new ButtonBuilder()
                   .setCustomId("LogBanSetup")
                   .setLabel("Ban User")
-                  .setEmoji("❎")
                   .setStyle(ButtonStyle.Danger)
               ),
               new ActionRowBuilder().addComponents(
                 new ButtonBuilder()
                   .setCustomId("LogUnbanSetup")
                   .setLabel("Unban User")
-                  .setEmoji("❎")
                   .setStyle(ButtonStyle.Danger),
                 new ButtonBuilder()
                   .setCustomId("LogKickUserSetup")
                   .setLabel("Kick User")
-                  .setEmoji("❎")
                   .setStyle(ButtonStyle.Danger),
                 new ButtonBuilder()
                   .setCustomId("LogUpdateUserSetup")
                   .setLabel("Channel User")
-                  .setEmoji("❎")
                   .setStyle(ButtonStyle.Danger)
               ),
               new ActionRowBuilder().addComponents(
                 new ButtonBuilder()
                   .setCustomId("LogInviteCreateSetup")
                   .setLabel("Invite Create")
-                  .setEmoji("❎")
                   .setStyle(ButtonStyle.Danger),
                 new ButtonBuilder()
                   .setCustomId("LogMessageDeleteSetup")
                   .setLabel("Message Delete")
-                  .setEmoji("❎")
                   .setStyle(ButtonStyle.Danger),
                 new ButtonBuilder()
                   .setCustomId("LogMessageUpdateSetup")
                   .setLabel("Update Message")
-                  .setEmoji("❎")
                   .setStyle(ButtonStyle.Danger)
               ),
               new ActionRowBuilder().addComponents(
                 new ButtonBuilder()
                   .setCustomId("LogRoleCreateSetup")
                   .setLabel("Create Role")
-                  .setEmoji("❎")
                   .setStyle(ButtonStyle.Danger),
                 new ButtonBuilder()
                   .setCustomId("LogRoleDeleteSetup")
                   .setLabel("Delete Role")
-                  .setEmoji("❎")
                   .setStyle(ButtonStyle.Danger),
                 new ButtonBuilder()
                   .setCustomId("LogRoleUpdateSetup")
                   .setLabel("Update Role")
-                  .setEmoji("❎")
                   .setStyle(ButtonStyle.Danger),
                 new ButtonBuilder()
                   .setCustomId("LogConfirmSetup")
@@ -257,6 +243,89 @@ module.exports = {
                   .setEmoji("✅")
                   .setStyle(ButtonStyle.Primary)
               ),
+            ],
+          });
+          const data = LogMsg.components[0];
+          const data2 = LogMsg.components[1];
+          const data3 = LogMsg.components[2];
+          const data4 = LogMsg.components[3];
+          const data5 = LogMsg.components[4];
+          const newActionRow = ActionRowBuilder.from(data);
+          const newActionRow2 = ActionRowBuilder.from(data2);
+          const newActionRow3 = ActionRowBuilder.from(data3);
+          const newActionRow4 = ActionRowBuilder.from(data4);
+          const newActionRow5 = ActionRowBuilder.from(data5);
+          const ButtonIds = [
+            { name: "LogChannelCreateSetup", ID: 0 },
+            { name: "LogChannelDeleteSetup", ID: 1 },
+            { name: "LogVCJoinSetup", ID: 2 },
+            { name: "LogVCLeaveSetup", ID: 0 },
+            { name: "LogChannelUpdateSetup", ID: 1 },
+            { name: "LogBanSetup", ID: 2 },
+            { name: "LogUnbanSetup", ID: 0 },
+            { name: "LogKickUserSetup", ID: 1 },
+            { name: "LogUpdateUserSetup", ID: 2 },
+            { name: "LogInviteCreateSetup", ID: 0 },
+            { name: "LogMessageDeleteSetup", ID: 1 },
+            { name: "LogMessageUpdateSetup", ID: 2 },
+            { name: "LogRoleCreateSetup", ID: 0 },
+            { name: "LogRoleDeleteSetup", ID: 1 },
+            { name: "LogRoleUpdateSetup", ID: 2 },
+          ];
+          ButtonIds.forEach((element) => {
+            const name = element.name;
+            const ID = element.ID;
+            if (setupData[name] === true) {
+              if (
+                [
+                  "LogChannelCreateSetup",
+                  "LogChannelDeleteSetup",
+                  "LogVCJoinSetup",
+                ].includes(name)
+              ) {
+                newActionRow.components[ID].setStyle(ButtonStyle.Success);
+              } else if (
+                [
+                  "LogVCLeaveSetup",
+                  "LogChannelUpdateSetup",
+                  "LogBanSetup",
+                ].includes(name)
+              ) {
+                newActionRow2.components[ID].setStyle(ButtonStyle.Success);
+              } else if (
+                [
+                  "LogUnbanSetup",
+                  "LogKickUserSetup",
+                  "LogUpdateUserSetup",
+                ].includes(name)
+              ) {
+                newActionRow3.components[ID].setStyle(ButtonStyle.Success);
+              } else if (
+                [
+                  "LogInviteCreateSetup",
+                  "LogMessageDeleteSetup",
+                  "LogMessageUpdateSetup",
+                ].includes(name)
+              ) {
+                newActionRow4.components[ID].setStyle(ButtonStyle.Success);
+              } else if (
+                [
+                  "LogRoleCreateSetup",
+                  "LogRoleDeleteSetup",
+                  "LogRoleUpdateSetup",
+                ].includes(name)
+              ) {
+                newActionRow5.components[ID].setStyle(ButtonStyle.Success);
+              }
+            }
+          });
+          LogMsg.edit({
+            components: [
+              newActionRow,
+              newActionRow2,
+              newActionRow3,
+              newActionRow4,
+              newActionRow5,
             ],
           });
           break;

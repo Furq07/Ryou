@@ -155,19 +155,18 @@ module.exports = {
                 const embed = new EmbedBuilder()
                   .setTitle("__Opening Main Setup Menu__")
                   .setDescription(
-                    `This Embed will be changed to **Main Setup Menu** in \`5 Seconds\`!`
+                    `This Embed will be changed to **Main Setup Menu** in \`3 Seconds\`!`
                   )
                   .setThumbnail(client.user.displayAvatarURL())
                   .setFooter({
                     text: "Ryou - Utility",
                     iconURL: client.user.displayAvatarURL(),
                   });
-                await wait(1000);
                 msg.edit({
                   embeds: [embed],
                   components: [],
                 });
-                for (let i = 5; i > 0; i--) {
+                for (let i = 3; i > 0; i--) {
                   await wait(1000);
                   msg.edit({
                     embeds: [
@@ -181,7 +180,6 @@ module.exports = {
                   new ButtonBuilder()
                     .setCustomId("JTCSetup")
                     .setLabel("Join to Create")
-                    .setDisabled(true)
                     .setStyle(ButtonStyle.Success),
                   new ButtonBuilder()
                     .setCustomId("VerificationSetup")
@@ -399,19 +397,18 @@ module.exports = {
               const embed = new EmbedBuilder()
                 .setTitle("__Opening Main Setup Menu__")
                 .setDescription(
-                  `This Embed will be changed to **Main Setup Menu** in \`5 Seconds\`!`
+                  `This Embed will be changed to **Main Setup Menu** in \`3 Seconds\`!`
                 )
                 .setThumbnail(client.user.displayAvatarURL())
                 .setFooter({
                   text: "Ryou - Utility",
                   iconURL: client.user.displayAvatarURL(),
                 });
-              await wait(1000);
               msg.edit({
                 embeds: [embed],
                 components: [],
               });
-              for (let i = 5; i > 0; i--) {
+              for (let i = 3; i > 0; i--) {
                 await wait(1000);
                 msg.edit({
                   embeds: [
@@ -425,7 +422,6 @@ module.exports = {
                 new ButtonBuilder()
                   .setCustomId("JTCSetup")
                   .setLabel("Join to Create")
-                  .setDisabled(true)
                   .setStyle(ButtonStyle.Success),
                 new ButtonBuilder()
                   .setCustomId("VerificationSetup")
@@ -489,47 +485,157 @@ module.exports = {
         "LogRoleUpdateSetup",
       ].includes(customId)
     ) {
+      const data2 = msg.components[1];
+      const data3 = msg.components[2];
+      const data4 = msg.components[3];
+      const data5 = msg.components[4];
+      const newActionRow2 = ActionRowBuilder.from(data2);
+      const newActionRow3 = ActionRowBuilder.from(data3);
+      const newActionRow4 = ActionRowBuilder.from(data4);
+      const newActionRow5 = ActionRowBuilder.from(data5);
       let Number;
-      if (customId === "LogChannelCreateSetup") Number = 0;
-      if (customId === "LogChannelDeleteSetup") Number = 1;
-      if (customId === "LogVCJoinSetup") Number = 2;
-      if (customId === "LogVCLeaveSetup") Number = 3;
-      if (customId === "LogVCUpdateSetup") Number = 4;
-      if (customId === "LogBanSetup") Number = 5;
-      if (customId === "LogUnbanSetup") Number = 6;
-      if (customId === "LogKickUserSetup") Number = 7;
-      if (customId === "LogUpdateUserSetup") Number = 8;
-      if (customId === "LogInviteCreateSetup") Number = 9;
-      if (customId === "LogMessageDeleteSetup") Number = 10;
-      if (customId === "LogMessageUpdateSetup") Number = 11;
-      if (customId === "LogRoleCreateSetup") Number = 12;
-      if (customId === "LogRoleDeleteSetup") Number = 13;
-      if (customId === "LogRoleUpdateSetup") Number = 14;
+      if (!setupData[customId] || setupData[customId] === false) {
+        if (
+          customId === "LogChannelCreateSetup" ||
+          customId === "LogChannelDeleteSetup" ||
+          customId === "LogVCJoinSetup"
+        ) {
+          if (customId === "LogChannelCreateSetup") Number = 0;
+          if (customId === "LogChannelDeleteSetup") Number = 1;
+          if (customId === "LogVCJoinSetup") Number = 2;
+          newActionRow.components[Number].setStyle(ButtonStyle.Success);
+        } else if (
+          customId === "LogVCLeaveSetup" ||
+          customId === "LogChannelUpdateSetup" ||
+          customId === "LogBanSetup"
+        ) {
+          if (customId === "LogVCLeaveSetup") Number = 0;
+          if (customId === "LogChannelUpdateSetup") Number = 1;
+          if (customId === "LogBanSetup") Number = 2;
+          newActionRow2.components[Number].setStyle(ButtonStyle.Success);
+        } else if (
+          customId === "LogUnbanSetup" ||
+          customId === "LogKickUserSetup" ||
+          customId === "LogUpdateUserSetup"
+        ) {
+          if (customId === "LogUnbanSetup") Number = 0;
+          if (customId === "LogKickUserSetup") Number = 1;
+          if (customId === "LogUpdateUserSetup") Number = 2;
+          newActionRow3.components[Number].setStyle(ButtonStyle.Success);
+        } else if (
+          customId === "LogInviteCreateSetup" ||
+          customId === "LogMessageDeleteSetup" ||
+          customId === "LogMessageUpdateSetup"
+        ) {
+          if (customId === "LogInviteCreateSetup") Number = 0;
+          if (customId === "LogMessageDeleteSetup") Number = 1;
+          if (customId === "LogMessageUpdateSetup") Number = 2;
+          newActionRow4.components[Number].setStyle(ButtonStyle.Success);
+        } else if (
+          customId === "LogRoleCreateSetup" ||
+          customId === "LogRoleDeleteSetup" ||
+          customId === "LogRoleUpdateSetup"
+        ) {
+          if (customId === "LogRoleCreateSetup") Number = 0;
+          if (customId === "LogRoleDeleteSetup") Number = 1;
+          if (customId === "LogRoleUpdateSetup") Number = 2;
+          newActionRow5.components[Number].setStyle(ButtonStyle.Success);
+        }
 
-      await setupDB.findOneAndUpdate(
-        { GuildID: guild.id },
-        { $set: { LogSettings: { [customId]: true } } }
-      );
-      newActionRow.components[Number].setStyle(ButtonStyle.Success);
-      interaction.update({ components: [newActionRow] });
+        await setupDB.findOneAndUpdate(
+          { GuildID: guild.id },
+          { [customId]: true }
+        );
+
+        interaction.update({
+          components: [
+            newActionRow,
+            newActionRow2,
+            newActionRow3,
+            newActionRow4,
+            newActionRow5,
+          ],
+        });
+      } else {
+        if (
+          customId === "LogChannelCreateSetup" ||
+          customId === "LogChannelDeleteSetup" ||
+          customId === "LogVCJoinSetup"
+        ) {
+          if (customId === "LogChannelCreateSetup") Number = 0;
+          if (customId === "LogChannelDeleteSetup") Number = 1;
+          if (customId === "LogVCJoinSetup") Number = 2;
+          newActionRow.components[Number].setStyle(ButtonStyle.Danger);
+        } else if (
+          customId === "LogVCLeaveSetup" ||
+          customId === "LogChannelUpdateSetup" ||
+          customId === "LogBanSetup"
+        ) {
+          if (customId === "LogVCLeaveSetup") Number = 0;
+          if (customId === "LogChannelUpdateSetup") Number = 1;
+          if (customId === "LogBanSetup") Number = 2;
+          newActionRow2.components[Number].setStyle(ButtonStyle.Danger);
+        } else if (
+          customId === "LogUnbanSetup" ||
+          customId === "LogKickUserSetup" ||
+          customId === "LogUpdateUserSetup"
+        ) {
+          if (customId === "LogUnbanSetup") Number = 0;
+          if (customId === "LogKickUserSetup") Number = 1;
+          if (customId === "LogUpdateUserSetup") Number = 2;
+          newActionRow3.components[Number].setStyle(ButtonStyle.Danger);
+        } else if (
+          customId === "LogInviteCreateSetup" ||
+          customId === "LogMessageDeleteSetup" ||
+          customId === "LogMessageUpdateSetup"
+        ) {
+          if (customId === "LogInviteCreateSetup") Number = 0;
+          if (customId === "LogMessageDeleteSetup") Number = 1;
+          if (customId === "LogMessageUpdateSetup") Number = 2;
+          newActionRow4.components[Number].setStyle(ButtonStyle.Danger);
+        } else if (
+          customId === "LogRoleCreateSetup" ||
+          customId === "LogRoleDeleteSetup" ||
+          customId === "LogRoleUpdateSetup"
+        ) {
+          if (customId === "LogRoleCreateSetup") Number = 0;
+          if (customId === "LogRoleDeleteSetup") Number = 1;
+          if (customId === "LogRoleUpdateSetup") Number = 2;
+          newActionRow5.components[Number].setStyle(ButtonStyle.Danger);
+        }
+
+        await setupDB.findOneAndUpdate(
+          { GuildID: guild.id },
+          { [customId]: false }
+        );
+
+        interaction.update({
+          components: [
+            newActionRow,
+            newActionRow2,
+            newActionRow3,
+            newActionRow4,
+            newActionRow5,
+          ],
+        });
+      }
       // Skip Button
-    } else if (customId === "SkipSetup") {
+    } else if (["SkipSetup", "LogConfirmSetup"].includes(customId)) {
       const embed = new EmbedBuilder()
         .setTitle("__Opening Main Setup Menu__")
         .setDescription(
-          `This Embed will be changed to **Main Setup Menu** in \`5 Seconds\`!`
+          `This Embed will be changed to **Main Setup Menu** in \`3 Seconds\`!`
         )
         .setThumbnail(client.user.displayAvatarURL())
         .setFooter({
           text: "Ryou - Utility",
           iconURL: client.user.displayAvatarURL(),
         });
-      await wait(1000);
       interaction.update({
         embeds: [embed],
         components: [],
       });
-      for (let i = 5; i > 0; i--) {
+      for (let i = 3; i > 0; i--) {
         await wait(1000);
         msg.edit({
           embeds: [

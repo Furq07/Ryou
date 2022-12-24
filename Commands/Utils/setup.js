@@ -64,15 +64,15 @@ module.exports = {
         new ButtonBuilder()
           .setCustomId("CommunityRole")
           .setLabel("Community Role")
-          .setStyle(ButtonStyle.Danger),
+          .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
           .setCustomId("StaffRole")
           .setLabel("Staff Role")
-          .setStyle(ButtonStyle.Danger),
+          .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
           .setCustomId("AdminRole")
           .setLabel("Admin Role")
-          .setStyle(ButtonStyle.Danger),
+          .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
           .setCustomId("SkipSetup")
           .setLabel("Skip to Main Setup Menu")

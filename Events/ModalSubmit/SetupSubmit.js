@@ -37,10 +37,6 @@ module.exports = {
           .setStyle(ButtonStyle.Success);
 
         interaction.update({ components: [newActionRow] });
-        interaction.reply({
-          content: `Community Role Set to <@&${CommunityRole}>`,
-          ephemeral: true,
-        });
         break;
       case "StaffModal":
         const StaffRole = fields.getTextInputValue("StaffRoleInput");
@@ -58,10 +54,6 @@ module.exports = {
           .setStyle(ButtonStyle.Success);
 
         interaction.update({ components: [newActionRow] });
-        interaction.reply({
-          content: `Staff Role Set to <@&${StaffRole}>`,
-          ephemeral: true,
-        });
         break;
       case "AdminModal":
         const AdminRole = fields.getTextInputValue("AdminRoleInput");
@@ -79,10 +71,6 @@ module.exports = {
           .setStyle(ButtonStyle.Success);
 
         interaction.update({ components: [newActionRow] });
-        interaction.reply({
-          content: `Admin Role Set to <@&${AdminRole}>`,
-          ephemeral: true,
-        });
         break;
     }
 
@@ -95,21 +83,20 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setTitle("__Opening Main Setup Menu__")
         .setDescription(
-          `This Embed will be changed to **Main Setup Menu** in \`5 Seconds\`!`
+          `This Embed will be changed to **Main Setup Menu** in \`3 Seconds\`!`
         )
         .setThumbnail(client.user.displayAvatarURL())
         .setFooter({
           text: "Ryou - Utility",
           iconURL: client.user.displayAvatarURL(),
         });
-      await wait(3000);
-      interaction.update({
+      msg.edit({
         embeds: [embed],
         components: [],
       });
-      for (let i = 5; i > 0; i--) {
+      for (let i = 3; i > 0; i--) {
         await wait(1000);
-        interaction.update({
+        msg.edit({
           embeds: [
             embed.setDescription(
               `This Embed will be changed to **Main Setup Menu** in \`${i} Seconds\`!`
@@ -117,7 +104,8 @@ module.exports = {
           ],
         });
       }
-      interaction.update({
+      const MainMsg = await msg.edit({
+        fetchReply: true,
         embeds: [
           new EmbedBuilder()
             .setTitle("__Main Setup Menu__")
@@ -155,6 +143,20 @@ module.exports = {
               .setStyle(ButtonStyle.Danger)
           ),
         ],
+      });
+      const data = MainMsg.components[0];
+      const newActionRow = ActionRowBuilder.from(data);
+      if (setupData.JTCChannelID) {
+        newActionRow.components[0].setStyle(ButtonStyle.Success);
+      } else if (setupData.VerificationChannelID) {
+        newActionRow.components[1].setStyle(ButtonStyle.Success);
+      } else if (setupData.LogChannelID) {
+        newActionRow.components[2].setStyle(ButtonStyle.Success);
+      } else if (setupData.TicketParentID) {
+        newActionRow.components[3].setStyle(ButtonStyle.Success);
+      }
+      MainMsg.edit({
+        components: [newActionRow],
       });
     }
   },
