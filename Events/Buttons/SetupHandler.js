@@ -88,7 +88,7 @@ module.exports = {
       switch (customId) {
         case "JTCSetup":
           if (setupData.JTCChannelID)
-            return msg.edit({
+            return interaction.update({
               embeds: [
                 new EmbedBuilder()
                   .setTitle("Wanna Re-Setup?")
@@ -116,7 +116,7 @@ module.exports = {
                 ),
               ],
             });
-          msg.edit({
+          interaction.update({
             embeds: [
               new EmbedBuilder()
                 .setColor("#800000")
@@ -149,36 +149,7 @@ module.exports = {
         case "VerificationSetup":
           break;
         case "LogsSetup":
-          if (setupData.logChannelID)
-            return msg.edit({
-              embeds: [
-                new EmbedBuilder()
-                  .setTitle("Wanna Re-Setup?")
-                  .setColor("#800000")
-                  .setAuthor({
-                    name: member.user.tag,
-                    iconURL: member.user.displayAvatarURL(),
-                  })
-                  .setFooter({
-                    text: "Ryou - Utility",
-                    iconURL: client.user.displayAvatarURL(),
-                  })
-                  .setDescription(
-                    `Logs has Already been Setup on this Server,
-                  If you wanna Re-Setup it, Click on the Button Below!`
-                  ),
-              ],
-              components: [
-                new ActionRowBuilder().addComponents(
-                  new ButtonBuilder()
-                    .setCustomId("LogResetup")
-                    .setLabel("Re-Setup")
-                    .setEmoji("🔁")
-                    .setStyle(ButtonStyle.Success)
-                ),
-              ],
-            });
-          msg.edit({
+          interaction.update({
             embeds: [
               new EmbedBuilder()
                 .setColor("#800000")
@@ -186,14 +157,13 @@ module.exports = {
                   name: member.user.tag,
                   iconURL: member.user.displayAvatarURL(),
                 })
-                .setTitle("Join to Create Setup Menu!")
+                .setTitle("__Logs Setup Menu__")
                 .setFooter({
                   text: "Ryou - Utility",
                   iconURL: client.user.displayAvatarURL(),
                 })
                 .setDescription(
-                  `If you wanna Setup Logs on your Server,
-                  Click on the Button Below!`
+                  `Just click on the Buttons below and Turn off or On the things you want!`
                 ),
             ],
             components: [

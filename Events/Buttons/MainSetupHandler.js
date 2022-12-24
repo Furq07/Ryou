@@ -15,6 +15,8 @@ module.exports = {
     if (!interaction.isButton()) return;
     const setupData = await setupDB.findOne({ GuildID: guild.id });
     const msg = await channel.messages.fetch(message.id);
+    const data = msg.components[0];
+    const newActionRow = ActionRowBuilder.from(data);
     const msgEmbed = msg.embeds[0];
     const author = msgEmbed.author.name;
     if (author !== member.user.tag)
@@ -130,7 +132,7 @@ module.exports = {
                         );
                       });
                   });
-                msg.edit({
+                interaction.update({
                   embeds: [
                     new EmbedBuilder()
                       .setTitle("JTC Resetup Complete!")
@@ -232,7 +234,7 @@ module.exports = {
             const jtcChannel = guild.channels.cache.get(setupData.JTCChannelID);
             if (setupData.JTCInfo.length !== 0) {
               await setupData.JTCInfo.forEach(async () => {
-                await msg.edit({
+                await interaction.update({
                   embeds: [
                     new EmbedBuilder()
                       .setTitle("Resetting Up the JTC")
@@ -485,12 +487,31 @@ module.exports = {
         "LogRoleCreateSetup",
         "LogRoleDeleteSetup",
         "LogRoleUpdateSetup",
-        "LogConfirmSetup",
       ].includes(customId)
     ) {
-      let value;
-      if (customId === "LogChannelCreateSetup") value = LogChannelCreateSetup;
+      let Number;
+      if (customId === "LogChannelCreateSetup") Number = 0;
+      if (customId === "LogChannelDeleteSetup") Number = 1;
+      if (customId === "LogVCJoinSetup") Number = 2;
+      if (customId === "LogVCLeaveSetup") Number = 3;
+      if (customId === "LogVCUpdateSetup") Number = 4;
+      if (customId === "LogBanSetup") Number = 5;
+      if (customId === "LogUnbanSetup") Number = 6;
+      if (customId === "LogKickUserSetup") Number = 7;
+      if (customId === "LogUpdateUserSetup") Number = 8;
+      if (customId === "LogInviteCreateSetup") Number = 9;
+      if (customId === "LogMessageDeleteSetup") Number = 10;
+      if (customId === "LogMessageUpdateSetup") Number = 11;
+      if (customId === "LogRoleCreateSetup") Number = 12;
+      if (customId === "LogRoleDeleteSetup") Number = 13;
+      if (customId === "LogRoleUpdateSetup") Number = 14;
 
+      await setupDB.findOneAndUpdate(
+        { GuildID: guild.id },
+        { $set: { LogSettings: { [customId]: true } } }
+      );
+      newActionRow.components[Number].setStyle(ButtonStyle.Success);
+      interaction.update({ components: [newActionRow] });
       // Skip Button
     } else if (customId === "SkipSetup") {
       const embed = new EmbedBuilder()
@@ -504,7 +525,7 @@ module.exports = {
           iconURL: client.user.displayAvatarURL(),
         });
       await wait(1000);
-      msg.edit({
+      interaction.update({
         embeds: [embed],
         components: [],
       });

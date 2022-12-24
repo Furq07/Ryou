@@ -5,8 +5,8 @@ module.exports = {
   async execute(message, client) {
     let setupData = await setupDB.findOne({ GuildID: message.guild.id });
     if (!setupData) return;
-    if (!setupData.logChannelID) return;
-    const logChannel = client.channels.cache.get(`${setupData.logChannelID}`);
+    if (!setupData.LogChannelID) return;
+    const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
     if (message.content.length !== 0) {
       logChannel.send({
         embeds: [

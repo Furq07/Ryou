@@ -3,10 +3,10 @@ const setupDB = require("../../src/models/setupDB");
 module.exports = {
   name: "guildMemberRemove",
   async execute(interaction, member, client) {
-    let setupData = await setupDB.findOne({ GuildID: member.guild.id });
+    let setupData = await setupDB.findOne({ GuildID: interaction.guild.id });
     if (!setupData) return;
-    if (!setupData.logChannelID) return;
-    const logChannel = client.channels.cache.get(`${setupData.logChannelID}`);
+    if (!setupData.LogChannelID) return;
+    const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
     if (member.bannable !== true) {
       interaction.guild
         .fetchAuditLogs({ type: AuditLogEvent.MemberKick })

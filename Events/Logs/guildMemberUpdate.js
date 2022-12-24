@@ -6,8 +6,8 @@ module.exports = {
   async execute(oldMember, newMember, client) {
     let setupData = await setupDB.findOne({ GuildID: oldMember.guild.id });
     if (!setupData) return;
-    if (!setupData.logChannelID) return;
-    const logChannel = client.channels.cache.get(`${setupData.logChannelID}`);
+    if (!setupData.LogChannelID) return;
+    const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
     const removedRoles = oldMember.roles.cache.filter(
       (role) => !newMember.roles.cache.has(role.id)
     );

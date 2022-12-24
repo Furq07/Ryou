@@ -5,8 +5,8 @@ module.exports = {
   async execute(oldRole, newRole, client) {
     let setupData = await setupDB.findOne({ GuildID: oldRole.guild.id });
     if (!setupData) return;
-    if (!setupData.logChannelID) return;
-    const logChannel = client.channels.cache.get(`${setupData.logChannelID}`);
+    if (!setupData.LogChannelID) return;
+    const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
     // for name
     if (newRole.name && oldRole.name !== newRole.name) {
       oldRole.guild

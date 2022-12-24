@@ -5,8 +5,8 @@ module.exports = {
   async execute(role, client) {
     let setupData = await setupDB.findOne({ GuildID: role.guild.id });
     if (!setupData) return;
-    if (!setupData.logChannelID) return;
-    const logChannel = client.channels.cache.get(`${setupData.logChannelID}`);
+    if (!setupData.LogChannelID) return;
+    const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
     role.guild
       .fetchAuditLogs({ type: AuditLogEvent.RoleDelete })
       .then((logs) => logs.entries.find((entry) => entry.target.id == role.id))

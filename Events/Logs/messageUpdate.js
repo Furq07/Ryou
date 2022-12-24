@@ -5,8 +5,8 @@ module.exports = {
   async execute(oldMessage, newMessage, client) {
     let setupData = await setupDB.findOne({ GuildID: oldMessage.guild.id });
     if (!setupData) return;
-    if (!setupData.logChannelID) return;
-    const logChannel = client.channels.cache.get(`${setupData.logChannelID}`);
+    if (!setupData.LogChannelID) return;
+    const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
     if (
       oldMessage.content.length !== 0 &&
       !oldMessage.content.includes("http")

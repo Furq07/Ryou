@@ -5,8 +5,8 @@ module.exports = {
   async execute(invite, client) {
     let setupData = await setupDB.findOne({ GuildID: invite.guild.id });
     if (!setupData) return;
-    if (!setupData.logChannelID) return;
-    const logChannel = client.channels.cache.get(`${setupData.logChannelID}`);
+    if (!setupData.LogChannelID) return;
+    const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
     logChannel.send({
       embeds: [
         new EmbedBuilder()

@@ -36,7 +36,7 @@ module.exports = {
           .setDisabled(true)
           .setStyle(ButtonStyle.Success);
 
-        msg.edit({ components: [newActionRow] });
+        interaction.update({ components: [newActionRow] });
         interaction.reply({
           content: `Community Role Set to <@&${CommunityRole}>`,
           ephemeral: true,
@@ -57,7 +57,7 @@ module.exports = {
           .setDisabled(true)
           .setStyle(ButtonStyle.Success);
 
-        msg.edit({ components: [newActionRow] });
+        interaction.update({ components: [newActionRow] });
         interaction.reply({
           content: `Staff Role Set to <@&${StaffRole}>`,
           ephemeral: true,
@@ -78,7 +78,7 @@ module.exports = {
           .setDisabled(true)
           .setStyle(ButtonStyle.Success);
 
-        msg.edit({ components: [newActionRow] });
+        interaction.update({ components: [newActionRow] });
         interaction.reply({
           content: `Admin Role Set to <@&${AdminRole}>`,
           ephemeral: true,
@@ -103,13 +103,13 @@ module.exports = {
           iconURL: client.user.displayAvatarURL(),
         });
       await wait(3000);
-      msg.edit({
+      interaction.update({
         embeds: [embed],
         components: [],
       });
       for (let i = 5; i > 0; i--) {
         await wait(1000);
-        msg.edit({
+        interaction.update({
           embeds: [
             embed.setDescription(
               `This Embed will be changed to **Main Setup Menu** in \`${i} Seconds\`!`
@@ -117,25 +117,7 @@ module.exports = {
           ],
         });
       }
-      const Buttons = new ActionRowBuilder().addComponents(
-        new ButtonBuilder()
-          .setCustomId("JTCSetup")
-          .setLabel("Join to Create")
-          .setStyle(ButtonStyle.Danger),
-        new ButtonBuilder()
-          .setCustomId("VerificationSetup")
-          .setLabel("Verification")
-          .setStyle(ButtonStyle.Danger),
-        new ButtonBuilder()
-          .setCustomId("LogsSetup")
-          .setLabel("Logs")
-          .setStyle(ButtonStyle.Danger),
-        new ButtonBuilder()
-          .setCustomId("TicketSetup")
-          .setLabel("Ticket")
-          .setStyle(ButtonStyle.Danger)
-      );
-      msg.edit({
+      interaction.update({
         embeds: [
           new EmbedBuilder()
             .setTitle("__Main Setup Menu__")
@@ -153,7 +135,26 @@ module.exports = {
               iconURL: client.user.displayAvatarURL(),
             }),
         ],
-        components: [Buttons],
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId("JTCSetup")
+              .setLabel("Join to Create")
+              .setStyle(ButtonStyle.Danger),
+            new ButtonBuilder()
+              .setCustomId("VerificationSetup")
+              .setLabel("Verification")
+              .setStyle(ButtonStyle.Danger),
+            new ButtonBuilder()
+              .setCustomId("LogsSetup")
+              .setLabel("Logs")
+              .setStyle(ButtonStyle.Danger),
+            new ButtonBuilder()
+              .setCustomId("TicketSetup")
+              .setLabel("Ticket")
+              .setStyle(ButtonStyle.Danger)
+          ),
+        ],
       });
     }
   },

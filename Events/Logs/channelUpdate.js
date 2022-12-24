@@ -5,8 +5,8 @@ module.exports = {
   async execute(oldChannel, newChannel, client) {
     let setupData = await setupDB.findOne({ GuildID: oldChannel.guild.id });
     if (!setupData) return;
-    if (!setupData.logChannelID) return;
-    const logChannel = client.channels.cache.get(`${setupData.logChannelID}`);
+    if (!setupData.LogChannelID) return;
+    const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
     // for channel name
     if (newChannel.name && oldChannel.name !== newChannel.name) {
       oldChannel.guild

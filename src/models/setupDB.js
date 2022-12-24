@@ -20,6 +20,6 @@ module.exports = mongoose.model(
     VerificationChannelID: String,
     verificationCategoryID: String,
     JTCInfo: Array,
-    LogSetting: Array,
+    LogSettings: Array,
   })
 );

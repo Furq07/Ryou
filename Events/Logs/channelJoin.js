@@ -5,8 +5,8 @@ module.exports = {
   async execute(oldState, newState, client) {
     let setupData = await setupDB.findOne({ GuildID: newState.guild.id });
     if (!setupData) return;
-    if (!setupData.logChannelID) return;
-    const logChannel = client.channels.cache.get(`${setupData.logChannelID}`);
+    if (!setupData.LogChannelID) return;
+    const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
     const custom_channel = client.channels.cache.find(
       (r) => r.name === `${newState.member.displayName}\'s Vc`
     );

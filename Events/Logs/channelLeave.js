@@ -5,8 +5,8 @@ module.exports = {
   async execute(oldState, newState, client) {
     let setupData = await setupDB.findOne({ GuildID: oldState.guild.id });
     if (!setupData) return;
-    if (!setupData.logChannelID) return;
-    const logChannel = client.channels.cache.get(`${setupData.logChannelID}`);
+    if (!setupData.LogChannelID) return;
+    const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
     try {
       if (oldState) {
         if (oldState.channelId !== setupData.JTCChannelID) {
