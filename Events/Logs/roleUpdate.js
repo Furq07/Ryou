@@ -7,6 +7,7 @@ module.exports = {
     if (!setupData) return;
     if (!setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
+    if (setupData.LogRoleUpdateSetup === false) return;
     // for name
     if (newRole.name && oldRole.name !== newRole.name) {
       oldRole.guild

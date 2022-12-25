@@ -14,6 +14,7 @@ module.exports = {
       channelType = "Text";
     }
     if (channel.name.includes("'s Vc")) return;
+    if (setupData.LogChannelDeleteSetup === false) return;
     channel.guild
       .fetchAuditLogs({ type: AuditLogEvent.ChannelDelete })
       .then((logs) =>

@@ -7,6 +7,7 @@ module.exports = {
     if (!setupData) return;
     if (!setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
+    if (setupData.LogMessageDeleteSetup === false) return;
     if (message.content.length !== 0) {
       logChannel.send({
         embeds: [

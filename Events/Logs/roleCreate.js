@@ -7,6 +7,8 @@ module.exports = {
     if (!setupData) return;
     if (!setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
+    if (setupData.LogRoleCreateSetup === false) return;
+
     role.guild
       .fetchAuditLogs({ type: AuditLogEvent.RoleCreate })
       .then((logs) => logs.entries.find((entry) => entry.target.id == role.id))

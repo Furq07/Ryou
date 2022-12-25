@@ -8,6 +8,8 @@ module.exports = {
     if (!setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
     try {
+      if (setupData.LogVCLeaveSetup === false) return;
+
       if (oldState) {
         if (oldState.channelId !== setupData.JTCChannelID) {
           logChannel.send({

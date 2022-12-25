@@ -7,6 +7,7 @@ module.exports = {
     if (!setupData) return;
     if (!setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
+    if (setupData.LogKickUserSetup === false) return;
     if (member.bannable !== true) {
       interaction.guild
         .fetchAuditLogs({ type: AuditLogEvent.MemberKick })

@@ -7,6 +7,7 @@ module.exports = {
     if (!setupData) return;
     if (!setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
+    if (setupData.LogMessageUpdateSetup === false) return;
     if (
       oldMessage.content.length !== 0 &&
       !oldMessage.content.includes("http")

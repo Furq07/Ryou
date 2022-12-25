@@ -12,6 +12,7 @@ module.exports = {
     if (!setupData) return;
     if (!setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
+    if (setupData.LogUnbanSetup === false) return;
     logChannel.send({
       embeds: [
         new EmbedBuilder()

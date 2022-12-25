@@ -16,6 +16,7 @@ module.exports = {
     if (channel.name === "Join to Create" || channel.name === "Custom Vcs")
       return;
     if (channel.name.includes("'s Vc")) return;
+    if (setupData.LogChannelCreateSetup === false) return;
     channel.guild
       .fetchAuditLogs({ type: AuditLogEvent.ChannelCreate })
       .then((logs) =>

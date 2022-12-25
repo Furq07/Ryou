@@ -390,6 +390,7 @@ module.exports = {
                     });
                 });
               });
+              await wait(3000);
               msg.edit({
                 embeds: [
                   new EmbedBuilder()
@@ -409,7 +410,7 @@ module.exports = {
                 ],
                 components: [],
               });
-              await wait(2000);
+              await wait(3000);
               const embed = new EmbedBuilder()
                 .setTitle("__Opening Main Setup Menu__")
                 .setDescription(

@@ -7,9 +7,7 @@ module.exports = {
     if (!setupData) return;
     if (!setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
-    const custom_channel = client.channels.cache.find(
-      (r) => r.name === `${newState.member.displayName}\'s Vc`
-    );
+    if (setupData.LogVCJoinSetup === false) return;
 
     if (newState) {
       if (newState.channelId !== setupData.JTCChannelID) {

@@ -13,6 +13,7 @@ module.exports = {
     if (!setupData) return;
     if (!setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
+    if (setupData.LogBanSetup === false) return;
     ban.guild
       .fetchAuditLogs({ type: AuditLogEvent.MemberBanAdd })
       .then((audit) => {
