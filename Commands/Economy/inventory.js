@@ -75,7 +75,7 @@ module.exports = {
               emoji: "<:TranquilizerDart:1034132988033761423>",
             },
           ];
-          for (element of values) {
+          for (let element of values) {
             const item = element.item;
             if (invData[item] && invData[item] >= 0) {
               embed.addFields({
@@ -87,7 +87,7 @@ module.exports = {
         }
         if (value.includes("powerups")) {
           const values = [{ item: "Banknote", emoji: "💵" }];
-          for (element of values) {
+          for (let element of values) {
             const item = element.item;
             if (invData[item] && invData[item] >= 0) {
               embed.addFields({
@@ -135,7 +135,7 @@ module.exports = {
             },
             { item: "Worm", emoji: "🪱" },
           ];
-          for (element of values) {
+          for (let element of values) {
             const item = element.item;
             if (invData[item] && invData[item] >= 0) {
               embed.addFields({
