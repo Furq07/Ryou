@@ -16,7 +16,7 @@ module.exports = {
     const msg = await channel.messages.fetch(message.id);
     const data = msg.components[0];
     const newActionRow = ActionRowBuilder.from(data);
-    if (!["CommunityModal", "StaffModal", "AdminModal"].includes(customId)) {
+    if (["CommunityModal", "StaffModal", "AdminModal"].includes(customId)) {
       switch (customId) {
         case "CommunityModal":
           const CommunityRole = fields.getTextInputValue("CommunityRoleInput");
