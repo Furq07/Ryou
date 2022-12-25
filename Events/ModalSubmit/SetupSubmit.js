@@ -141,6 +141,7 @@ module.exports = {
             ),
           ],
         });
+        const setupData = await setupDB.findOne({ GuildID: guild.id });
         const data = MainMsg.components[0];
         const newMainActionRow = ActionRowBuilder.from(data);
         if (setupData.JTCChannelID) {
@@ -167,7 +168,6 @@ module.exports = {
         { GuildID: guild.id },
         { LogChannelID: LogChannel }
       );
-      newActionRow.components[2].setStyle(ButtonStyle.Success);
       const LogMsg = await interaction.update({
         fetchReply: true,
         embeds: [
