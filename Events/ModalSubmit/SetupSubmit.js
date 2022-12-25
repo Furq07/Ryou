@@ -141,23 +141,28 @@ module.exports = {
             ),
           ],
         });
-        const setupData = await setupDB.findOne({ GuildID: guild.id });
-        const data = MainMsg.components[0];
-        const newMainActionRow = ActionRowBuilder.from(data);
-        if (setupData.JTCChannelID) {
-          newMainActionRow.components[0].setStyle(ButtonStyle.Success);
-        } else if (setupData.VerificationChannelID) {
-          newMainActionRow.components[1].setStyle(ButtonStyle.Success);
-        } else if (setupData.LogChannelID) {
-          newMainActionRow.components[2].setStyle(ButtonStyle.Success);
-        } else if (setupData.TicketParentID) {
-          newMainActionRow.components[3].setStyle(ButtonStyle.Success);
-        }
-        MainMsg.edit({
-          components: [newMainActionRow],
+        await setupDB.findOne({ GuildID: guild.id }).then((DB) => {
+          const data = MainMsg.components[0];
+          const newActionRow = ActionRowBuilder.from(data);
+          if (DB.JTCChannelID) {
+            newActionRow.components[0].setStyle(ButtonStyle.Success);
+          }
+          if (DB.VerificationChannelID) {
+            newActionRow.components[1].setStyle(ButtonStyle.Success);
+          }
+          if (DB.LogChannelID) {
+            newActionRow.components[2].setStyle(ButtonStyle.Success);
+          }
+          if (DB.TicketParentID) {
+            newActionRow.components[3].setStyle(ButtonStyle.Success);
+          }
+          MainMsg.edit({
+            components: [newActionRow],
+          });
         });
       }
     } else if (["LogChannelModal"].includes(customId)) {
+      const setupData = await setupDB.findOne({ GuildID: guild.id });
       const LogChannel = fields.getTextInputValue("LogChannelInput");
       if (!guild.channels.cache.has(LogChannel))
         return interaction.reply({

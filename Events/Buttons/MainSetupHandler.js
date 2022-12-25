@@ -135,14 +135,14 @@ module.exports = {
                 interaction.update({
                   embeds: [
                     new EmbedBuilder()
-                      .setTitle("JTC Resetup Complete!")
+                      .setTitle("JTC Setup Complete!")
                       .setColor("#800000")
                       .setAuthor({
                         name: member.user.tag,
                         iconURL: member.user.displayAvatarURL(),
                       })
                       .setDescription(
-                        "JTC has been Resetup You can go ahead and Enjoy it!"
+                        "JTC has been setup You can go ahead and Enjoy it!"
                       )
                       .setFooter({
                         text: "Ryou - Utility",
@@ -151,7 +151,6 @@ module.exports = {
                   ],
                   components: [],
                 });
-                await wait(2000);
                 const embed = new EmbedBuilder()
                   .setTitle("__Opening Main Setup Menu__")
                   .setDescription(
@@ -221,11 +220,14 @@ module.exports = {
                   const newActionRow = ActionRowBuilder.from(data);
                   if (DB.JTCChannelID) {
                     newActionRow.components[0].setStyle(ButtonStyle.Success);
-                  } else if (DB.VerificationChannelID) {
+                  }
+                  if (DB.VerificationChannelID) {
                     newActionRow.components[1].setStyle(ButtonStyle.Success);
-                  } else if (DB.LogChannelID) {
+                  }
+                  if (DB.LogChannelID) {
                     newActionRow.components[2].setStyle(ButtonStyle.Success);
-                  } else if (DB.TicketParentID) {
+                  }
+                  if (DB.TicketParentID) {
                     newActionRow.components[3].setStyle(ButtonStyle.Success);
                   }
                   MainMsg.edit({
@@ -482,11 +484,14 @@ module.exports = {
                 const newActionRow = ActionRowBuilder.from(data);
                 if (DB.JTCChannelID) {
                   newActionRow.components[0].setStyle(ButtonStyle.Success);
-                } else if (DB.VerificationChannelID) {
+                }
+                if (DB.VerificationChannelID) {
                   newActionRow.components[1].setStyle(ButtonStyle.Success);
-                } else if (DB.LogChannelID) {
+                }
+                if (DB.LogChannelID) {
                   newActionRow.components[2].setStyle(ButtonStyle.Success);
-                } else if (DB.TicketParentID) {
+                }
+                if (DB.TicketParentID) {
                   newActionRow.components[3].setStyle(ButtonStyle.Success);
                 }
                 MainMsg.edit({
@@ -727,11 +732,14 @@ module.exports = {
         const newActionRow = ActionRowBuilder.from(data);
         if (DB.JTCChannelID) {
           newActionRow.components[0].setStyle(ButtonStyle.Success);
-        } else if (DB.VerificationChannelID) {
+        }
+        if (DB.VerificationChannelID) {
           newActionRow.components[1].setStyle(ButtonStyle.Success);
-        } else if (DB.LogChannelID) {
+        }
+        if (DB.LogChannelID) {
           newActionRow.components[2].setStyle(ButtonStyle.Success);
-        } else if (DB.TicketParentID) {
+        }
+        if (DB.TicketParentID) {
           newActionRow.components[3].setStyle(ButtonStyle.Success);
         }
         MainMsg.edit({
