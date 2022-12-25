@@ -32,7 +32,6 @@ module.exports = {
     const { member, guild, options, channel } = interaction;
     const target = options.getMember("target");
     const partner = options.getMember("partner");
-    const ecoData = await ecoDB.findOne({ MemberID: member.id });
     const ecoDataT = await ecoDB.findOne({ MemberID: target.id });
     const ecoDataP = await ecoDB.findOne({ MemberID: partner.id });
     const embed = new EmbedBuilder()
