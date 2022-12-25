@@ -108,7 +108,7 @@ module.exports = {
             interaction.update({
               ephemeral: true,
               content:
-                "You have setuped the normal verification system, do you want to shift to captcah verification or not",
+                "Your current verificiation status is `NORMAL`, Do you want to shift to `CAPTCHA` verification system?",
               components: [
                 new ActionRowBuilder().addComponents(
                   new ButtonBuilder()
@@ -216,6 +216,7 @@ module.exports = {
                                   .setTitle("Verificaion setuped"),
                               ],
                               components: [],
+                              content: [],
                             });
                             await setupDB.findOneAndUpdate(
                               { GuildID: guild.id },
@@ -233,14 +234,17 @@ module.exports = {
                       });
                   });
               } else {
-                collected.update({ components: [] });
+                collected.update({
+                  components: [],
+                  content: "Cancelled the resetup",
+                });
               }
             });
           } else if (setupData.VerificationType === "Captcha") {
             interaction.update({
               ephemeral: true,
               content:
-                "You have setuped the captcha verification system, choose your new verification system from below to start the setup",
+                "Your current verificiation status is `CAPTCHA`, Do you want to shift to `NORMAL` verification system?",
               components: [
                 new ActionRowBuilder().addComponents(
                   new ButtonBuilder()
@@ -344,6 +348,7 @@ module.exports = {
                                   .setTitle("Verificaion re-setuped"),
                               ],
                               components: [],
+                              content: [],
                             });
                             await setupDB.findOneAndUpdate(
                               { GuildID: guild.id },
@@ -362,7 +367,10 @@ module.exports = {
                       });
                   });
               } else {
-                collected.update({ components: [] });
+                collected.update({
+                  components: [],
+                  content: "Cancelled the resetup",
+                });
               }
             });
           }
