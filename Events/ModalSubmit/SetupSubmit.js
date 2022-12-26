@@ -280,9 +280,9 @@ module.exports = {
       const newActionRow4 = ActionRowBuilder.from(data4);
       const newActionRow5 = ActionRowBuilder.from(data5);
       const ButtonIds = [
-        { name: "LogChannelCreateSetup", ID: 1 },
-        { name: "LogChannelDeleteSetup", ID: 2 },
-        { name: "LogVCJoinSetup", ID: 3 },
+        { name: "LogChannelCreateSetup", ID: 0 },
+        { name: "LogChannelDeleteSetup", ID: 1 },
+        { name: "LogVCJoinSetup", ID: 2 },
         { name: "LogVCLeaveSetup", ID: 0 },
         { name: "LogChannelUpdateSetup", ID: 1 },
         { name: "LogBanSetup", ID: 2 },
