@@ -28,11 +28,11 @@ module.exports = {
                 .addFields(
                   {
                     name: "Before:",
-                    value: `#${oldChannel.name}`,
+                    value: `\`\`\`#${oldChannel.name}\`\`\``,
                   },
                   {
                     name: "After:",
-                    value: `#${newChannel.name}`,
+                    value: `\`\`\`#${newChannel.name}\`\`\``,
                   },
                   {
                     name: "Changer:",

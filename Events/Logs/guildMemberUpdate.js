@@ -35,9 +35,9 @@ module.exports = {
               },
               {
                 name: "Before:",
-                value: `\`${nickname ?? oldMember.user.username}\``,
+                value: `\`\`\`${nickname ?? oldMember.user.username}\`\`\``,
               },
-              { name: "After:", value: `\`${newMember.nickname}\`` }
+              { name: "After:", value: `\`\`\`${newMember.nickname}\`\`\`` }
             )
             .setFooter({
               iconURL: client.user.displayAvatarURL({ dynamic: true }),

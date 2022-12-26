@@ -47,7 +47,9 @@ module.exports = {
                 },
                 {
                   name: "Parent:",
-                  value: `${channel.parent}`,
+                  value: `${
+                    channel.parent !== null ? channel.parnt : "No parent"
+                  }`,
                 },
                 {
                   name: "Creator",

@@ -34,7 +34,7 @@ module.exports = {
             },
             {
               name: "Invite:",
-              value: `${invite}`,
+              value: `\`\`\`${invite}\`\`\``,
             }
           )
           .setFooter({

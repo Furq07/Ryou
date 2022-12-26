@@ -36,7 +36,7 @@ module.exports = {
                   },
                   {
                     name: "Reason:",
-                    value: `${kickReason || "No Reason given"}`,
+                    value: `\`\`\`${kickReason || "No Reason given"}\`\`\``,
                   },
                   {
                     name: "Moderator",

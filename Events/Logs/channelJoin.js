@@ -11,7 +11,7 @@ module.exports = {
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
 
     // Main piece of code
-    if (newState) {
+    if (newState && !oldState.streaming) {
       if (newState.channelId !== setupData.JTCChannelID) {
         try {
           logChannel.send({
