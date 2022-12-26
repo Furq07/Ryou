@@ -1,14 +1,17 @@
 const { EmbedBuilder, AuditLogEvent } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
+
+// This event send message(s) in the log channel(s) about a channel like (Channnel name, topic change)
 module.exports = {
   name: "channelUpdate",
   async execute(oldChannel, newChannel, client) {
+    // Checking after fetching all data
     let setupData = await setupDB.findOne({ GuildID: oldChannel.guild.id });
-    if (!setupData) return;
-    if (!setupData.LogChannelID) return;
+    if (!setupData || !setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
     if (setupData.LogChannelUpdateSetup === false) return;
-    // for channel name
+
+    // Channel name
     if (newChannel.name && oldChannel.name !== newChannel.name) {
       oldChannel.guild
         .fetchAuditLogs({ type: AuditLogEvent.ChannelUpdate })
@@ -50,7 +53,8 @@ module.exports = {
           ``;
         });
     }
-    // for channel topic
+
+    // Channel Topic
     if (newChannel.topic && oldChannel.topic !== newChannel.topic) {
       oldChannel.guild
         .fetchAuditLogs({ type: AuditLogEvent.ChannelUpdate })

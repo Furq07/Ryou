@@ -5,14 +5,18 @@ const {
   ButtonBuilder,
 } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
+
+// This event send message(s) in the log channel(s) about a user who was unbanned
 module.exports = {
   name: "guildBanRemove",
   async execute(ban, client) {
+    // Checking after fetching all data
     let setupData = await setupDB.findOne({ GuildID: client.guild.id });
-    if (!setupData) return;
-    if (!setupData.LogChannelID) return;
+    if (!setupData || !setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
     if (setupData.LogUnbanSetup === false) return;
+
+    // Main piece of code
     logChannel.send({
       embeds: [
         new EmbedBuilder()

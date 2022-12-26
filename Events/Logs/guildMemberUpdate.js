@@ -1,12 +1,13 @@
 const { EmbedBuilder, AuditLogEvent, time } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
 
+// This event send message(s) in the log channel(s) about a user whose nickname, role was changed and was muted
 module.exports = {
   name: "guildMemberUpdate",
   async execute(oldMember, newMember, client) {
+    // Checking after fetching all data
     let setupData = await setupDB.findOne({ GuildID: oldMember.guild.id });
-    if (!setupData) return;
-    if (!setupData.LogChannelID) return;
+    if (!setupData || !setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
     const removedRoles = oldMember.roles.cache.filter(
       (role) => !newMember.roles.cache.has(role.id)
@@ -15,6 +16,7 @@ module.exports = {
       (role) => !oldMember.roles.cache.has(role.id)
     );
     if (setupData.LogUpdateUserSetup === false) return;
+
     //Nickname
     if (newMember.nickname && oldMember.nickname !== newMember.nickname) {
       let nickname = "";
@@ -49,6 +51,7 @@ module.exports = {
         ],
       });
     }
+
     // Role removal
     else if (removedRoles.size > 0) {
       roles = removedRoles.map((r) => " " + "(" + r.hexColor + ") " + r.name);
@@ -79,7 +82,8 @@ module.exports = {
         ],
       });
     }
-    // Rele Addition
+
+    // Role Addition
     else if (addedRoles.size > 0) {
       roles = addedRoles.map((r) => " " + "(" + r.hexColor + ") " + r.name);
       logChannel.send({
@@ -109,6 +113,7 @@ module.exports = {
         ],
       });
     }
+
     // Member Muted
     else if (newMember.isCommunicationDisabled(true)) {
       newMember.guild

@@ -1,14 +1,16 @@
-const { EmbedBuilder, AutoModerationRuleEventType } = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
+// This event send message(s) in the log channel(s) about who joined a voice channel after filtering jtc (if setuped)
 module.exports = {
   name: "voiceStateUpdate",
   async execute(oldState, newState, client) {
+    // Checking after fetching all data
     let setupData = await setupDB.findOne({ GuildID: newState.guild.id });
-    if (!setupData) return;
-    if (!setupData.LogChannelID) return;
-    const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
+    if (!setupData || !setupData.LogChannelID) return;
     if (setupData.LogVCJoinSetup === false) return;
+    const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
 
+    // Main piece of code
     if (newState) {
       if (newState.channelId !== setupData.JTCChannelID) {
         try {

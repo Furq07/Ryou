@@ -1,14 +1,17 @@
 const { EmbedBuilder, AuditLogEvent } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
+
+// This event send message(s) in the log channel(s) about role update like (role name, permission (addition/removal))
 module.exports = {
   name: "roleUpdate",
   async execute(oldRole, newRole, client) {
+    // Checking after fethching all data
     let setupData = await setupDB.findOne({ GuildID: oldRole.guild.id });
-    if (!setupData) return;
-    if (!setupData.LogChannelID) return;
+    if (!setupData || !setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
     if (setupData.LogRoleUpdateSetup === false) return;
-    // for name
+
+    // Name
     if (newRole.name && oldRole.name !== newRole.name) {
       oldRole.guild
         .fetchAuditLogs({ type: AuditLogEvent.RoleUpdate })
@@ -23,8 +26,8 @@ module.exports = {
                 .setColor("#800000")
                 .setDescription(`A role was renamed`)
                 .addFields(
-                  { name: "Before:", value: `${oldRole.name}` },
-                  { name: "After:", value: `${newRole.name}` },
+                  { name: "Before:", value: `\`\`\`${oldRole.name}\`\`\`` },
+                  { name: "After:", value: `\`\`\`${newRole.name}\`\`\`` },
                   { name: "Editor:", value: `${author}` }
                 )
                 .setFooter({
@@ -51,9 +54,8 @@ module.exports = {
         )
         .then((entry) => {
           author = entry.executor;
-          // permisison added
+          // Permission(s) addition
           if (oldRole.permissions < newRole.permissions) {
-            let oldPerm = oldRole.permissions.toArray().join(", ");
             const namesToDeleteArr = oldRole.permissions.toArray();
             let newRolePermissions = newRole.permissions.toArray();
             const permissionsToDeleteSet = new Set(namesToDeleteArr);
@@ -72,7 +74,7 @@ module.exports = {
                     { name: "ID:", value: `${oldRole.id}`, inline: true },
                     {
                       name: "Permission Added:",
-                      value: `${newArr}`,
+                      value: `\`\`\`${newArr}\`\`\``,
                     },
                     { name: "Editor:", value: `${author}` }
                   )
@@ -89,7 +91,7 @@ module.exports = {
               ],
             });
           } else {
-            // permisison removed
+            // Permission(s) removal
             const namesToDeleteArr = newRole.permissions.toArray();
             let newRolePermissions = oldRole.permissions.toArray();
             const permissionsToDeleteSet = new Set(namesToDeleteArr);
@@ -108,7 +110,7 @@ module.exports = {
                     { name: "ID:", value: `${oldRole.id}`, inline: true },
                     {
                       name: "Permission Removed:",
-                      value: `${newArr}`,
+                      value: `\`\`\`${newArr}\`\`\``,
                     },
                     { name: "Editor:", value: `${author}` }
                   )
