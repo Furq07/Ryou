@@ -1,20 +1,22 @@
 const { EmbedBuilder, AuditLogEvent } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
 module.exports = {
+  // This event will send message(s) in the log channel(s) about channel(s) deletion if it's enabled
   name: "channelDelete",
   async execute(channel, client) {
+    // Checking after fetching all data
     let setupData = await setupDB.findOne({ GuildID: channel.guild.id });
-    if (!setupData) return;
-    if (!setupData.LogChannelID) return;
+    if (!setupData || !setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
-    let channelType = "";
-    if (channel.isVoiceBased()) {
-      channelType = "Voice";
-    } else if (channel.isTextBased) {
-      channelType = "Text";
-    }
     if (channel.name.includes("'s Vc")) return;
-    if (setupData.LogChannelDeleteSetup === false) return;
+    if (setupData.LogChannelCreateSetup === false) return;
+
+    // Determining the channel type
+    let channelType = "";
+    if (channel.isVoiceBased()) channelType = "Voice";
+    else if (channel.isTextBased) channelType = "Text";
+
+    // Maine piece of code
     channel.guild
       .fetchAuditLogs({ type: AuditLogEvent.ChannelDelete })
       .then((logs) =>

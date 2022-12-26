@@ -108,6 +108,7 @@ module.exports = {
               collected.update({
                 embeds: [
                   new EmbedBuilder()
+                    .setColor("#800000")
                     .setTitle("Process cancelled")
                     .setDescription(
                       `Successfully cancelled the deletion of your custom vc`
@@ -255,6 +256,7 @@ module.exports = {
               collected.update({
                 embeds: [
                   new EmbedBuilder()
+                    .setColor("#800000")
                     .setTitle("Process cancelled")
                     .setDescription(
                       `Successfully cancelled the changing the user limit of your custom vc`
@@ -338,6 +340,7 @@ module.exports = {
               collected.update({
                 embeds: [
                   new EmbedBuilder()
+                    .setColor("#800000")
                     .setTitle("Process cancelled")
                     .setDescription(
                       `Successfully cancelled the unlocking of your custom vc`
@@ -421,6 +424,7 @@ module.exports = {
               collected.update({
                 embeds: [
                   new EmbedBuilder()
+                    .setColor("#800000")
                     .setTitle("Process cancelled")
                     .setDescription(
                       `Successfully cancelled the unlocking of your custom vc`
@@ -588,6 +592,7 @@ module.exports = {
               collected.update({
                 embeds: [
                   new EmbedBuilder()
+                    .setColor("#800000")
                     .setTitle("Process cancelled")
                     .setDescription(
                       `Successfully cancelled the hiding of your custom vc`
@@ -701,6 +706,7 @@ module.exports = {
               collected.update({
                 embeds: [
                   new EmbedBuilder()
+                    .setColor("#800000")
                     .setTitle("Process cancelled")
                     .setDescription(
                       `Successfully cancelled the unhiding of your custom vc`

@@ -6,14 +6,18 @@ const {
   AuditLogEvent,
 } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
+
+// This event send message(s) in the log channel(s) about a user who was banned
 module.exports = {
   name: "guildBanAdd",
   async execute(ban, client) {
+    // Checking after fetching all data
     let setupData = await setupDB.findOne({ GuildID: ban.guild.id });
-    if (!setupData) return;
-    if (!setupData.LogChannelID) return;
+    if (!setupData || !setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
     if (setupData.LogBanSetup === false) return;
+
+    // Main piece of code
     ban.guild
       .fetchAuditLogs({ type: AuditLogEvent.MemberBanAdd })
       .then((audit) => {
@@ -54,7 +58,6 @@ module.exports = {
               })
               .setTimestamp(),
           ],
-
           components: [
             new ActionRowBuilder().addComponents(
               new ButtonBuilder()

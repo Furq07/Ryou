@@ -1,22 +1,27 @@
 const { EmbedBuilder, AuditLogEvent } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
 module.exports = {
+  // This event will send message(s) in log channel(s) about channel creation if they have enabled logs in their server
   name: "channelCreate",
   async execute(channel, client) {
+    // Checking after fetching all data
     let setupData = await setupDB.findOne({ GuildID: channel.guild.id });
-    if (!setupData) return;
-    if (!setupData.LogChannelID) return;
+    if (!setupData || !setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
-    let channelType = "";
-    if (channel.isVoiceBased()) {
-      channelType = "Voice";
-    } else if (channel.isTextBased) {
-      channelType = "Text";
-    }
-    if (channel.name === "Join to Create" || channel.name === "Custom Vcs")
-      return;
     if (channel.name.includes("'s Vc")) return;
     if (setupData.LogChannelCreateSetup === false) return;
+    if (
+      channel.id === setupData.JTCChannelID ||
+      channel.id === setupData.JTCCategoryID
+    )
+      return;
+
+    // Determining the channel type
+    let channelType = "";
+    if (channel.isVoiceBased()) channelType = "Voice";
+    else if (channel.isTextBased) channelType = "Text";
+
+    // Main piece of code
     channel.guild
       .fetchAuditLogs({ type: AuditLogEvent.ChannelCreate })
       .then((logs) =>

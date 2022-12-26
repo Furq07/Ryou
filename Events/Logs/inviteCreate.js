@@ -1,13 +1,17 @@
 const { EmbedBuilder, time } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
+
+// This event send message(s) in the log channel(s) about invite creation
 module.exports = {
   name: "inviteCreate",
   async execute(invite, client) {
+    // Checking after fetching all data
     let setupData = await setupDB.findOne({ GuildID: invite.guild.id });
-    if (!setupData) return;
-    if (!setupData.LogChannelID) return;
+    if (!setupData || !setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
     if (setupData.LogInviteCreateSetup === false) return;
+
+    // Main piece of code
     logChannel.send({
       embeds: [
         new EmbedBuilder()
