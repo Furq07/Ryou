@@ -24,11 +24,11 @@ module.exports = {
               },
               {
                 name: "Message:",
-                value: `\`${
+                value: `\`\`\`${
                   message.content.length >= 1024
                     ? message.content.slice(0, 1024 / 2) + "..."
                     : message.content
-                }\``,
+                }\`\`\``,
               },
               { name: "Channel:", value: `<#${message.channel.id}>` }
             )
