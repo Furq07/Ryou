@@ -13,7 +13,7 @@ module.exports = {
 
     // Main piece of code
     try {
-      if (oldState && !newState.streaming) {
+      if (oldState && !newState.streaming && !oldState.streaming) {
         if (oldState.channelId !== setupData.JTCChannelID) {
           logChannel.send({
             embeds: [
