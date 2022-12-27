@@ -41,7 +41,12 @@ module.exports = {
           user.roles.add(CommunityRole);
         });
         interaction.update({
-          content: "✅ Successfully verified",
+          embeds: [
+            new EmbedBuilder()
+              .setColor("Green")
+              .setTitle("✅ Successuflly verified")
+              .setDescription("You have been successfully verified"),
+          ],
           components: [],
           files: [],
         });

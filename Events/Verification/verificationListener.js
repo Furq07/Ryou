@@ -1,4 +1,10 @@
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
+const {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  AttachmentBuilder,
+  EmbedBuilder,
+} = require("discord.js");
 const { CaptchaGenerator } = require("captcha-canvas");
 const captchaDB = require("../../src/models/captchaDB");
 const setupDB = require("../../src/models/setupDB");
@@ -10,7 +16,6 @@ module.exports = {
     let captchaData = await captchaDB.findOne({ GuildID: guild.id });
     let setupData = await setupDB.findOne({ GuildID: guild.id });
 
-
     if (["captcha-verify-button", "normal-verify-button"].includes(customId)) {
       switch (customId) {
         case "captcha-verify-button":
@@ -21,23 +26,29 @@ module.exports = {
           });
           if (captchaFound) {
             const captcha1 = new CaptchaGenerator()
-              .setDimension(150, 450)
-              .setDecoy({ opacity: 0.5 })
-              .setTrace({ color: "gray" })
+              .setDimension(100, 280)
+              .setDecoy({ opacity: 1, color: "gray" })
+              .setTrace({ color: "#3DED97" })
               .setCaptcha({
                 text: `${captchaFound.captcha}`,
-                color: "black",
-                size: 60,
+                color: "#3DED97",
+                size: 40,
               });
             const buffer1 = captcha1.generateSync();
+            const captchaAttachment = new AttachmentBuilder(buffer1, {
+              name: "captcha.png",
+            });
             interaction.reply({
               ephemeral: true,
-              content: `You had already generated your captcha, just verify this time`,
-              files: [
-                {
-                  attachment: buffer1,
-                  name: "captcha.png",
-                },
+              files: [captchaAttachment],
+              embeds: [
+                new EmbedBuilder()
+                  .setColor("#800000")
+                  .setTitle("⚠ Verification Required")
+                  .setDescription(
+                    "Click on the **Verify** button below to fill your captcha"
+                  )
+                  .setImage("attachment://captcha.png"),
               ],
               components: [
                 new ActionRowBuilder().addComponents(
@@ -50,8 +61,8 @@ module.exports = {
             });
           } else {
             function generateWord() {
-              const alphabet = "abcdefghijklmnopqrstuvwxyz";
-              const numbers = "0123456789";
+              const alphabet = "abcdefghijkmnopqrstuvwxyz";
+              const alphabet_capital = "ABCDEFGHJKLMNOPQRSTUVWXYZ";
               let word = "";
               for (let i = 0; i < 5; i++) {
                 if (Math.random() < 0.5) {
@@ -59,8 +70,8 @@ module.exports = {
                     Math.floor(Math.random() * alphabet.length)
                   );
                 } else {
-                  word += numbers.charAt(
-                    Math.floor(Math.random() * numbers.length)
+                  word += alphabet_capital.charAt(
+                    Math.floor(Math.random() * alphabet_capital.length)
                   );
                 }
               }
@@ -68,24 +79,29 @@ module.exports = {
             }
 
             const captcha = new CaptchaGenerator()
-              .setDimension(150, 450)
-              .setDecoy({ opacity: 0.5 })
-              .setTrace({ color: "gray" })
+              .setDimension(100, 300)
+              .setDecoy({ opacity: 1, color: "gray" })
+              .setTrace({ color: "#3DED97" })
               .setCaptcha({
                 text: `${generateWord()}`,
-                color: "black",
-                size: 60,
+                color: "#3DED97",
+                size: 40,
               });
             const buffer = captcha.generateSync();
-
+            const captchaAttachment1 = new AttachmentBuilder(buffer, {
+              name: "captcha.png",
+            });
             interaction.reply({
               ephemeral: true,
-              content: `Here is your captcha: ${captcha.text}`,
-              files: [
-                {
-                  attachment: buffer,
-                  name: "captcha.png",
-                },
+              files: [captchaAttachment1],
+              embeds: [
+                new EmbedBuilder()
+                  .setColor("#800000")
+                  .setTitle("⚠ Verification Required")
+                  .setDescription(
+                    "Click on the **Verify** button below to fill your captcha"
+                  )
+                  .setImage("attachment://captcha.png"),
               ],
               components: [
                 new ActionRowBuilder().addComponents(
@@ -115,7 +131,14 @@ module.exports = {
             );
             user.roles.add(CommunityRole);
             interaction.reply({
-              content: "✅ Successfully verified",
+              embeds: [
+                new EmbedBuilder()
+                  .setColor("Green")
+                  .setTitle("✅ Successuflly verified")
+                  .setDescription("You have been successfully verified"),
+              ],
+              components: [],
+              files: [],
               ephemeral: true,
             });
           });

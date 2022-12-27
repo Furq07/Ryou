@@ -15,7 +15,8 @@ module.exports = {
     let setupData = await setupDB.findOne({ GuildID: ban.guild.id });
     if (!setupData || !setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
-    if (setupData.LogBanSetup === false) return;
+    if (setupData.LogBanSetup === false || !setupData.LogBanSetup)
+      return;
 
     // Main piece of code
     ban.guild

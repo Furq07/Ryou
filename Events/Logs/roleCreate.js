@@ -9,7 +9,8 @@ module.exports = {
     let setupData = await setupDB.findOne({ GuildID: role.guild.id });
     if (!setupData || !setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
-    if (setupData.LogRoleCreateSetup === false) return;
+    if (setupData.LogRoleCreateSetup === false || !setupData.LogRoleCreateSetup)
+      return;
 
     // Maine piece of code
     role.guild

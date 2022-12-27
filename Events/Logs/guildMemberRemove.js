@@ -9,12 +9,13 @@ module.exports = {
     let setupData = await setupDB.findOne({ GuildID: interaction.guild.id });
     if (!setupData || !setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
-    if (setupData.LogKickUserSetup === false) return;
+    if (setupData.LogKickUserSetup === false || !setupData.LogKickUserSetup)
+      return;
 
     // Main piece of code
     if (member.bannable !== true) {
       interaction.guild
-        .fetchAuditLogs({ type: AuditLogEvent.MemberKick })
+        .fetchAuditLogs({ type: AuditLogEvent.MemberBanRemove })
         .then((audit) => {
           let kickReason = audit.entries.first().reason;
           let author = audit.entries.first().executor;

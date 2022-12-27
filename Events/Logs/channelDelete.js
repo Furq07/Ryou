@@ -9,12 +9,17 @@ module.exports = {
     if (!setupData || !setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
     if (channel.name.includes("'s Vc")) return;
-    if (setupData.LogChannelCreateSetup === false) return;
+    if (
+      setupData.LogChannelCreateSetup === false ||
+      !setupData.LogChannelDeleteSetup
+    )
+      return;
 
     // Determining the channel type
     let channelType = "";
     if (channel.isVoiceBased()) channelType = "Voice";
     else if (channel.isTextBased) channelType = "Text";
+    else channelType = "Category";
 
     // Maine piece of code
     channel.guild
@@ -38,7 +43,7 @@ module.exports = {
                 {
                   name: "Parent:",
                   value: `${
-                    channel.parent !== null ? channel.parnt : "No parent"
+                    channel.parent === null ? "No parent" : channel.parent
                   }`,
                   inline: true,
                 },

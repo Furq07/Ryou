@@ -86,22 +86,22 @@ module.exports = {
           });
           break;
         case "captcha-verify":
-          const changeuserModal = new ModalBuilder()
+          const captchaModal = new ModalBuilder()
             .setCustomId(`captcha-modal`)
             .setTitle(`Captcha verification`);
 
-          const changeUserLimitTextInput = new TextInputBuilder()
+          const captchaInputText = new TextInputBuilder()
             .setCustomId(`captcha-verify-input`)
             .setLabel(`Enter the code below`)
             .setRequired(true)
             .setStyle(TextInputStyle.Short)
-            .setPlaceholder("Captcha code (eg: 9cwsk)")
+            .setPlaceholder("Captcha code (eg: BekYm)")
             .setMaxLength(5)
             .setMinLength(5);
-          changeuserModal.addComponents(
-            new ActionRowBuilder().addComponents(changeUserLimitTextInput)
+          captchaModal.addComponents(
+            new ActionRowBuilder().addComponents(captchaInputText)
           );
-          interaction.showModal(changeuserModal);
+          interaction.showModal(captchaModal);
           break;
         case "verification-resetup":
           if (setupData.VerificationType === "Normal") {
@@ -138,7 +138,7 @@ module.exports = {
                   .get(`${setupData.VerificationChannelID}`)
                   .delete();
                 collected.guild.channels.cache
-                  .get(`${setupData.verificationCategoryID}`)
+                  .get(`${setupData.VerificationCategoryID}`)
                   .delete()
                   .then(async () => {
                     collected.guild.channels
@@ -185,16 +185,18 @@ module.exports = {
                                 embeds: [
                                   new EmbedBuilder()
                                     .setColor("#800000")
+                                    .setTitle("⚠ Verification Required")
                                     .setDescription(
-                                      "Click the button below to verify your self"
-                                    )
-                                    .setTitle("Captcha Verification"),
+                                      `In order to get the \`${guild.name}\` access, verify yourself using \n**Verify** button`
+                                    ),
                                 ],
                                 components: [
                                   new ActionRowBuilder().addComponents(
                                     new ButtonBuilder()
                                       .setCustomId("captcha-verify-button")
                                       .setLabel("Verify")
+                                      .setEmoji("✅")
+
                                       .setStyle(ButtonStyle.Success)
                                   ),
                                 ],
@@ -211,12 +213,16 @@ module.exports = {
                                 new EmbedBuilder()
                                   .setColor("#800000")
                                   .setDescription(
-                                    "Successfully setuped captcha verification system"
+                                    "Successfully re-setuped verification system"
                                   )
-                                  .setTitle("Verificaion setuped"),
+                                  .addFields({
+                                    name: "Status:",
+                                    value: `\`CAPTCHA\``,
+                                  })
+                                  .setTitle("Verificaion re-setuped"),
                               ],
+                              content: " ",
                               components: [],
-                              content: [],
                             });
                             await setupDB.findOneAndUpdate(
                               { GuildID: guild.id },
@@ -224,7 +230,7 @@ module.exports = {
                             );
                             await setupDB.findOneAndUpdate(
                               { GuildID: guild.id },
-                              { verificationCategoryID: category.id }
+                              { VerificationCategoryID: category.id }
                             );
                             await setupDB.findOneAndUpdate(
                               { GuildID: guild.id },
@@ -270,7 +276,7 @@ module.exports = {
                   .get(`${setupData.VerificationChannelID}`)
                   .delete();
                 collected.guild.channels.cache
-                  .get(`${setupData.verificationCategoryID}`)
+                  .get(`${setupData.VerificationCategoryID}`)
                   .delete()
                   .then(async () => {
                     collected.guild.channels
@@ -312,21 +318,24 @@ module.exports = {
                             ],
                           })
                           .then(async (verifyChannel) => {
-                            verifyChannel
+                            await verifyChannel
                               .send({
                                 embeds: [
                                   new EmbedBuilder()
                                     .setColor("#800000")
+                                    .setTitle("⚠ Verification Required")
                                     .setDescription(
-                                      "Click the button below to verify your self"
-                                    )
-                                    .setTitle("Verification"),
+                                      `In order to get the \`${guild.name}\` access, verify yourself using \n**Verify** button`
+                                    ),
                                 ],
+                                ephemeral: true,
+                                content: " ",
                                 components: [
                                   new ActionRowBuilder().addComponents(
                                     new ButtonBuilder()
                                       .setCustomId("normal-verify-button")
                                       .setLabel("Verify")
+                                      .setEmoji("✅")
                                       .setStyle(ButtonStyle.Success)
                                   ),
                                 ],
@@ -343,12 +352,16 @@ module.exports = {
                                 new EmbedBuilder()
                                   .setColor("#800000")
                                   .setDescription(
-                                    "Successfully re-setuped normal verification system"
+                                    "Successfully re-setuped verification system"
                                   )
+                                  .addFields({
+                                    name: "Status:",
+                                    value: `\`NORMAL\``,
+                                  })
                                   .setTitle("Verificaion re-setuped"),
                               ],
+                              ephemeral: true,
                               components: [],
-                              content: [],
                             });
                             await setupDB.findOneAndUpdate(
                               { GuildID: guild.id },
@@ -356,13 +369,15 @@ module.exports = {
                             );
                             await setupDB.findOneAndUpdate(
                               { GuildID: guild.id },
-                              { verificationCategoryID: category.id }
+                              { VerificationCategoryID: category.id }
                             );
                             await setupDB.findOneAndUpdate(
                               { GuildID: guild.id },
                               { VerificationType: "Normal" }
                             );
-                            await captchaDB.deleteOne({ GuildID: guild.id });
+                            await captchaDB.deleteOne({
+                              GuildID: guild.id,
+                            });
                           });
                       });
                   });

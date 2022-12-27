@@ -7,7 +7,7 @@ module.exports = {
     // Checking after fetching all data
     let setupData = await setupDB.findOne({ GuildID: newState.guild.id });
     if (!setupData || !setupData.LogChannelID) return;
-    if (setupData.LogVCJoinSetup === false) return;
+    if (setupData.LogVCJoinSetup === false || !setupData.LogVCJoinSetup) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
 
     // Main piece of code

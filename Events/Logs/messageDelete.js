@@ -8,7 +8,11 @@ module.exports = {
     let setupData = await setupDB.findOne({ GuildID: message.guild.id });
     if (!setupData || !setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
-    if (setupData.LogMessageDeleteSetup === false) return;
+    if (
+      setupData.LogMessageDeleteSetup === false ||
+      !setupData.LogMessageDeleteSetup
+    )
+      return;
 
     // Main piece of code
     if (message.content.length !== 0) {

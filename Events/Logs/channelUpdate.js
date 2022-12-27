@@ -9,7 +9,11 @@ module.exports = {
     let setupData = await setupDB.findOne({ GuildID: oldChannel.guild.id });
     if (!setupData || !setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
-    if (setupData.LogChannelUpdateSetup === false) return;
+    if (
+      setupData.LogChannelUpdateSetup === false ||
+      !setupData.LogChannelUpdateSetup
+    )
+      return;
 
     // Channel name
     if (newChannel.name && oldChannel.name !== newChannel.name) {

@@ -18,13 +18,14 @@ module.exports = {
     const msg = await channel.messages.fetch(message.id);
     const msgEmbed = msg.embeds[0];
     const author = msgEmbed.author.name;
-    if (author !== member.user.tag)
-      return interaction.reply({
-        content: `These Buttons aren't for You!`,
-        ephemeral: true,
-      });
+
     // Startup Setup Menu
     if (["CommunityRole", "StaffRole", "AdminRole"].includes(customId)) {
+      // if (author !== member.user.tag)
+      //   return interaction.reply({
+      //     content: `These Buttons aren't for You!`,
+      //     ephemeral: true,
+      //   });
       switch (customId) {
         case "CommunityRole":
           const CommunityModal = new ModalBuilder()

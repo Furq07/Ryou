@@ -15,7 +15,8 @@ module.exports = {
     const addedRoles = newMember.roles.cache.filter(
       (role) => !oldMember.roles.cache.has(role.id)
     );
-    if (setupData.LogUpdateUserSetup === false) return;
+    if (setupData.LogUpdateUserSetup === false || !setupData.LogUpdateUserSetup)
+      return;
 
     //Nickname
     if (newMember.nickname && oldMember.nickname !== newMember.nickname) {

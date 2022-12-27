@@ -9,7 +9,11 @@ module.exports = {
     let setupData = await setupDB.findOne({ GuildID: invite.guild.id });
     if (!setupData || !setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
-    if (setupData.LogInviteCreateSetup === false) return;
+    if (
+      setupData.LogInviteCreateSetup === false ||
+      !setupData.LogInviteCreateSetup
+    )
+      return;
 
     // Main piece of code
     logChannel.send({
@@ -34,7 +38,7 @@ module.exports = {
             },
             {
               name: "Invite:",
-              value: `\`\`\`${invite}\`\`\``,
+              value: `${invite}`,
             }
           )
           .setFooter({

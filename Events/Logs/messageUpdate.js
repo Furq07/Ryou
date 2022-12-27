@@ -9,7 +9,11 @@ module.exports = {
     let setupData = await setupDB.findOne({ GuildID: oldMessage.guild.id });
     if (!setupData || !setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
-    if (setupData.LogMessageUpdateSetup === false) return;
+    if (
+      setupData.LogMessageUpdateSetup === false ||
+      !setupData.LogMessageUpdateSetup
+    )
+      return;
 
     // Main piece of code
     if (

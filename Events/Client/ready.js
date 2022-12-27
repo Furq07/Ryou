@@ -12,7 +12,7 @@ module.exports = {
     user.setPresence({
       activities: [
         {
-          name: `${guilds.cache.size} Servers`,
+          name: `${guilds.cache.size} Server(s)`,
           type: ActivityType.Watching,
         },
       ],

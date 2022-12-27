@@ -9,7 +9,8 @@ module.exports = {
     let setupData = await setupDB.findOne({ GuildID: oldRole.guild.id });
     if (!setupData || !setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
-    if (setupData.LogRoleUpdateSetup === false) return;
+    if (setupData.LogRoleUpdateSetup === false || !setupData.LogRoleUpdateSetup)
+      return;
 
     // Name
     if (newRole.name && oldRole.name !== newRole.name) {

@@ -109,16 +109,17 @@ module.exports = {
                     embeds: [
                       new EmbedBuilder()
                         .setColor("#800000")
+                        .setTitle("⚠ Verification Required")
                         .setDescription(
-                          "Click the button below to verify your self"
-                        )
-                        .setTitle("Captcha Verification"),
+                          `In order to get the \`${guild.name}\` access, verify yourself using \n**Verify** button`
+                        ),
                     ],
                     components: [
                       new ActionRowBuilder().addComponents(
                         new ButtonBuilder()
                           .setCustomId("captcha-verify-button")
                           .setLabel("Verify")
+                          .setEmoji("✅")
                           .setStyle(ButtonStyle.Success)
                       ),
                     ],
@@ -128,8 +129,23 @@ module.exports = {
                       { GuildID: guild.id },
                       { VerificationMessageID: message.id }
                     );
+                    await setupDB.findOneAndUpdate(
+                      { GuildID: guild.id },
+                      { VerificationChannelID: verifyChannel.id }
+                    );
+                    await setupDB.findOneAndUpdate(
+                      { GuildID: guild.id },
+                      { VerificationCategoryID: category.id }
+                    );
+                    await setupDB.findOneAndUpdate(
+                      { GuildID: guild.id },
+                      { VerificationSetuped: true }
+                    );
+                    await setupDB.findOneAndUpdate(
+                      { GuildID: guild.id },
+                      { VerificationType: "Captcha" }
+                    );
                   });
-
                 collected.update({
                   embeds: [
                     new EmbedBuilder()
@@ -141,22 +157,6 @@ module.exports = {
                   ],
                   components: [],
                 });
-                await captchaDB.findOneAndUpdate(
-                  { GuildID: guild.id },
-                  { VerificationChannelID: verifyChannel.id }
-                );
-                await captchaDB.findOneAndUpdate(
-                  { GuildID: guild.id },
-                  { verificationCategoryID: category.id }
-                );
-                await setupDB.findOneAndUpdate(
-                  { GuildID: guild.id },
-                  { VerificationSetuped: true }
-                );
-                await setupDB.findOneAndUpdate(
-                  { GuildID: guild.id },
-                  { VerificationType: "Captcha" }
-                );
               });
           });
       } else if (collected.customId === "normal-verification-setup-button") {
@@ -167,10 +167,7 @@ module.exports = {
             permissionOverwrites: [
               {
                 id: collected.guild.roles.everyone.id,
-                allow: [
-                  PermissionFlagsBits.SendMessages,
-                  PermissionFlagsBits.ViewChannel,
-                ],
+                allow: [PermissionFlagsBits.ViewChannel],
               },
               {
                 id: setupData.CommunityRoleID,
@@ -190,10 +187,7 @@ module.exports = {
                 permissionOverwrites: [
                   {
                     id: collected.guild.roles.everyone.id,
-                    allow: [
-                      PermissionFlagsBits.SendMessages,
-                      PermissionFlagsBits.ViewChannel,
-                    ],
+                    allow: [PermissionFlagsBits.ViewChannel],
                   },
                   {
                     id: setupData.CommunityRoleID,
@@ -209,17 +203,17 @@ module.exports = {
                   .send({
                     embeds: [
                       new EmbedBuilder()
-                        .setColor("#800000")
+                        .setTitle("⚠ Verification Required")
                         .setDescription(
-                          "Click the button below to verify your self"
-                        )
-                        .setTitle("Verification"),
+                          `In order to get the \`\`${guild.name}\`\` access, verify yourself using \n**Verify** button`
+                        ),
                     ],
                     components: [
                       new ActionRowBuilder().addComponents(
                         new ButtonBuilder()
                           .setCustomId("normal-verify-button")
                           .setLabel("Verify")
+                          .setEmoji("✅")
                           .setStyle(ButtonStyle.Success)
                       ),
                     ],
@@ -248,7 +242,7 @@ module.exports = {
                 );
                 await setupDB.findOneAndUpdate(
                   { GuildID: guild.id },
-                  { verificationCategoryID: category.id }
+                  { VerificationCategoryID: category.id }
                 );
                 await setupDB.findOneAndUpdate(
                   { GuildID: guild.id },
