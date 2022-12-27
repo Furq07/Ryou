@@ -74,7 +74,7 @@ module.exports = {
           .setLabel("Admin Role")
           .setStyle(ButtonStyle.Success),
         new ButtonBuilder()
-          .setCustomId("SkipSetup")
+          .setCustomId("MainSetupMenu")
           .setLabel("Main Setup Menu")
           .setEmoji("⏩")
           .setStyle(ButtonStyle.Primary)

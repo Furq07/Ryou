@@ -14,18 +14,31 @@ module.exports = {
   async execute(interaction, client) {
     const { customId, channel, message, member, guild } = interaction;
     if (!interaction.isButton()) return;
+    if (
+      ![
+        "CommunityRole",
+        "StaffRole",
+        "AdminRole",
+        "JTCSetup",
+        "VerificationSetup",
+        "LogsSetup",
+        "TicketSetup",
+        "LogSettingsSetup",
+        "LogChannelIDSetup",
+      ].includes(customId)
+    )
+      return;
     const setupData = await setupDB.findOne({ GuildID: guild.id });
     const msg = await channel.messages.fetch(message.id);
     const msgEmbed = msg.embeds[0];
     const author = msgEmbed.author.name;
-
+    if (author !== member.user.tag)
+      return interaction.reply({
+        content: `These Buttons aren't for You!`,
+        ephemeral: true,
+      });
     // Startup Setup Menu
     if (["CommunityRole", "StaffRole", "AdminRole"].includes(customId)) {
-      // if (author !== member.user.tag)
-      //   return interaction.reply({
-      //     content: `These Buttons aren't for You!`,
-      //     ephemeral: true,
-      //   });
       switch (customId) {
         case "CommunityRole":
           const CommunityModal = new ModalBuilder()
@@ -113,7 +126,12 @@ module.exports = {
                     .setCustomId("JTCResetup")
                     .setLabel("Re-Setup")
                     .setEmoji("🔁")
-                    .setStyle(ButtonStyle.Success)
+                    .setStyle(ButtonStyle.Success),
+                  new ButtonBuilder()
+                    .setCustomId("MainSetupMenu")
+                    .setLabel("Main Setup Menu")
+                    .setEmoji("⏪")
+                    .setStyle(ButtonStyle.Primary)
                 ),
               ],
             });
@@ -141,6 +159,11 @@ module.exports = {
                   .setCustomId("JTCSetupB")
                   .setLabel("Setup JTC")
                   .setEmoji("✅")
+                  .setStyle(ButtonStyle.Primary),
+                new ButtonBuilder()
+                  .setCustomId("MainSetupMenu")
+                  .setLabel("Main Setup Menu")
+                  .setEmoji("⏪")
                   .setStyle(ButtonStyle.Primary)
               ),
             ],
@@ -152,6 +175,11 @@ module.exports = {
             new ButtonBuilder()
               .setCustomId("LogChannelIDSetup")
               .setLabel("Log Channel")
+              .setStyle(ButtonStyle.Danger),
+            new ButtonBuilder()
+              .setCustomId("MainSetupMenu")
+              .setLabel("Main Setup Menu")
+              .setEmoji("⏪")
               .setStyle(ButtonStyle.Primary)
           );
           if (setupData.LogChannelID)
@@ -159,10 +187,15 @@ module.exports = {
               new ButtonBuilder()
                 .setCustomId("LogChannelIDSetup")
                 .setLabel("Log Channel")
-                .setStyle(ButtonStyle.Primary),
+                .setStyle(ButtonStyle.Success),
               new ButtonBuilder()
                 .setCustomId("LogSettingsSetup")
                 .setLabel("Log Settings")
+                .setStyle(ButtonStyle.Primary),
+              new ButtonBuilder()
+                .setCustomId("MainSetupMenu")
+                .setLabel("Main Setup Menu")
+                .setEmoji("⏪")
                 .setStyle(ButtonStyle.Primary)
             );
 
@@ -283,9 +316,9 @@ module.exports = {
                   .setLabel("Update Role")
                   .setStyle(ButtonStyle.Danger),
                 new ButtonBuilder()
-                  .setCustomId("LogConfirmSetup")
-                  .setLabel("Confirm")
-                  .setEmoji("✅")
+                  .setCustomId("MainSetupMenu")
+                  .setLabel("Main Setup Menu")
+                  .setEmoji("⏪")
                   .setStyle(ButtonStyle.Primary)
               ),
             ],

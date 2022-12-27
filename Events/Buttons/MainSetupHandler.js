@@ -13,19 +13,41 @@ module.exports = {
   async execute(interaction, client) {
     const { customId, channel, message, member, guild } = interaction;
     if (!interaction.isButton()) return;
+    if (
+      ![
+        "JTCSetupB",
+        "JTCResetup",
+        "LogChannelCreateSetup",
+        "LogChannelDeleteSetup",
+        "LogVCJoinSetup",
+        "LogVCLeaveSetup",
+        "LogChannelUpdateSetup",
+        "LogBanSetup",
+        "LogUnbanSetup",
+        "LogKickUserSetup",
+        "LogUpdateUserSetup",
+        "LogInviteCreateSetup",
+        "LogMessageDeleteSetup",
+        "LogMessageUpdateSetup",
+        "LogRoleCreateSetup",
+        "LogRoleDeleteSetup",
+        "LogRoleUpdateSetup",
+        "MainSetupMenu",
+      ].includes(customId)
+    )
+      return;
     const setupData = await setupDB.findOne({ GuildID: guild.id });
     const msg = await channel.messages.fetch(message.id);
     const data = msg.components[0];
     const newActionRow = ActionRowBuilder.from(data);
     const msgEmbed = msg.embeds[0];
     const author = msgEmbed.author.name;
-
+    if (author !== member.user.tag)
+      return interaction.reply({
+        content: `These Buttons aren't for You!`,
+        ephemeral: true,
+      });
     if (["JTCSetupB", "JTCResetup"].includes(customId)) {
-      // if (author !== member.user.tag)
-      //   return interaction.reply({
-      //     content: `These Buttons aren't for You!`,
-      //     ephemeral: true,
-      //   });
       switch (customId) {
         case "JTCSetupB":
           {
@@ -152,30 +174,6 @@ module.exports = {
                   ],
                   components: [],
                 });
-                const embed = new EmbedBuilder()
-                  .setTitle("__Opening Main Setup Menu__")
-                  .setDescription(
-                    `This Embed will be changed to **Main Setup Menu** in \`3 Seconds\`!`
-                  )
-                  .setThumbnail(client.user.displayAvatarURL())
-                  .setFooter({
-                    text: "Ryou - Utility",
-                    iconURL: client.user.displayAvatarURL(),
-                  });
-                msg.edit({
-                  embeds: [embed],
-                  components: [],
-                });
-                for (let i = 3; i > 0; i--) {
-                  await wait(1000);
-                  msg.edit({
-                    embeds: [
-                      embed.setDescription(
-                        `This Embed will be changed to **Main Setup Menu** in \`${i} Seconds\`!`
-                      ),
-                    ],
-                  });
-                }
                 const MainMsg = await msg.edit({
                   fetchReply: true,
                   embeds: [
@@ -415,31 +413,7 @@ module.exports = {
                 ],
                 components: [],
               });
-              await wait(3000);
-              const embed = new EmbedBuilder()
-                .setTitle("__Opening Main Setup Menu__")
-                .setDescription(
-                  `This Embed will be changed to **Main Setup Menu** in \`3 Seconds\`!`
-                )
-                .setThumbnail(client.user.displayAvatarURL())
-                .setFooter({
-                  text: "Ryou - Utility",
-                  iconURL: client.user.displayAvatarURL(),
-                });
-              msg.edit({
-                embeds: [embed],
-                components: [],
-              });
-              for (let i = 3; i > 0; i--) {
-                await wait(1000);
-                msg.edit({
-                  embeds: [
-                    embed.setDescription(
-                      `This Embed will be changed to **Main Setup Menu** in \`${i} Seconds\`!`
-                    ),
-                  ],
-                });
-              }
+              await wait(5000);
               const MainMsg = await msg.edit({
                 fetchReply: true,
                 embeds: [
@@ -662,33 +636,8 @@ module.exports = {
           ],
         });
       }
-      // Skip Button
-    } else if (["SkipSetup", "LogConfirmSetup"].includes(customId)) {
-      const embed = new EmbedBuilder()
-        .setTitle("__Opening Main Setup Menu__")
-        .setDescription(
-          `This Embed will be changed to **Main Setup Menu** in \`3 Seconds\`!`
-        )
-        .setThumbnail(client.user.displayAvatarURL())
-        .setFooter({
-          text: "Ryou - Utility",
-          iconURL: client.user.displayAvatarURL(),
-        });
-      msg.edit({
-        embeds: [embed],
-        components: [],
-      });
-      for (let i = 3; i > 0; i--) {
-        await wait(1000);
-        msg.edit({
-          embeds: [
-            embed.setDescription(
-              `This Embed will be changed to **Main Setup Menu** in \`${i} Seconds\`!`
-            ),
-          ],
-        });
-      }
-      const MainMsg = await msg.edit({
+    } else if (customId === "MainSetupMenu") {
+      const MainMsg = await interaction.update({
         fetchReply: true,
         embeds: [
           new EmbedBuilder()

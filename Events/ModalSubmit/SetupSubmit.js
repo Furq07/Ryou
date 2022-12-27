@@ -77,30 +77,6 @@ module.exports = {
         setupData.StaffRoleID &&
         setupData.AdminRoleID
       ) {
-        const embed = new EmbedBuilder()
-          .setTitle("__Opening Main Setup Menu__")
-          .setDescription(
-            `This Embed will be changed to **Main Setup Menu** in \`3 Seconds\`!`
-          )
-          .setThumbnail(client.user.displayAvatarURL())
-          .setFooter({
-            text: "Ryou - Utility",
-            iconURL: client.user.displayAvatarURL(),
-          });
-        msg.edit({
-          embeds: [embed],
-          components: [],
-        });
-        for (let i = 3; i > 0; i--) {
-          await wait(1000);
-          msg.edit({
-            embeds: [
-              embed.setDescription(
-                `This Embed will be changed to **Main Setup Menu** in \`${i} Seconds\`!`
-              ),
-            ],
-          });
-        }
         const MainMsg = await msg.edit({
           fetchReply: true,
           embeds: [
@@ -262,9 +238,9 @@ module.exports = {
               .setLabel("Update Role")
               .setStyle(ButtonStyle.Danger),
             new ButtonBuilder()
-              .setCustomId("LogConfirmSetup")
-              .setLabel("Confirm")
-              .setEmoji("✅")
+              .setCustomId("MainSetupMenu")
+              .setLabel("Main Setup Menu")
+              .setEmoji("⏪")
               .setStyle(ButtonStyle.Primary)
           ),
         ],
