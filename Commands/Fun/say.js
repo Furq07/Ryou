@@ -12,7 +12,19 @@ module.exports = {
   ],
   async execute(interaction, client) {
     interaction.reply({
-      content: `**\"**${interaction.options.getString("message")}**\"**`,
+      embeds: [
+        new EmbedBuilder()
+          .setColor("#800000")
+          .setTitle(`${interaction.user.username} said`)
+          .addFields({
+            name: "Message:",
+            value: `**\"**${interaction.options.getString("message")}**\"**`,
+          })
+          .setFooter({
+            text: "Ryou - Fun",
+            iconURL: client.user.displayAvatarURL({ dynamic: true }),
+          }),
+      ],
     });
   },
 };

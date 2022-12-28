@@ -21,8 +21,9 @@ module.exports = {
               )
               .setFooter({
                 iconURL: client.user.displayAvatarURL({ dynamic: true }),
-                text: "Ryou - Quote",
-              }),
+                text: "Ryou - Fun",
+              })
+            ,
           ],
         });
       });

@@ -31,15 +31,22 @@ module.exports = {
     const image = await Canvas.loadImage("src/images/whisper.jpg");
 
     const listenerAvatar = await Canvas.loadImage(
-      listener.user.displayAvatarURL({ extension: "png" })
+      listener.user.displayAvatarURL({ extension: "jpg" })
     );
     const whispererAvatar = await Canvas.loadImage(
-      interaction.user.displayAvatarURL({ extension: "png" })
+      interaction.user.displayAvatarURL({ extension: "jpg" })
     );
 
     context.drawImage(image, 0, 0, canvas.width, canvas.height);
-    context.drawImage(listenerAvatar, 660, 160, 430, 430);
-    context.drawImage(whispererAvatar, 140, 110, 400, 400);
+    context.save();
+    context.rotate((10 * Math.PI) / 180);
+    context.drawImage(listenerAvatar, 700, 0, 450, 450);
+    context.restore();
+    context.save();
+    context.rotate((6 * Math.PI) / 180);
+    context.drawImage(whispererAvatar, 135, 80, 480, 480);
+    context.restore();
+
     context.drawImage(overlay, 0, 0, canvas.width, canvas.height);
     context.font = "bold 45px Arial";
     context.fillStyle = "#FFFFFF";
@@ -69,7 +76,10 @@ module.exports = {
       return;
     }
 
-    const attachment = new AttachmentBuilder(canvas.toBuffer(), "whisper.png");
+    const attachment = new AttachmentBuilder(
+      canvas.toBuffer(),
+      "whisper-image.png"
+    );
     await interaction.channel.send({ files: [attachment] });
   },
 };
