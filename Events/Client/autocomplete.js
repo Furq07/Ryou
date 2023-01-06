@@ -42,7 +42,41 @@ module.exports = {
             .map((choice) => ({ name: choice, value: choice }))
             .slice(0, 24)
         );
+      } else if (commandName === "translate") {
       }
+      const focusedValue = options.getFocused();
+      var choices = [
+        "English",
+        "Spanish",
+        "Croatian",
+        "Arabic",
+        "French",
+        "Russian",
+        "German",
+        "Japanese",
+        "Portuguese",
+        "Italian",
+        "Dutch",
+        "Korean",
+        "Greek",
+        "Polish",
+        "Turkish",
+        "Swedish",
+        "Danish",
+        "Hindi",
+        "Finnish",
+        "Czech",
+        "Slovak",
+        "Hungarian",
+        "Thai",
+        "Romanian",
+      ];
+      const filtered = choices.filter((choice) =>
+        choice.startsWith(focusedValue)
+      );
+      await interaction.respond(
+        filtered.map((choice) => ({ name: choice, value: choice })).slice(0, 25)
+      );
     }
   },
 };

@@ -15,15 +15,14 @@ module.exports = {
     if (!interaction.isButton()) return;
     const setupData = await setupDB.findOne({ GuildID: interaction.guild.id });
     const isFound = setupData.JTCInfo.some((element) => {
-      const testChannel = element.owner.channels;
       if (element.owner === interaction.member.id) {
         return true;
       } else {
         return false;
       }
-    });
+    });     
 
-    const { customId, member } = interaction;
+    const { customId } = interaction;
     if (
       [
         "jtc-delete-vc-button",

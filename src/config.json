@@ -4,5 +4,6 @@
   "MongoDBConnect": "mongodb+srv://Ryou:R273169you@database.wopvio4.mongodb.net/Ryou",
   "ecoIcon": "<:Yur:1034414003071500320>",
   "ecoRuby": "<:Ruby:1034416992813326417>",
-  "weatherApiKey": "887c9d1888588329708c4d611129c441"
+  "weatherApiKey": "887c9d1888588329708c4d611129c441",
+  "giphyApiKey": "C8WtQRZvAw6a5lnMKUcLbt9VUNrJ91ox"
 }

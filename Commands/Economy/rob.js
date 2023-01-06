@@ -281,7 +281,7 @@ module.exports = {
                       value: `${client.config.ecoIcon}${Fine}`,
                       inline: true,
                     },
-                    { name: "Fine Gave To:", value: `${target}`, inline: true },
+                    { name: "Fine Given To:", value: `${target}`, inline: true },
                     {
                       name: `${member.user.username} Gave:`,
                       value: `${client.config.ecoIcon}${HalfFine}`,
