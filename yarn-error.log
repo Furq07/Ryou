@@ -1,0 +1,49 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js install
+
+PATH: 
+  C:\Program Files\Common Files\Oracle\Java\javapath;C:\ProgramData\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files\Git\cmd;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Program Files (x86)\Yarn\bin\;C:\Users\DELL\AppData\Local\Microsoft\WindowsApps;C:\Users\DELL\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\DELL\AppData\Local\GitHubDesktop\bin;C:\Users\DELL\AppData\Roaming\npm;C:\ProgramData\chocolatey\bin;C:\Users\DELL\AppData\Local\Yarn\bin;
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  16.18.0
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: UNKNOWN: unknown error, lstat 'J:\Other Data\RyouRewrite\node_modules\@aws-sdk\node-config-provider\dist-cjs\fromSharedConfigFiles.js'
+
+npm manifest: 
+  {
+    "name": "ryou",
+    "version": "0.1.0",
+    "description": "A All in one Package for your Server!",
+    "main": "src/bot.js",
+    "scripts": {
+      "test": "node ."
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+      "@iamtraction/google-translate": "^2.0.1",
+      "canvas": "^2.11.0",
+      "captcha-canvas": "3.2.1",
+      "chalk": "^4.1.2",
+      "discord-html-transcripts": "^3.1.2",
+      "discord.js": "^14.7.1",
+      "glob": "^8.0.3",
+      "mongoose": "^6.7.5",
+      "undici": "^5.14.0",
+      "util": "^0.12.5"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

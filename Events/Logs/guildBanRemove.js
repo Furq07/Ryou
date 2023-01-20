@@ -11,7 +11,7 @@ module.exports = {
   name: "guildBanRemove",
   async execute(ban, client) {
     // Checking after fetching all data
-    let setupData = await setupDB.findOne({ GuildID: client.guild.id });
+    let setupData = await setupDB.findOne({ GuildID: ban.guild.id });
     if (!setupData || !setupData.LogChannelID) return;
     const logChannel = client.channels.cache.get(`${setupData.LogChannelID}`);
     if (setupData.LogUnbanSetup === false || !setupData.LogUnbanSetup)

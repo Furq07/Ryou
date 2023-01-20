@@ -29,14 +29,6 @@ module.exports = {
         interaction
           .update({
             content: "Provide an integer, try again",
-            components: [
-              new ActionRowBuilder().addComponents(
-                new ButtonBuilder()
-                  .setCustomId("yes-jtc-user-limit")
-                  .setLabel("Try again")
-                  .setStyle(ButtonStyle.Primary)
-              ),
-            ],
             ephemeral: true,
             embeds: [],
           })
@@ -52,14 +44,6 @@ module.exports = {
             content:
               "User limit less than your channels members is not allowed, set some higher limit",
             ephemeral: true,
-            components: [
-              new ActionRowBuilder().addComponents(
-                new ButtonBuilder()
-                  .setCustomId("yes-jtc-user-limit")
-                  .setLabel("Try again")
-                  .setStyle(ButtonStyle.Primary)
-              ),
-            ],
           });
         } else {
           let userLimit = interaction.guild.channels.cache.get(
@@ -105,7 +89,7 @@ module.exports = {
           // }
 
           interaction
-            .update({
+            .reply({
               content: "",
               embeds: [
                 new EmbedBuilder()
@@ -124,6 +108,7 @@ module.exports = {
                   ),
               ],
               components: [],
+              ephemeral: true
             })
             .catch((err) => {
               return;

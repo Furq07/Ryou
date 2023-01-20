@@ -111,7 +111,7 @@ module.exports = {
         .find((r) => r.id === userChannelIsFound.channels)
         .setName(renameChannelInputValue);
 
-      interaction.update({
+      interaction.reply({
         embeds: [
           new EmbedBuilder()
             .setColor("#800000")
@@ -121,6 +121,7 @@ module.exports = {
             ),
         ],
         components: [],
+        ephemeral: true
       });
     }
   },
