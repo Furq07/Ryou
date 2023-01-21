@@ -17,15 +17,10 @@ module.exports = {
     const isFound = setupData.JTCInfo.some((element) => {
       if (element.owner === interaction.member.id) return true;
       else return false;
-    });     
-    if (isFound === false) {
-      return interaction.reply({
-      content: "You dont own any custom vc yet",
-      ephemeral: true,
-    }) }
-    const { customId, guild} = interaction;
-    const globalEmbed =  new EmbedBuilder()
-    .setColor("#800000");
+    });
+
+    const { customId, guild } = interaction;
+    const globalEmbed = new EmbedBuilder().setColor("#800000");
     if (
       [
         "jtc-delete-vc-button",
@@ -40,36 +35,39 @@ module.exports = {
         "jtc-unhide-button",
       ].includes(customId)
     ) {
-      
+      if (isFound === false) {
+        return interaction.reply({
+          content: "You dont own any custom vc yet",
+          ephemeral: true,
+        });
+      }
       switch (customId) {
-
         case "jtc-delete-vc-button":
           const deleteChannelIsFound = setupData.JTCInfo.find((element) => {
             if (element.owner === interaction.user.id) {
               return element.channels;
             }
           });
-              interaction.guild.channels.cache
-                .find((r) => r.id === deleteChannelIsFound.channels)
-                .delete();
+          interaction.guild.channels.cache
+            .find((r) => r.id === deleteChannelIsFound.channels)
+            .delete();
 
-              await setupDB.updateOne(
-                {
-                  GuildID: interaction.guild.id,
-                },
-                { $pull: { JTCInfo: { owner: interaction.user.id } } }
-              );
-              await interaction.reply({
-                embeds: [
-                  EmbedBuilder.from(globalEmbed)
-                    .setTitle("Deleted your custom vc")
-                    .setDescription(
-                      `You have successfully deleted your custom vc\n\nIf you want to create a new one just hop into <#${setupData.JTCChannelID}>`
-                    ),
-                ],
-                components: [],
-                ephemeral: true
-             
+          await setupDB.updateOne(
+            {
+              GuildID: interaction.guild.id,
+            },
+            { $pull: { JTCInfo: { owner: interaction.user.id } } }
+          );
+          await interaction.reply({
+            embeds: [
+              EmbedBuilder.from(globalEmbed)
+                .setTitle("Deleted your custom vc")
+                .setDescription(
+                  `You have successfully deleted your custom vc\n\nIf you want to create a new one just hop into <#${setupData.JTCChannelID}>`
+                ),
+            ],
+            components: [],
+            ephemeral: true,
           });
           break;
         case "jtc-user-limit-button":
@@ -78,24 +76,24 @@ module.exports = {
               return element.channels;
             }
           });
-                        const changeuserModal = new ModalBuilder()
-                .setCustomId(`jtc-update-user-limit-modal`)
-                .setTitle(`Update your custom vc user limit`);
+          const changeuserModal = new ModalBuilder()
+            .setCustomId(`jtc-update-user-limit-modal`)
+            .setTitle(`Update your custom vc user limit`);
 
-              const changeUserLimitTextInput = new TextInputBuilder()
-                .setCustomId(`jtc-update-user-limit-input`)
-                .setLabel(`Provide new user limit (0 = unlimited)`)
-                .setRequired(true)
-                .setStyle(TextInputStyle.Short)
-                .setPlaceholder("Enter the new user limit")
-                .setMaxLength(2)
-                .setMinLength(1);
-              changeuserModal.addComponents(
-                new ActionRowBuilder().addComponents(changeUserLimitTextInput)
-              );
-              interaction.showModal(changeuserModal).then(() => {
-                return;
-              });
+          const changeUserLimitTextInput = new TextInputBuilder()
+            .setCustomId(`jtc-update-user-limit-input`)
+            .setLabel(`Provide new user limit (0 = unlimited)`)
+            .setRequired(true)
+            .setStyle(TextInputStyle.Short)
+            .setPlaceholder("Enter the new user limit")
+            .setMaxLength(2)
+            .setMinLength(1);
+          changeuserModal.addComponents(
+            new ActionRowBuilder().addComponents(changeUserLimitTextInput)
+          );
+          interaction.showModal(changeuserModal).then(() => {
+            return;
+          });
           break;
         case "jtc-rename-vc-button":
           const userLimitIsFound2 = setupData.JTCInfo.find((element) => {
@@ -103,25 +101,24 @@ module.exports = {
               return element.channels;
             }
           });
-       
-          
-              const changeNameModal = new ModalBuilder()
-                .setCustomId(`jtc-change-name-modal`)
-                .setTitle(`Rename your custom vc`);
 
-              const changeNameTextInput = new TextInputBuilder()
-                .setCustomId(`jtc-change-name-input`)
-                .setLabel(`Enter name for you custom vc`)
-                .setRequired(true)
-                .setStyle(TextInputStyle.Short)
-                .setPlaceholder("New name")
-                .setMaxLength(32)
-                .setMinLength(2);
-              changeNameModal.addComponents(
-                new ActionRowBuilder().addComponents(changeNameTextInput)
-              );
-              interaction.showModal(changeNameModal);
-           
+          const changeNameModal = new ModalBuilder()
+            .setCustomId(`jtc-change-name-modal`)
+            .setTitle(`Rename your custom vc`);
+
+          const changeNameTextInput = new TextInputBuilder()
+            .setCustomId(`jtc-change-name-input`)
+            .setLabel(`Enter name for you custom vc`)
+            .setRequired(true)
+            .setStyle(TextInputStyle.Short)
+            .setPlaceholder("New name")
+            .setMaxLength(32)
+            .setMinLength(2);
+          changeNameModal.addComponents(
+            new ActionRowBuilder().addComponents(changeNameTextInput)
+          );
+          interaction.showModal(changeNameModal);
+
           break;
         case "jtc-unlock-channel-button":
           const userLimitIsFound3 = setupData.JTCInfo.find((element) => {
@@ -139,25 +136,25 @@ module.exports = {
               content: "You have already unlocked your vc",
               ephemeral: true,
             });
-          
-              interaction.guild.channels.cache
-                .get(userLimitIsFound3.channels)
-                .permissionOverwrites.edit(interaction.guild.roles.everyone.id, {
-                  Connect: true,
-                  Speak: true,
-                });
-              await interaction.reply({
-                embeds: [
-                  EmbedBuilder.from(globalEmbed)
-                    .setTitle("Unlocked your custom vc")
-                    .setDescription(
-                      `You have successfully unlocked your custom vc to everyone\n\n**Vc Information**\n**Name**: <#${userLimitIsFound3.channels}>\n**ID**: ${userLimitIsFound3.channels}\n**User Limit**: ${userLimitIsFound3.userLimit}`
-                    ),
-                ],
-                components: [],
-                ephemeral: true
-              });
-        
+
+          interaction.guild.channels.cache
+            .get(userLimitIsFound3.channels)
+            .permissionOverwrites.edit(interaction.guild.roles.everyone.id, {
+              Connect: true,
+              Speak: true,
+            });
+          await interaction.reply({
+            embeds: [
+              EmbedBuilder.from(globalEmbed)
+                .setTitle("Unlocked your custom vc")
+                .setDescription(
+                  `You have successfully unlocked your custom vc to everyone\n\n**Vc Information**\n**Name**: <#${userLimitIsFound3.channels}>\n**ID**: ${userLimitIsFound3.channels}\n**User Limit**: ${userLimitIsFound3.userLimit}`
+                ),
+            ],
+            components: [],
+            ephemeral: true,
+          });
+
           break;
         case "jtc-lock-channel-button":
           const userLimitIsFound4 = setupData.JTCInfo.find((element) => {
@@ -175,24 +172,24 @@ module.exports = {
               content: "You have already locked your vc",
               ephemeral: true,
             });
-       
-              interaction.guild.channels.cache
-                .get(userLimitIsFound4.channels)
-                .permissionOverwrites.edit(interaction.guild.roles.everyone.id, {
-                  Connect: false,
-                  Speak: false,
-                });
-              interaction.reply({
-                embeds: [
-                  EmbedBuilder.from(globalEmbed)
-                    .setTitle("Locked your custom vc")
-                    .setDescription(
-                      `You have successfully locked your custom vc to everyone\n\n**Vc Information**\n**Name**: <#${userLimitIsFound4.channels}>\n**ID**: ${userLimitIsFound4.channels}\n**User Limit**: ${userLimitIsFound4.userLimit}`
-                    ),
-                ],
-                components: [],
-                ephemeral: true
-              });   
+
+          interaction.guild.channels.cache
+            .get(userLimitIsFound4.channels)
+            .permissionOverwrites.edit(interaction.guild.roles.everyone.id, {
+              Connect: false,
+              Speak: false,
+            });
+          interaction.reply({
+            embeds: [
+              EmbedBuilder.from(globalEmbed)
+                .setTitle("Locked your custom vc")
+                .setDescription(
+                  `You have successfully locked your custom vc to everyone\n\n**Vc Information**\n**Name**: <#${userLimitIsFound4.channels}>\n**ID**: ${userLimitIsFound4.channels}\n**User Limit**: ${userLimitIsFound4.userLimit}`
+                ),
+            ],
+            components: [],
+            ephemeral: true,
+          });
           break;
         case "jtc-add-user-button":
           interaction.reply({
@@ -240,64 +237,64 @@ module.exports = {
               .catch(() => {
                 return;
               });
-      
-              interaction.guild.channels.cache
-                .get(userLimitIsFound5.channels)
-                .permissionOverwrites.edit(interaction.guild.roles.everyone.id, {
-                  ViewChannel: false,
+
+          interaction.guild.channels.cache
+            .get(userLimitIsFound5.channels)
+            .permissionOverwrites.edit(interaction.guild.roles.everyone.id, {
+              ViewChannel: false,
+            });
+
+          const jtcusers2 = userLimitIsFound5.users.map((a) => ({
+            id: a.id,
+            added: a.added === false,
+          }));
+          var size2 = Object.keys(userLimitIsFound5.users).length;
+          if (jtcusers2) {
+            for (let i = 0; i < size2; i++) {
+              guild.members
+                .fetch(`${jtcusers2[i].id}`)
+                .then((user) => {
+                  if (
+                    !interaction.guild.channels.cache
+                      .get(`${userLimitIsFound5.channels}`)
+                      .permissionsFor(`${user.id}`)
+                      .has("Connect")
+                  ) {
+                    interaction.guild.channels.cache
+                      .get(userLimitIsFound5.channels)
+                      .permissionOverwrites.edit(user, {
+                        ViewChannel: false,
+                      });
+                  }
+                })
+                .catch(() => {
+                  return;
                 });
+            }
+          }
 
-              const jtcusers2 = userLimitIsFound5.users.map((a) => ({
-                id: a.id,
-                added: a.added === false,
-              }));
-              var size2 = Object.keys(userLimitIsFound5.users).length;
-              if (jtcusers2) {
-                for (let i = 0; i < size2; i++) {
-                  guild.members
-                    .fetch(`${jtcusers2[i].id}`)
-                    .then((user) => {
-                      if (
-                        !interaction.guild.channels.cache
-                          .get(`${userLimitIsFound5.channels}`)
-                          .permissionsFor(`${user.id}`)
-                          .has("Connect")
-                      ) {
-                        interaction.guild.channels.cache
-                          .get(userLimitIsFound5.channels)
-                          .permissionOverwrites.edit(user, {
-                            ViewChannel: false,
-                          });
-                      }
-                    })
-                    .catch(() => {
-                      return;
-                    });
-                }
-              }
-
-              await setupDB.updateOne(
-                {
-                  GuildID: interaction.guild.id,
-                  "JTCInfo.owner": interaction.user.id,
-                },
-                {
-                  $set: {
-                    "JTCInfo.$.hidden": true,
-                  },
-                }
-              );
-              await interaction.reply({
-                embeds: [
-                  EmbedBuilder.from(globalEmbed)
-                    .setTitle("Hided your custom vc")
-                    .setDescription(
-                      `You have successfully hided your custom vc to everyone except for the users you have added yourself\n\n**Vc Information**\n**Name**: <#${userLimitIsFound5.channels}>\n**ID**: ${userLimitIsFound5.channels}\n**User Limit**: ${userLimitIsFound5.userLimit}`
-                    ),
-                ],
-                components: [],
-                ephemeral: true
-              });
+          await setupDB.updateOne(
+            {
+              GuildID: interaction.guild.id,
+              "JTCInfo.owner": interaction.user.id,
+            },
+            {
+              $set: {
+                "JTCInfo.$.hidden": true,
+              },
+            }
+          );
+          await interaction.reply({
+            embeds: [
+              EmbedBuilder.from(globalEmbed)
+                .setTitle("Hided your custom vc")
+                .setDescription(
+                  `You have successfully hided your custom vc to everyone except for the users you have added yourself\n\n**Vc Information**\n**Name**: <#${userLimitIsFound5.channels}>\n**ID**: ${userLimitIsFound5.channels}\n**User Limit**: ${userLimitIsFound5.userLimit}`
+                ),
+            ],
+            components: [],
+            ephemeral: true,
+          });
           break;
         case "jtc-unhide-button":
           const userLimitIsFound6 = setupData.JTCInfo.find((element) => {
@@ -316,56 +313,55 @@ module.exports = {
               content: "Your channel is already unhided to everyone",
               ephemeral: true,
             });
-        
-          
-              interaction.guild.channels.cache
-                .get(userLimitIsFound6.channels)
-                .permissionOverwrites.edit(interaction.guild.roles.everyone.id, {
-                  ViewChannel: true,
-                });
-              const jtcusers = userLimitIsFound6.users.map((a) => ({
-                id: a.id,
-                added: a.added === false,
-              }));
-              var size = Object.keys(userLimitIsFound6.users).length;
-              if (jtcusers) {
-                for (let i = 0; i < size; i++) {
-                  guild.members
-                    .fetch(`${jtcusers[i].id}`)
-                    .then((user) => {
-                      interaction.guild.channels.cache
-                        .get(`${userLimitIsFound6.channels}`)
-                        .permissionOverwrites.edit(user, {
-                          ViewChannel: true,
-                        });
-                    })
-                    .catch(() => {});
-                }
-              }
-              await setupDB.updateOne(
-                {
-                  GuildID: interaction.guild.id,
-                  "JTCInfo.owner": interaction.user.id,
-                },
-                {
-                  $set: {
-                    "JTCInfo.$.hidden": false,
-                  },
-                }
-              );
-              interaction.reply({
-                embeds: [
-                  EmbedBuilder.from(globalEmbed)
-                    .setTitle("UnHided your custom vc")
-                    .setDescription(
-                      `You have successfully unhided your custom vc to everyone\n\n**Vc Information**\n**Name**: <#${userLimitIsFound6.channels}>\n**ID**: ${userLimitIsFound6.channels}\n**User Limit**: ${userLimitIsFound6.userLimit}`
-                    ),
-                ],
-                components: [],
-                ephemeral: true
-              });
+
+          interaction.guild.channels.cache
+            .get(userLimitIsFound6.channels)
+            .permissionOverwrites.edit(interaction.guild.roles.everyone.id, {
+              ViewChannel: true,
+            });
+          const jtcusers = userLimitIsFound6.users.map((a) => ({
+            id: a.id,
+            added: a.added === false,
+          }));
+          var size = Object.keys(userLimitIsFound6.users).length;
+          if (jtcusers) {
+            for (let i = 0; i < size; i++) {
+              guild.members
+                .fetch(`${jtcusers[i].id}`)
+                .then((user) => {
+                  interaction.guild.channels.cache
+                    .get(`${userLimitIsFound6.channels}`)
+                    .permissionOverwrites.edit(user, {
+                      ViewChannel: true,
+                    });
+                })
+                .catch(() => {});
+            }
+          }
+          await setupDB.updateOne(
+            {
+              GuildID: interaction.guild.id,
+              "JTCInfo.owner": interaction.user.id,
+            },
+            {
+              $set: {
+                "JTCInfo.$.hidden": false,
+              },
+            }
+          );
+          interaction.reply({
+            embeds: [
+              EmbedBuilder.from(globalEmbed)
+                .setTitle("UnHided your custom vc")
+                .setDescription(
+                  `You have successfully unhided your custom vc to everyone\n\n**Vc Information**\n**Name**: <#${userLimitIsFound6.channels}>\n**ID**: ${userLimitIsFound6.channels}\n**User Limit**: ${userLimitIsFound6.userLimit}`
+                ),
+            ],
+            components: [],
+            ephemeral: true,
+          });
           break;
-    }
+      }
     }
   },
 };

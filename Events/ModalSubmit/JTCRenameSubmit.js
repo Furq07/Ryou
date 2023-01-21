@@ -101,10 +101,11 @@ module.exports = {
       ];
 
       if (bad_words.includes(renameChannelInputValue))
-        return interaction.update({
+        return interaction.reply({
           content: `That word is a profane word, which is not allowed `,
           components: [],
           embeds: [],
+          ephemeral: true,
         });
 
       interaction.guild.channels.cache
@@ -121,7 +122,7 @@ module.exports = {
             ),
         ],
         components: [],
-        ephemeral: true
+        ephemeral: true,
       });
     }
   },

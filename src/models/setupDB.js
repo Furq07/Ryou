@@ -15,6 +15,7 @@ module.exports = mongoose.model(
     JTCChannelID: String,
     JTCSettingID: String,
     JTCCategoryID: String,
+    Resetting: Boolean,
     VerificationSetuped: Boolean,
     VerificationType: String,
     VerificationChannelID: String,

@@ -57,7 +57,7 @@ module.exports = {
                 type: ChannelType.GuildCategory,
                 permissionOverwrites: [
                   {
-                    id: setupData.CommunityRoleID,
+                    id: guild.roles.everyone.id,
                     allow: [
                       PermissionFlagsBits.Connect,
                       PermissionFlagsBits.Speak,
@@ -74,7 +74,7 @@ module.exports = {
                     parent: categoryName,
                     permissionOverwrites: [
                       {
-                        id: setupData.CommunityRoleID,
+                        id: guild.roles.everyone.id,
                         deny: [PermissionFlagsBits.SendMessages],
                         allow: [PermissionFlagsBits.ViewChannel],
                       },
@@ -242,6 +242,10 @@ module.exports = {
             // const channels = serverID?.channels
             //   ? JSON.parse(JSON.stringify(serverID.channels)).guild.channels
             //   : [];
+            await setupDB.findOneAndUpdate(
+              { GuildID: guild.id },
+              { Resetting: true }
+            );
             const jtcCategory = guild.channels.cache.get(
               setupData.JTCCategoryID
             );
@@ -249,236 +253,232 @@ module.exports = {
               setupData.JTCSettingID
             );
             const jtcChannel = guild.channels.cache.get(setupData.JTCChannelID);
-            if (setupData.JTCInfo.length !== 0) {
-              await setupData.JTCInfo.forEach(async () => {
-                await interaction.update({
-                  embeds: [
-                    new EmbedBuilder()
-                      .setTitle("Resetting Up the JTC")
-                      .setColor("#800000")
-                      .setAuthor({
-                        name: member.user.tag,
-                        iconURL: member.user.displayAvatarURL(),
-                      })
-                      .setDescription("Please wait a Moment!")
-                      .setFooter({
-                        text: "Ryou - Utility",
-                        iconURL: client.user.displayAvatarURL(),
-                      }),
-                  ],
-                  components: [],
-                });
-                // await setupDB.updateMany(
-                //   {
-                //     GuildID: guild.id,
-                //   },
-                //   { $pull: { JTCInfo: { channels: owner.channels } } }
-                // );
+            await interaction.update({
+              embeds: [
+                new EmbedBuilder()
+                  .setTitle("Resetting Up the JTC")
+                  .setColor("#800000")
+                  .setAuthor({
+                    name: member.user.tag,
+                    iconURL: member.user.displayAvatarURL(),
+                  })
+                  .setDescription("Please wait a Moment!")
+                  .setFooter({
+                    text: "Ryou - Utility",
+                    iconURL: client.user.displayAvatarURL(),
+                  }),
+              ],
+              components: [],
+            });
+            // await setupDB.updateMany(
+            //   {
+            //     GuildID: guild.id,
+            //   },
+            //   { $pull: { JTCInfo: { channels: owner.channels } } }
+            // );
 
-                await jtcSettingChannel.delete();
-                await jtcChannel.delete();
-                await jtcCategory.delete().then(async (err) => {
-                  await guild.channels
-                    .create({
-                      name: "JTC VCs",
-                      type: ChannelType.GuildCategory,
-                      permissionOverwrites: [
-                        {
-                          id: setupData.CommunityRoleID,
-                          allow: [
-                            PermissionFlagsBits.Connect,
-                            PermissionFlagsBits.Speak,
-                            PermissionFlagsBits.ViewChannel,
-                          ],
-                        },
+            if (jtcSettingChannel) await jtcSettingChannel.delete();
+            if (jtcChannel) await jtcChannel.delete();
+            if (jtcCategory) await jtcCategory.delete();
+
+            await guild.channels
+              .create({
+                name: "JTC VCs",
+                type: ChannelType.GuildCategory,
+                permissionOverwrites: [
+                  {
+                    id: guild.roles.everyone.id,
+                    allow: [
+                      PermissionFlagsBits.Connect,
+                      PermissionFlagsBits.Speak,
+                      PermissionFlagsBits.ViewChannel,
+                    ],
+                  },
+                ],
+              })
+              .then(async (categoryName) => {
+                await guild.channels
+                  .create({
+                    name: "jtc-settings",
+                    type: ChannelType.GuildText,
+                    parent: categoryName,
+                    permissionOverwrites: [
+                      {
+                        id: guild.roles.everyone.id,
+                        deny: [PermissionFlagsBits.SendMessages],
+                        allow: [PermissionFlagsBits.ViewChannel],
+                      },
+                    ],
+                  })
+                  .then(async (channel) => {
+                    await setupDB.findOneAndUpdate(
+                      { GuildID: guild.id },
+                      { JTCSettingID: channel.id }
+                    );
+                    channel.send({
+                      embeds: [
+                        new EmbedBuilder()
+                          .setColor("#800000")
+                          .setTitle("Join to Create Settings")
+                          .setDescription(
+                            "You can manage your Custom VCs Using the Buttons Below!"
+                          ),
                       ],
-                    })
-                    .then(async (categoryName) => {
-                      await guild.channels
-                        .create({
-                          name: "jtc-settings",
-                          type: ChannelType.GuildText,
-                          parent: categoryName,
-                          permissionOverwrites: [
-                            {
-                              id: setupData.CommunityRoleID,
-                              deny: [PermissionFlagsBits.SendMessages],
-                              allow: [PermissionFlagsBits.ViewChannel],
-                            },
-                          ],
-                        })
-                        .then(async (channel) => {
-                          await setupDB.findOneAndUpdate(
-                            { GuildID: guild.id },
-                            { JTCSettingID: channel.id }
-                          );
-                          channel.send({
-                            embeds: [
-                              new EmbedBuilder()
-                                .setColor("#800000")
-                                .setTitle("Join to Create Settings")
-                                .setDescription(
-                                  "You can manage your Custom VCs Using the Buttons Below!"
-                                ),
-                            ],
-                            components: [
-                              new ActionRowBuilder().addComponents(
-                                new ButtonBuilder()
-                                  .setCustomId("jtc-delete-vc-button")
-                                  .setLabel("Delete VC")
-                                  .setStyle(ButtonStyle.Primary),
-                                new ButtonBuilder()
-                                  .setCustomId("jtc-rename-vc-button")
-                                  .setLabel("Rename VC")
-                                  .setStyle(ButtonStyle.Primary),
-                                new ButtonBuilder()
-                                  .setCustomId("jtc-user-limit-button")
-                                  .setLabel("User Limit")
-                                  .setStyle(ButtonStyle.Primary),
-                                new ButtonBuilder()
-                                  .setCustomId("jtc-lock-channel-button")
-                                  .setLabel("Lock VC")
-                                  .setStyle(ButtonStyle.Primary),
-                                new ButtonBuilder()
-                                  .setCustomId("jtc-unlock-channel-button")
-                                  .setLabel("Unlock VC")
-                                  .setStyle(ButtonStyle.Primary)
-                              ),
-                              new ActionRowBuilder().addComponents(
-                                new ButtonBuilder()
-                                  .setCustomId("jtc-add-user-button")
-                                  .setLabel("Add User")
-                                  .setStyle(ButtonStyle.Primary),
-                                new ButtonBuilder()
-                                  .setCustomId("jtc-remove-user-button")
-                                  .setLabel("Remove User")
-                                  .setStyle(ButtonStyle.Primary),
-                                new ButtonBuilder()
-                                  .setCustomId("jtc-hide-button")
-                                  .setLabel("Hide VC")
-                                  .setStyle(ButtonStyle.Primary),
-                                new ButtonBuilder()
-                                  .setCustomId("jtc-unhide-button")
-                                  .setLabel("Unhide VC")
-                                  .setStyle(ButtonStyle.Primary)
-                              ),
-                            ],
-                          });
-                          await guild.channels
-                            .create({
-                              name: `Join to Create`,
-                              type: ChannelType.GuildVoice,
-                              parent: categoryName,
-                              userLimit: 1,
-                            })
-                            .then(async (channel) => {
-                              await setupDB.findOneAndUpdate(
-                                { GuildID: guild.id },
-                                { JTCChannelID: channel.id }
-                              );
-                              await setupDB.findOneAndUpdate(
-                                { GuildID: guild.id },
-                                { JTCCategoryID: categoryName.id }
-                              );
-                              channel.setPosition(2);
-                              setupData.JTCInfo.forEach(async (owner) => {
-                                await guild.channels.cache
-                                  .find((r) => r.id === owner.channels)
-                                  .setParent(categoryName.id, {
-                                    lockPermissions: false,
-                                  });
-                              });
+                      components: [
+                        new ActionRowBuilder().addComponents(
+                          new ButtonBuilder()
+                            .setCustomId("jtc-delete-vc-button")
+                            .setLabel("Delete VC")
+                            .setStyle(ButtonStyle.Primary),
+                          new ButtonBuilder()
+                            .setCustomId("jtc-rename-vc-button")
+                            .setLabel("Rename VC")
+                            .setStyle(ButtonStyle.Primary),
+                          new ButtonBuilder()
+                            .setCustomId("jtc-user-limit-button")
+                            .setLabel("User Limit")
+                            .setStyle(ButtonStyle.Primary),
+                          new ButtonBuilder()
+                            .setCustomId("jtc-lock-channel-button")
+                            .setLabel("Lock VC")
+                            .setStyle(ButtonStyle.Primary),
+                          new ButtonBuilder()
+                            .setCustomId("jtc-unlock-channel-button")
+                            .setLabel("Unlock VC")
+                            .setStyle(ButtonStyle.Primary)
+                        ),
+                        new ActionRowBuilder().addComponents(
+                          new ButtonBuilder()
+                            .setCustomId("jtc-add-user-button")
+                            .setLabel("Add User")
+                            .setStyle(ButtonStyle.Primary),
+                          new ButtonBuilder()
+                            .setCustomId("jtc-remove-user-button")
+                            .setLabel("Remove User")
+                            .setStyle(ButtonStyle.Primary),
+                          new ButtonBuilder()
+                            .setCustomId("jtc-hide-button")
+                            .setLabel("Hide VC")
+                            .setStyle(ButtonStyle.Primary),
+                          new ButtonBuilder()
+                            .setCustomId("jtc-unhide-button")
+                            .setLabel("Unhide VC")
+                            .setStyle(ButtonStyle.Primary)
+                        ),
+                      ],
+                    });
+                    await guild.channels
+                      .create({
+                        name: `Join to Create`,
+                        type: ChannelType.GuildVoice,
+                        parent: categoryName,
+                        userLimit: 1,
+                      })
+                      .then(async (channel) => {
+                        await setupDB.findOneAndUpdate(
+                          { GuildID: guild.id },
+                          { JTCChannelID: channel.id }
+                        );
+                        await setupDB.findOneAndUpdate(
+                          { GuildID: guild.id },
+                          { JTCCategoryID: categoryName.id }
+                        );
+                        await channel.setPosition(2);
+                        setupData.JTCInfo.forEach(async (owner) => {
+                          await guild.channels.cache
+                            .find((r) => r.id === owner.channels)
+                            .setParent(categoryName.id, {
+                              lockPermissions: false,
                             });
                         });
-                    });
-                });
+                        await setupDB.findOneAndUpdate(
+                          { GuildID: guild.id },
+                          { Resetting: false }
+                        );
+                      });
+                  });
               });
-              await wait(3000);
-              msg.edit({
-                embeds: [
-                  new EmbedBuilder()
-                    .setTitle("JTC Resetup Complete!")
-                    .setColor("#800000")
-                    .setAuthor({
-                      name: member.user.tag,
-                      iconURL: member.user.displayAvatarURL(),
-                    })
-                    .setDescription(
-                      "JTC has been Resetup You can go ahead and Enjoy it!"
-                    )
-                    .setFooter({
-                      text: "Ryou - Utility",
-                      iconURL: client.user.displayAvatarURL(),
-                    }),
-                ],
-                components: [],
-              });
-              await wait(5000);
-              const MainMsg = await msg.edit({
-                fetchReply: true,
-                embeds: [
-                  new EmbedBuilder()
-                    .setTitle("__Main Setup Menu__")
-                    .setAuthor({
-                      name: member.user.tag,
-                      iconURL: member.user.displayAvatarURL(),
-                    })
-                    .setDescription(
-                      `This is the Main Setup Menu, you can choose what you want for your server and leave things that you don't need!
+
+            await wait(3000);
+            msg.edit({
+              embeds: [
+                new EmbedBuilder()
+                  .setTitle("JTC Resetup Complete!")
+                  .setColor("#800000")
+                  .setAuthor({
+                    name: member.user.tag,
+                    iconURL: member.user.displayAvatarURL(),
+                  })
+                  .setDescription(
+                    "JTC has been Resetup You can go ahead and Enjoy it!"
+                  )
+                  .setFooter({
+                    text: "Ryou - Utility",
+                    iconURL: client.user.displayAvatarURL(),
+                  }),
+              ],
+              components: [],
+            });
+            await wait(5000);
+            const MainMsg = await msg.edit({
+              fetchReply: true,
+              embeds: [
+                new EmbedBuilder()
+                  .setTitle("__Main Setup Menu__")
+                  .setAuthor({
+                    name: member.user.tag,
+                    iconURL: member.user.displayAvatarURL(),
+                  })
+                  .setDescription(
+                    `This is the Main Setup Menu, you can choose what you want for your server and leave things that you don't need!
                     
                     Simply go ahead and click on the Buttons and Complete them, when you have setup the things you want, you can just click on the Confirm Button!`
-                    )
-                    .setFooter({
-                      text: "Ryou - Utility",
-                      iconURL: client.user.displayAvatarURL(),
-                    }),
-                ],
-                components: [
-                  new ActionRowBuilder().addComponents(
-                    new ButtonBuilder()
-                      .setCustomId("JTCSetup")
-                      .setLabel("Join to Create")
-                      .setStyle(ButtonStyle.Danger),
-                    new ButtonBuilder()
-                      .setCustomId("VerificationSetup")
-                      .setLabel("Verification")
-                      .setStyle(ButtonStyle.Danger),
-                    new ButtonBuilder()
-                      .setCustomId("LogsSetup")
-                      .setLabel("Logs")
-                      .setStyle(ButtonStyle.Danger),
-                    new ButtonBuilder()
-                      .setCustomId("TicketSetup")
-                      .setLabel("Ticket")
-                      .setStyle(ButtonStyle.Danger)
-                  ),
-                ],
+                  )
+                  .setFooter({
+                    text: "Ryou - Utility",
+                    iconURL: client.user.displayAvatarURL(),
+                  }),
+              ],
+              components: [
+                new ActionRowBuilder().addComponents(
+                  new ButtonBuilder()
+                    .setCustomId("JTCSetup")
+                    .setLabel("Join to Create")
+                    .setStyle(ButtonStyle.Danger),
+                  new ButtonBuilder()
+                    .setCustomId("VerificationSetup")
+                    .setLabel("Verification")
+                    .setStyle(ButtonStyle.Danger),
+                  new ButtonBuilder()
+                    .setCustomId("LogsSetup")
+                    .setLabel("Logs")
+                    .setStyle(ButtonStyle.Danger),
+                  new ButtonBuilder()
+                    .setCustomId("TicketSetup")
+                    .setLabel("Ticket")
+                    .setStyle(ButtonStyle.Danger)
+                ),
+              ],
+            });
+            await setupDB.findOne({ GuildID: guild.id }).then((DB) => {
+              const data = MainMsg.components[0];
+              const newActionRow = ActionRowBuilder.from(data);
+              if (DB.JTCChannelID) {
+                newActionRow.components[0].setStyle(ButtonStyle.Success);
+              }
+              if (DB.VerificationChannelID) {
+                newActionRow.components[1].setStyle(ButtonStyle.Success);
+              }
+              if (DB.LogChannelID) {
+                newActionRow.components[2].setStyle(ButtonStyle.Success);
+              }
+              if (DB.TicketParentID) {
+                newActionRow.components[3].setStyle(ButtonStyle.Success);
+              }
+              MainMsg.edit({
+                components: [newActionRow],
               });
-              await setupDB.findOne({ GuildID: guild.id }).then((DB) => {
-                const data = MainMsg.components[0];
-                const newActionRow = ActionRowBuilder.from(data);
-                if (DB.JTCChannelID) {
-                  newActionRow.components[0].setStyle(ButtonStyle.Success);
-                }
-                if (DB.VerificationChannelID) {
-                  newActionRow.components[1].setStyle(ButtonStyle.Success);
-                }
-                if (DB.LogChannelID) {
-                  newActionRow.components[2].setStyle(ButtonStyle.Success);
-                }
-                if (DB.TicketParentID) {
-                  newActionRow.components[3].setStyle(ButtonStyle.Success);
-                }
-                MainMsg.edit({
-                  components: [newActionRow],
-                });
-              });
-            } else {
-              interaction.reply({
-                content: `Resetup requires atleast 1 or more than 1 custom vc, To make one just hope into <#${setupData.JTCChannelID}>`,
-                ephemeral: true,
-              });
-            }
+            });
           }
           break;
       }
