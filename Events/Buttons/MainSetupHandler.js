@@ -85,58 +85,65 @@ module.exports = {
                       { GuildID: guild.id },
                       { JTCSettingID: channel.id }
                     );
-                    channel.send({
-                      embeds: [
-                        new EmbedBuilder()
-                          .setColor("#800000")
-                          .setTitle("Join to Create Settings")
-                          .setDescription(
-                            "You can manage your Custom VCs Using the Buttons Below!"
+                    channel
+                      .send({
+                        embeds: [
+                          new EmbedBuilder()
+                            .setColor("#800000")
+                            .setTitle("Join to Create Settings")
+                            .setDescription(
+                              "You can manage your Custom VCs Using the Buttons Below!"
+                            ),
+                        ],
+                        components: [
+                          new ActionRowBuilder().addComponents(
+                            new ButtonBuilder()
+                              .setCustomId("jtc-delete-vc-button")
+                              .setLabel("Delete VC")
+                              .setStyle(ButtonStyle.Primary),
+                            new ButtonBuilder()
+                              .setCustomId("jtc-rename-vc-button")
+                              .setLabel("Rename VC")
+                              .setStyle(ButtonStyle.Primary),
+                            new ButtonBuilder()
+                              .setCustomId("jtc-user-limit-button")
+                              .setLabel("User Limit")
+                              .setStyle(ButtonStyle.Primary),
+                            new ButtonBuilder()
+                              .setCustomId("jtc-lock-channel-button")
+                              .setLabel("Lock VC")
+                              .setStyle(ButtonStyle.Primary),
+                            new ButtonBuilder()
+                              .setCustomId("jtc-unlock-channel-button")
+                              .setLabel("Unlock VC")
+                              .setStyle(ButtonStyle.Primary)
                           ),
-                      ],
-                      components: [
-                        new ActionRowBuilder().addComponents(
-                          new ButtonBuilder()
-                            .setCustomId("jtc-delete-vc-button")
-                            .setLabel("Delete VC")
-                            .setStyle(ButtonStyle.Primary),
-                          new ButtonBuilder()
-                            .setCustomId("jtc-rename-vc-button")
-                            .setLabel("Rename VC")
-                            .setStyle(ButtonStyle.Primary),
-                          new ButtonBuilder()
-                            .setCustomId("jtc-user-limit-button")
-                            .setLabel("User Limit")
-                            .setStyle(ButtonStyle.Primary),
-                          new ButtonBuilder()
-                            .setCustomId("jtc-lock-channel-button")
-                            .setLabel("Lock VC")
-                            .setStyle(ButtonStyle.Primary),
-                          new ButtonBuilder()
-                            .setCustomId("jtc-unlock-channel-button")
-                            .setLabel("Unlock VC")
-                            .setStyle(ButtonStyle.Primary)
-                        ),
-                        new ActionRowBuilder().addComponents(
-                          new ButtonBuilder()
-                            .setCustomId("jtc-add-user-button")
-                            .setLabel("Add User")
-                            .setStyle(ButtonStyle.Primary),
-                          new ButtonBuilder()
-                            .setCustomId("jtc-remove-user-button")
-                            .setLabel("Remove User")
-                            .setStyle(ButtonStyle.Primary),
-                          new ButtonBuilder()
-                            .setCustomId("jtc-hide-button")
-                            .setLabel("Hide VC")
-                            .setStyle(ButtonStyle.Primary),
-                          new ButtonBuilder()
-                            .setCustomId("jtc-unhide-button")
-                            .setLabel("Unhide VC")
-                            .setStyle(ButtonStyle.Primary)
-                        ),
-                      ],
-                    });
+                          new ActionRowBuilder().addComponents(
+                            new ButtonBuilder()
+                              .setCustomId("jtc-add-user-button")
+                              .setLabel("Add User")
+                              .setStyle(ButtonStyle.Primary),
+                            new ButtonBuilder()
+                              .setCustomId("jtc-remove-user-button")
+                              .setLabel("Remove User")
+                              .setStyle(ButtonStyle.Primary),
+                            new ButtonBuilder()
+                              .setCustomId("jtc-hide-button")
+                              .setLabel("Hide VC")
+                              .setStyle(ButtonStyle.Primary),
+                            new ButtonBuilder()
+                              .setCustomId("jtc-unhide-button")
+                              .setLabel("Unhide VC")
+                              .setStyle(ButtonStyle.Primary)
+                          ),
+                        ],
+                      })
+                      .then(async (message) => {
+                        await setupDB.findOneAndUpdate(
+                          { GuildID: guild.id },
+                          { JTCSettingMessageID: message.id }
+                        );
+                      });
                     guild.channels
                       .create({
                         name: `Join to Create`,
@@ -315,58 +322,65 @@ module.exports = {
                       { GuildID: guild.id },
                       { JTCSettingID: channel.id }
                     );
-                    channel.send({
-                      embeds: [
-                        new EmbedBuilder()
-                          .setColor("#800000")
-                          .setTitle("Join to Create Settings")
-                          .setDescription(
-                            "You can manage your Custom VCs Using the Buttons Below!"
+                    channel
+                      .send({
+                        embeds: [
+                          new EmbedBuilder()
+                            .setColor("#800000")
+                            .setTitle("Join to Create Settings")
+                            .setDescription(
+                              "You can manage your Custom VCs Using the Buttons Below!"
+                            ),
+                        ],
+                        components: [
+                          new ActionRowBuilder().addComponents(
+                            new ButtonBuilder()
+                              .setCustomId("jtc-delete-vc-button")
+                              .setLabel("Delete VC")
+                              .setStyle(ButtonStyle.Primary),
+                            new ButtonBuilder()
+                              .setCustomId("jtc-rename-vc-button")
+                              .setLabel("Rename VC")
+                              .setStyle(ButtonStyle.Primary),
+                            new ButtonBuilder()
+                              .setCustomId("jtc-user-limit-button")
+                              .setLabel("User Limit")
+                              .setStyle(ButtonStyle.Primary),
+                            new ButtonBuilder()
+                              .setCustomId("jtc-lock-channel-button")
+                              .setLabel("Lock VC")
+                              .setStyle(ButtonStyle.Primary),
+                            new ButtonBuilder()
+                              .setCustomId("jtc-unlock-channel-button")
+                              .setLabel("Unlock VC")
+                              .setStyle(ButtonStyle.Primary)
                           ),
-                      ],
-                      components: [
-                        new ActionRowBuilder().addComponents(
-                          new ButtonBuilder()
-                            .setCustomId("jtc-delete-vc-button")
-                            .setLabel("Delete VC")
-                            .setStyle(ButtonStyle.Primary),
-                          new ButtonBuilder()
-                            .setCustomId("jtc-rename-vc-button")
-                            .setLabel("Rename VC")
-                            .setStyle(ButtonStyle.Primary),
-                          new ButtonBuilder()
-                            .setCustomId("jtc-user-limit-button")
-                            .setLabel("User Limit")
-                            .setStyle(ButtonStyle.Primary),
-                          new ButtonBuilder()
-                            .setCustomId("jtc-lock-channel-button")
-                            .setLabel("Lock VC")
-                            .setStyle(ButtonStyle.Primary),
-                          new ButtonBuilder()
-                            .setCustomId("jtc-unlock-channel-button")
-                            .setLabel("Unlock VC")
-                            .setStyle(ButtonStyle.Primary)
-                        ),
-                        new ActionRowBuilder().addComponents(
-                          new ButtonBuilder()
-                            .setCustomId("jtc-add-user-button")
-                            .setLabel("Add User")
-                            .setStyle(ButtonStyle.Primary),
-                          new ButtonBuilder()
-                            .setCustomId("jtc-remove-user-button")
-                            .setLabel("Remove User")
-                            .setStyle(ButtonStyle.Primary),
-                          new ButtonBuilder()
-                            .setCustomId("jtc-hide-button")
-                            .setLabel("Hide VC")
-                            .setStyle(ButtonStyle.Primary),
-                          new ButtonBuilder()
-                            .setCustomId("jtc-unhide-button")
-                            .setLabel("Unhide VC")
-                            .setStyle(ButtonStyle.Primary)
-                        ),
-                      ],
-                    });
+                          new ActionRowBuilder().addComponents(
+                            new ButtonBuilder()
+                              .setCustomId("jtc-add-user-button")
+                              .setLabel("Add User")
+                              .setStyle(ButtonStyle.Primary),
+                            new ButtonBuilder()
+                              .setCustomId("jtc-remove-user-button")
+                              .setLabel("Remove User")
+                              .setStyle(ButtonStyle.Primary),
+                            new ButtonBuilder()
+                              .setCustomId("jtc-hide-button")
+                              .setLabel("Hide VC")
+                              .setStyle(ButtonStyle.Primary),
+                            new ButtonBuilder()
+                              .setCustomId("jtc-unhide-button")
+                              .setLabel("Unhide VC")
+                              .setStyle(ButtonStyle.Primary)
+                          ),
+                        ],
+                      })
+                      .then(async (message) => {
+                        await setupDB.findOneAndUpdate(
+                          { GuildID: guild.id },
+                          { JTCSettingMessageID: message.id }
+                        );
+                      });
                     await guild.channels
                       .create({
                         name: `Join to Create`,

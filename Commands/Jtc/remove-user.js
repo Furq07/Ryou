@@ -101,8 +101,8 @@ module.exports = {
           }
           if (
             size >=
-            interaction.guild.channels.cache.get(userLimitIsFound.channels)
-              .userLimit &&
+              interaction.guild.channels.cache.get(userLimitIsFound.channels)
+                .userLimit &&
             interaction.guild.channels.cache.get(userLimitIsFound.channels)
               .userLimit !== 0
           ) {
@@ -194,8 +194,8 @@ module.exports = {
           }
           if (
             size >=
-            interaction.guild.channels.cache.get(userLimitIsFound.channels)
-              .userLimit &&
+              interaction.guild.channels.cache.get(userLimitIsFound.channels)
+                .userLimit &&
             interaction.guild.channels.cache.get(userLimitIsFound.channels)
               .userLimit !== 0
           ) {
