@@ -27,6 +27,9 @@ module.exports = {
         "LogKickUserSetup",
         "LogUpdateUserSetup",
         "LogInviteCreateSetup",
+        "VerificationResetup",
+        "VerificationModeSetup",
+        "VerificationSetupB",
         "LogMessageDeleteSetup",
         "LogMessageUpdateSetup",
         "LogRoleCreateSetup",
@@ -649,6 +652,43 @@ module.exports = {
             newActionRow5,
           ],
         });
+      }
+    } else if (
+      [
+        "VerificationResetup",
+        "VerificationModeSetup",
+        "VerificationSetupB",
+      ].includes(customId)
+    ) {
+      switch (customId) {
+        case "VerificationModeSetup":
+          let Mode;
+          if (setupData.VerificationMode === false) {
+            newActionRow.components[0]
+              .setLabel("Mode: Captcha")
+              .setStyle(ButtonStyle.Success);
+            await setupDB.findOneAndUpdate(
+              { GuildID: guild.id },
+              { VerificationMode: true }
+            );
+            Mode = true;
+          } else {
+            newActionRow.components[0]
+              .setLabel("Mode: Normal")
+              .setStyle(ButtonStyle.Success);
+            await setupDB.findOneAndUpdate(
+              { GuildID: guild.id },
+              { VerificationMode: false }
+            );
+            Mode = false;
+          }
+          const VerifyDB = setupDB.findOne({ GuildID: guild.id });
+          if (VerifyDB.VerificationMode && VerifyDB.VerificationDesc)
+            newActionRow.components[2].setDisabled(false);
+          interaction.update({ components: [newActionRow] });
+          break;
+        case "VerificationSetup":
+          break;
       }
     } else if (customId === "MainSetupMenu") {
       const MainMsg = await interaction.update({

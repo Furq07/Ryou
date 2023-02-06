@@ -14,6 +14,8 @@ module.exports = {
       interaction;
     if (type !== InteractionType.ModalSubmit) return;
     const msg = await channel.messages.fetch(message.id);
+    const msgEmbed = msg.embeds[0];
+    const MsgEmbed = EmbedBuilder.from(msgEmbed);
     const data = msg.components[0];
     const newActionRow = ActionRowBuilder.from(data);
     if (["CommunityModal", "StaffModal", "AdminModal"].includes(customId)) {
@@ -137,7 +139,7 @@ module.exports = {
           });
         });
       }
-    } else if (["LogChannelModal"].includes(customId)) {
+    } else if (customId === "LogChannelModal") {
       const setupData = await setupDB.findOne({ GuildID: guild.id });
       const LogChannel = fields.getTextInputValue("LogChannelInput");
       if (!guild.channels.cache.has(LogChannel))
@@ -327,6 +329,34 @@ module.exports = {
           newActionRow4,
           newActionRow5,
         ],
+      });
+    } else if ("VerificationDescModal" === customId) {
+      const VerificationDesc = fields.getTextInputValue(
+        "VerificationDescInput"
+      );
+      newActionRow.components[1].setStyle(ButtonStyle.Success);
+      await setupDB.findOneAndUpdate(
+        { GuildID: guild.id },
+        { VerificationDesc: `${VerificationDesc}` }
+      );
+      const VerifyDB = setupDB.findOne({ GuildID: guild.id });
+      if (VerifyDB.VerificationMode && VerifyDB.VerificationDesc)
+        newActionRow.components[2].setDisabled(false);
+
+      interaction.update({
+        embeds: [
+          MsgEmbed.setDescription(
+            `This is Main Verification Setup Menu,
+            Choose what you want to do from Below!
+
+            There are 2 Modes for Verification System,
+            You can change them by Clicking on Mode Button!
+            
+            **Description Preview:**
+            ${VerificationDesc}`
+          ),
+        ],
+        components: [newActionRow],
       });
     }
   },

@@ -8,7 +8,7 @@ const {
   EmbedBuilder,
 } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
-const wait = require("util").promisify(setTimeout);
+const captchaDB = require("../../src/models/captchaDB");
 module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
@@ -21,6 +21,7 @@ module.exports = {
         "AdminRole",
         "JTCSetup",
         "VerificationSetup",
+        "VerificationDescSetup",
         "LogsSetup",
         "TicketSetup",
         "LogSettingsSetup",
@@ -29,6 +30,7 @@ module.exports = {
     )
       return;
     const setupData = await setupDB.findOne({ GuildID: guild.id });
+    const captchaData = await captchaDB.findOne({ GuildID: guild.id });
     const msg = await channel.messages.fetch(message.id);
     const msgEmbed = msg.embeds[0];
     const author = msgEmbed.author.name;
@@ -220,6 +222,95 @@ module.exports = {
           });
           break;
         case "VerificationSetup":
+          if (setupData.VerificationChannelID)
+            return interaction.update({
+              embeds: [
+                new EmbedBuilder()
+                  .setTitle("Verification Setup Menu")
+                  .setDescription(
+                    `Do you wanna Re-Setup?
+                    Maybe change Description or Change Mode?
+                    
+                    Do it from Below!`
+                  )
+                  .setFooter({
+                    text: "Ryou - Utility",
+                    iconURL: client.user.displayAvatarURL(),
+                  })
+                  .setColor("#800000")
+                  .setAuthor({
+                    name: member.user.tag,
+                    iconURL: member.user.displayAvatarURL(),
+                  }),
+              ],
+              components: [
+                new ActionRowBuilder().addComponents(
+                  new ButtonBuilder()
+                    .setCustomId("VerificationModeSetup")
+                    .setLabel("Mode: None")
+                    .setStyle(ButtonStyle.Primary),
+                  new ButtonBuilder()
+                    .setCustomId("VerificationDescSetup")
+                    .setLabel("Description")
+                    .setStyle(ButtonStyle.Primary),
+                  new ButtonBuilder()
+                    .setCustomId("VerificationSetupB")
+                    .setLabel("Confirm")
+                    .setStyle(ButtonStyle.Success),
+                  new ButtonBuilder()
+                    .setCustomId("MainSetupMenu")
+                    .setLabel("Cancel")
+                    .setStyle(ButtonStyle.Danger),
+                  new ButtonBuilder()
+                    .setCustomId("VerificationResetup")
+                    .setLabel("Re-Setup")
+                    .setStyle(ButtonStyle.Primary)
+                ),
+              ],
+            });
+          interaction.update({
+            embeds: [
+              new EmbedBuilder()
+                .setTitle("Verification Setup Menu")
+                .setDescription(
+                  `This is Main Verification Setup Menu,
+                Choose what you want to do from Below!
+                
+                There are 2 Modes for Verification System,
+                You can change them by Clicking on Mode Button!`
+                )
+                .setFooter({
+                  text: "Ryou - Utility",
+                  iconURL: client.user.displayAvatarURL(),
+                })
+                .setColor("#800000")
+                .setAuthor({
+                  name: member.user.tag,
+                  iconURL: member.user.displayAvatarURL(),
+                }),
+            ],
+            components: [
+              new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                  .setCustomId("VerificationModeSetup")
+                  .setLabel("Mode: None")
+                  .setStyle(ButtonStyle.Primary),
+                new ButtonBuilder()
+                  .setCustomId("VerificationDescSetup")
+                  .setLabel("Description")
+                  .setStyle(ButtonStyle.Primary),
+                new ButtonBuilder()
+                  .setCustomId("VerificationSetupB")
+                  .setLabel("Confirm")
+                  .setDisabled(true)
+                  .setStyle(ButtonStyle.Success),
+                new ButtonBuilder()
+                  .setCustomId("MainSetupMenu")
+                  .setLabel("Cancel")
+                  .setStyle(ButtonStyle.Danger)
+              ),
+            ],
+          });
           break;
         case "TicketSetup":
           break;
@@ -425,6 +516,22 @@ module.exports = {
           await interaction.showModal(LogChannelModal);
           break;
       }
+    } else if (["VerificationDescSetup"].includes(customId)) {
+      const VerificationDescModal = new ModalBuilder()
+        .setCustomId("VerificationDescModal")
+        .setTitle("Enter Description For Embed:");
+      const VerificationDescInput = new TextInputBuilder()
+        .setCustomId("VerificationDescInput")
+        .setLabel("Enter the Description Below:")
+        .setRequired(true)
+        .setPlaceholder(
+          "This is Verification Section, Click on the Button Below to Unlock the Server!"
+        )
+        .setStyle(TextInputStyle.Paragraph);
+      VerificationDescModal.addComponents(
+        new ActionRowBuilder().addComponents(VerificationDescInput)
+      );
+      await interaction.showModal(VerificationDescModal);
     }
   },
 };
