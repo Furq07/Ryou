@@ -7,6 +7,7 @@ const {
   PermissionFlagsBits,
 } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
+const draftDB = require("../../src/models/draftDB");
 const wait = require("util").promisify(setTimeout);
 module.exports = {
   name: "interactionCreate",
@@ -29,7 +30,7 @@ module.exports = {
         "LogInviteCreateSetup",
         "VerificationResetup",
         "VerificationModeSetup",
-        "VerificationSetupB",
+        "VerificationConfirm",
         "LogMessageDeleteSetup",
         "LogMessageUpdateSetup",
         "LogRoleCreateSetup",
@@ -40,6 +41,7 @@ module.exports = {
     )
       return;
     const setupData = await setupDB.findOne({ GuildID: guild.id });
+    const draftData = await draftDB.findOne({ GuildID: guild.id });
     const msg = await channel.messages.fetch(message.id);
     const data = msg.components[0];
     const newActionRow = ActionRowBuilder.from(data);
@@ -657,13 +659,32 @@ module.exports = {
       [
         "VerificationResetup",
         "VerificationModeSetup",
-        "VerificationSetupB",
+        "VerificationConfirm",
       ].includes(customId)
     ) {
       switch (customId) {
         case "VerificationModeSetup":
-          let Mode;
-          if (setupData.VerificationMode === false) {
+          const data2 = msg.components[1];
+          const newActionRow2 = ActionRowBuilder.from(data2);
+          if (!setupData.VerificationMode) {
+            if (draftData.VerificationMode === false) {
+              newActionRow.components[0]
+                .setLabel("Mode: Captcha")
+                .setStyle(ButtonStyle.Success);
+              await draftDB.findOneAndUpdate(
+                { GuildID: guild.id },
+                { VerificationMode: true }
+              );
+            } else {
+              newActionRow.components[0]
+                .setLabel("Mode: Normal")
+                .setStyle(ButtonStyle.Success);
+              await draftDB.findOneAndUpdate(
+                { GuildID: guild.id },
+                { VerificationMode: false }
+              );
+            }
+          } else if (setupData.VerificationMode === false) {
             newActionRow.components[0]
               .setLabel("Mode: Captcha")
               .setStyle(ButtonStyle.Success);
@@ -671,7 +692,6 @@ module.exports = {
               { GuildID: guild.id },
               { VerificationMode: true }
             );
-            Mode = true;
           } else {
             newActionRow.components[0]
               .setLabel("Mode: Normal")
@@ -680,14 +700,126 @@ module.exports = {
               { GuildID: guild.id },
               { VerificationMode: false }
             );
-            Mode = false;
           }
-          const VerifyDB = setupDB.findOne({ GuildID: guild.id });
-          if (VerifyDB.VerificationMode && VerifyDB.VerificationDesc)
-            newActionRow.components[2].setDisabled(false);
-          interaction.update({ components: [newActionRow] });
+          interaction.update({ components: [newActionRow, newActionRow2] });
           break;
-        case "VerificationSetup":
+        case "VerificationConfirm":
+          await setupDB.findOneAndUpdate(
+            { GuildID: guild.id },
+            {
+              VerificationMode: draftData.VerificationMode,
+              VerificationDesc: draftData.VerificationDesc,
+              VerificationChannelID: draftData.VerificationChannelID,
+            }
+          );
+          const VerifyChannel = guild.channels.cache.get(
+            draftData.VerificationChannelID
+          );
+
+          const M = await VerifyChannel.send({
+            embeds: [
+              new EmbedBuilder()
+                .setTitle(`${guild.name} | Verification Center`)
+                .setDescription(`${draftData.VerificationDesc}`)
+                .setColor("#800000")
+                .setFooter({
+                  text: "Ryou - Verification",
+                  iconURL: client.user.displayAvatarURL(),
+                }),
+            ],
+            components: [
+              new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                  .setCustomId("VerifyButton")
+                  .setLabel("Verify")
+                  .setStyle(ButtonStyle.Success)
+                  .setEmoji("☑️")
+              ),
+            ],
+            fetchReply: true,
+          });
+          // await draftDB.findOneAndDelete({});
+          await wait(3000);
+          msg.edit({
+            embeds: [
+              new EmbedBuilder()
+                .setTitle("Verification Setup Complete!")
+                .setColor("#800000")
+                .setAuthor({
+                  name: member.user.tag,
+                  iconURL: member.user.displayAvatarURL(),
+                })
+                .setDescription(
+                  `Verification has been Setuped!
+                  You can check it out by [Clicking Here](${M.url})!`
+                )
+                .setFooter({
+                  text: "Ryou - Utility",
+                  iconURL: client.user.displayAvatarURL(),
+                }),
+            ],
+            components: [],
+          });
+          await wait(5000);
+          const MainMsg = await msg.edit({
+            fetchReply: true,
+            embeds: [
+              new EmbedBuilder()
+                .setTitle("__Main Setup Menu__")
+                .setAuthor({
+                  name: member.user.tag,
+                  iconURL: member.user.displayAvatarURL(),
+                })
+                .setDescription(
+                  `This is the Main Setup Menu, you can choose what you want for your server and leave things that you don't need!
+                  
+                  Simply go ahead and click on the Buttons and Complete them, when you have setup the things you want, you can just click on the Confirm Button!`
+                )
+                .setFooter({
+                  text: "Ryou - Utility",
+                  iconURL: client.user.displayAvatarURL(),
+                }),
+            ],
+            components: [
+              new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                  .setCustomId("JTCSetup")
+                  .setLabel("Join to Create")
+                  .setStyle(ButtonStyle.Danger),
+                new ButtonBuilder()
+                  .setCustomId("VerificationSetup")
+                  .setLabel("Verification")
+                  .setStyle(ButtonStyle.Danger),
+                new ButtonBuilder()
+                  .setCustomId("LogsSetup")
+                  .setLabel("Logs")
+                  .setStyle(ButtonStyle.Danger),
+                new ButtonBuilder()
+                  .setCustomId("TicketSetup")
+                  .setLabel("Ticket")
+                  .setStyle(ButtonStyle.Danger)
+              ),
+            ],
+          });
+          await setupDB.findOne({ GuildID: guild.id }).then((DB) => {
+            const data = MainMsg.components[0];
+            const newActionRow = ActionRowBuilder.from(data);
+            if (DB.JTCChannelID) {
+              newActionRow.components[0].setStyle(ButtonStyle.Success);
+            }
+            if (DB.VerificationChannelID) {
+              newActionRow.components[1].setStyle(ButtonStyle.Success);
+            }
+            if (DB.LogChannelID) {
+              newActionRow.components[2].setStyle(ButtonStyle.Success);
+            }
+            if (DB.TicketParentID) {
+              newActionRow.components[3].setStyle(ButtonStyle.Success);
+            }
+            MainMsg.edit({
+              components: [newActionRow],
+            });
+          });
           break;
       }
     } else if (customId === "MainSetupMenu") {

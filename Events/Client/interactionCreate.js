@@ -7,6 +7,7 @@ const {
 const ecoDB = require("../../src/models/ecoDB");
 const setupDB = require("../../src/models/setupDB");
 const cooldownDB = require("../../src/models/cooldownDB");
+const draftDB = require("../../src/models/draftDB");
 module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
@@ -105,6 +106,7 @@ module.exports = {
         new setupDB({
           GuildID: guild.id,
         }).save();
+        new draftDB({ GuildID: guild.id }).save();
         return;
       }
       if (

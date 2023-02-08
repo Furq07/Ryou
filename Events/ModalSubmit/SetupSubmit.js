@@ -6,6 +6,7 @@ const {
   ButtonStyle,
 } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
+const draftDB = require("../../src/models/draftDB");
 const wait = require("util").promisify(setTimeout);
 module.exports = {
   name: "interactionCreate",
@@ -13,11 +14,14 @@ module.exports = {
     const { guild, type, customId, message, channel, fields, member } =
       interaction;
     if (type !== InteractionType.ModalSubmit) return;
+    const draftData = await draftDB.findOne({ GuildID: guild.id });
     const msg = await channel.messages.fetch(message.id);
     const msgEmbed = msg.embeds[0];
     const MsgEmbed = EmbedBuilder.from(msgEmbed);
     const data = msg.components[0];
     const newActionRow = ActionRowBuilder.from(data);
+    const data2 = msg.components[1];
+    const newActionRow2 = ActionRowBuilder.from(data2);
     if (["CommunityModal", "StaffModal", "AdminModal"].includes(customId)) {
       switch (customId) {
         case "CommunityModal":
@@ -335,14 +339,10 @@ module.exports = {
         "VerificationDescInput"
       );
       newActionRow.components[1].setStyle(ButtonStyle.Success);
-      await setupDB.findOneAndUpdate(
+      await draftDB.findOneAndUpdate(
         { GuildID: guild.id },
         { VerificationDesc: `${VerificationDesc}` }
       );
-      const VerifyDB = setupDB.findOne({ GuildID: guild.id });
-      if (VerifyDB.VerificationMode && VerifyDB.VerificationDesc)
-        newActionRow.components[2].setDisabled(false);
-
       interaction.update({
         embeds: [
           MsgEmbed.setDescription(
@@ -356,7 +356,24 @@ module.exports = {
             ${VerificationDesc}`
           ),
         ],
-        components: [newActionRow],
+        components: [newActionRow, newActionRow2],
+      });
+    } else if ("VerificationChannelModal" === customId) {
+      const VerificationChannel = fields.getTextInputValue(
+        "VerificationChannelInput"
+      );
+      if (!guild.roles.cache.find((r) => r.id === VerificationChannel))
+        return interaction.reply({
+          content: "The Provided ID for Channel is Invalid.",
+          ephemeral: true,
+        });
+      newActionRow.components[2].setStyle(ButtonStyle.Success);
+      await draftDB.findOneAndUpdate(
+        { GuildID: guild.id },
+        { VerificationChannelID: VerificationChannel }
+      );
+      interaction.update({
+        components: [newActionRow, newActionRow2],
       });
     }
   },

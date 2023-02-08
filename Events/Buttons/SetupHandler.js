@@ -9,6 +9,7 @@ const {
 } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
 const captchaDB = require("../../src/models/captchaDB");
+const draftDB = require("../../src/models/draftDB");
 module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
@@ -22,6 +23,7 @@ module.exports = {
         "JTCSetup",
         "VerificationSetup",
         "VerificationDescSetup",
+        "VerificationChannelID",
         "LogsSetup",
         "TicketSetup",
         "LogSettingsSetup",
@@ -30,7 +32,6 @@ module.exports = {
     )
       return;
     const setupData = await setupDB.findOne({ GuildID: guild.id });
-    const captchaData = await captchaDB.findOne({ GuildID: guild.id });
     const msg = await channel.messages.fetch(message.id);
     const msgEmbed = msg.embeds[0];
     const author = msgEmbed.author.name;
@@ -222,53 +223,51 @@ module.exports = {
           });
           break;
         case "VerificationSetup":
+          const VerfiyConfirm = new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId("MainSetupMenu")
+              .setLabel("Cancel")
+              .setStyle(ButtonStyle.Danger),
+            new ButtonBuilder()
+              .setCustomId("VerificationConfirm")
+              .setLabel("Confirm")
+              .setStyle(ButtonStyle.Success)
+          );
+          let VerfiyButtons = new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId("VerificationModeSetup")
+              .setLabel("Mode: None")
+              .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+              .setCustomId("VerificationDescSetup")
+              .setLabel("Description")
+              .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+              .setCustomId("VerificationChannelID")
+              .setLabel("Verification Channel")
+              .setStyle(ButtonStyle.Primary)
+          );
           if (setupData.VerificationChannelID)
-            return interaction.update({
-              embeds: [
-                new EmbedBuilder()
-                  .setTitle("Verification Setup Menu")
-                  .setDescription(
-                    `Do you wanna Re-Setup?
-                    Maybe change Description or Change Mode?
-                    
-                    Do it from Below!`
-                  )
-                  .setFooter({
-                    text: "Ryou - Utility",
-                    iconURL: client.user.displayAvatarURL(),
-                  })
-                  .setColor("#800000")
-                  .setAuthor({
-                    name: member.user.tag,
-                    iconURL: member.user.displayAvatarURL(),
-                  }),
-              ],
-              components: [
-                new ActionRowBuilder().addComponents(
-                  new ButtonBuilder()
-                    .setCustomId("VerificationModeSetup")
-                    .setLabel("Mode: None")
-                    .setStyle(ButtonStyle.Primary),
-                  new ButtonBuilder()
-                    .setCustomId("VerificationDescSetup")
-                    .setLabel("Description")
-                    .setStyle(ButtonStyle.Primary),
-                  new ButtonBuilder()
-                    .setCustomId("VerificationSetupB")
-                    .setLabel("Confirm")
-                    .setStyle(ButtonStyle.Success),
-                  new ButtonBuilder()
-                    .setCustomId("MainSetupMenu")
-                    .setLabel("Cancel")
-                    .setStyle(ButtonStyle.Danger),
-                  new ButtonBuilder()
-                    .setCustomId("VerificationResetup")
-                    .setLabel("Re-Setup")
-                    .setStyle(ButtonStyle.Primary)
-                ),
-              ],
-            });
-          interaction.update({
+            VerfiyButtons = new ActionRowBuilder().addComponents(
+              new ButtonBuilder()
+                .setCustomId("VerificationModeSetup")
+                .setLabel("Mode: ......")
+                .setStyle(ButtonStyle.Primary),
+              new ButtonBuilder()
+                .setCustomId("VerificationDescSetup")
+                .setLabel("Description")
+                .setStyle(ButtonStyle.Primary),
+              new ButtonBuilder()
+                .setCustomId("VerificationChannelID")
+                .setLabel("Verification Channel")
+                .setStyle(ButtonStyle.Primary),
+              new ButtonBuilder()
+                .setCustomId("VerificationResetup")
+                .setLabel("Re-Setup")
+                .setStyle(ButtonStyle.Primary)
+            );
+          const M = await interaction.update({
+            fetchReply: true,
             embeds: [
               new EmbedBuilder()
                 .setTitle("Verification Setup Menu")
@@ -289,28 +288,28 @@ module.exports = {
                   iconURL: member.user.displayAvatarURL(),
                 }),
             ],
-            components: [
-              new ActionRowBuilder().addComponents(
-                new ButtonBuilder()
-                  .setCustomId("VerificationModeSetup")
-                  .setLabel("Mode: None")
-                  .setStyle(ButtonStyle.Primary),
-                new ButtonBuilder()
-                  .setCustomId("VerificationDescSetup")
-                  .setLabel("Description")
-                  .setStyle(ButtonStyle.Primary),
-                new ButtonBuilder()
-                  .setCustomId("VerificationSetupB")
-                  .setLabel("Confirm")
-                  .setDisabled(true)
-                  .setStyle(ButtonStyle.Success),
-                new ButtonBuilder()
-                  .setCustomId("MainSetupMenu")
-                  .setLabel("Cancel")
-                  .setStyle(ButtonStyle.Danger)
-              ),
-            ],
+            components: [VerfiyButtons, VerfiyConfirm],
           });
+          const data = msg.components[0];
+          const newActionRow = ActionRowBuilder.from(data);
+          if (setupData.VerificationMode === false) {
+            newActionRow.components[0]
+              .setLabel("Mode: Captcha")
+              .setStyle(ButtonStyle.Primary);
+            await setupDB.findOneAndUpdate(
+              { GuildID: guild.id },
+              { VerificationMode: true }
+            );
+          } else if (setupData.VerificationMode === true) {
+            newActionRow.components[0]
+              .setLabel("Mode: Normal")
+              .setStyle(ButtonStyle.Primary);
+            await setupDB.findOneAndUpdate(
+              { GuildID: guild.id },
+              { VerificationMode: false }
+            );
+          }
+          M.edit({ components: [newActionRow, VerfiyConfirm] });
           break;
         case "TicketSetup":
           break;
@@ -532,6 +531,20 @@ module.exports = {
         new ActionRowBuilder().addComponents(VerificationDescInput)
       );
       await interaction.showModal(VerificationDescModal);
+    } else if (["VerificationChannelID"].includes(customId)) {
+      const VerificationChannelModal = new ModalBuilder()
+        .setCustomId("VerificationChannelModal")
+        .setTitle("Enter ID of Verification Channel");
+      const VerificationChannelInput = new TextInputBuilder()
+        .setCustomId("VerificationChannelInput")
+        .setLabel("Enter the ID Below:")
+        .setRequired(true)
+        .setPlaceholder("Example: 1072950570895278201")
+        .setStyle(TextInputStyle.Short);
+      VerificationChannelModal.addComponents(
+        new ActionRowBuilder().addComponents(VerificationChannelInput)
+      );
+      await interaction.showModal(VerificationChannelModal);
     }
   },
 };
