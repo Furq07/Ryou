@@ -362,7 +362,7 @@ module.exports = {
       const VerificationChannel = fields.getTextInputValue(
         "VerificationChannelInput"
       );
-      if (!guild.roles.cache.find((r) => r.id === VerificationChannel))
+      if (!guild.channels.cache.find((c) => c.id === VerificationChannel))
         return interaction.reply({
           content: "The Provided ID for Channel is Invalid.",
           ephemeral: true,

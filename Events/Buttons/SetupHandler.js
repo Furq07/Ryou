@@ -223,60 +223,53 @@ module.exports = {
           });
           break;
         case "VerificationSetup":
-          const VerfiyConfirm = new ActionRowBuilder().addComponents(
-            new ButtonBuilder()
-              .setCustomId("MainSetupMenu")
-              .setLabel("Cancel")
-              .setStyle(ButtonStyle.Danger),
-            new ButtonBuilder()
-              .setCustomId("VerificationConfirm")
-              .setLabel("Confirm")
-              .setStyle(ButtonStyle.Success)
-          );
-          let VerfiyButtons = new ActionRowBuilder().addComponents(
-            new ButtonBuilder()
-              .setCustomId("VerificationModeSetup")
-              .setLabel("Mode: None")
-              .setStyle(ButtonStyle.Primary),
-            new ButtonBuilder()
-              .setCustomId("VerificationDescSetup")
-              .setLabel("Description")
-              .setStyle(ButtonStyle.Primary),
-            new ButtonBuilder()
-              .setCustomId("VerificationChannelID")
-              .setLabel("Verification Channel")
-              .setStyle(ButtonStyle.Primary)
-          );
-          if (setupData.VerificationChannelID)
-            VerfiyButtons = new ActionRowBuilder().addComponents(
-              new ButtonBuilder()
-                .setCustomId("VerificationModeSetup")
-                .setLabel("Mode: ......")
-                .setStyle(ButtonStyle.Primary),
-              new ButtonBuilder()
-                .setCustomId("VerificationDescSetup")
-                .setLabel("Description")
-                .setStyle(ButtonStyle.Primary),
-              new ButtonBuilder()
-                .setCustomId("VerificationChannelID")
-                .setLabel("Verification Channel")
-                .setStyle(ButtonStyle.Primary),
-              new ButtonBuilder()
-                .setCustomId("VerificationResetup")
-                .setLabel("Re-Setup")
-                .setStyle(ButtonStyle.Primary)
-            );
+          if (!guild.channels.cache.get(setupData.VerificationChannelID))
+            return interaction.update({
+              embeds: [
+                new EmbedBuilder()
+                  .setTitle("Verification Setup Menu")
+                  .setDescription(
+                    `Lets Start of by Creating a Verification Channel!
+                    Click on the Button Below to Create the Basics things.
+                
+                    After that you can change the settings as you want.`
+                  )
+                  .setFooter({
+                    text: "Ryou - Utility",
+                    iconURL: client.user.displayAvatarURL(),
+                  })
+                  .setColor("#800000")
+                  .setAuthor({
+                    name: member.user.tag,
+                    iconURL: member.user.displayAvatarURL(),
+                  }),
+              ],
+              components: [
+                new ActionRowBuilder().addComponents(
+                  new ButtonBuilder()
+                    .setCustomId("VerificationSetupCreate")
+                    .setLabel("Create")
+                    .setEmoji("✅")
+                    .setStyle(ButtonStyle.Primary),
+                  new ButtonBuilder()
+                    .setCustomId("MainSetupMenu")
+                    .setEmoji("⏩")
+                    .setLabel("Back")
+                    .setStyle(ButtonStyle.Primary)
+                ),
+              ],
+            });
           const M = await interaction.update({
             fetchReply: true,
             embeds: [
               new EmbedBuilder()
                 .setTitle("Verification Setup Menu")
                 .setDescription(
-                  `This is Main Verification Setup Menu,
-                Choose what you want to do from Below!
+                  `This is Verification Setup Menu,
+                Change what you want from Below!
                 
                 There are 2 Modes for Verification System,
-                You can change them by Clicking on Mode Button!`
+                You can change them by Clicking on the Mode Button!`
                 )
                 .setFooter({
                   text: "Ryou - Utility",
@@ -288,28 +281,36 @@ module.exports = {
                   iconURL: member.user.displayAvatarURL(),
                 }),
             ],
-            components: [VerfiyButtons, VerfiyConfirm],
+            components: [
+              new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                  .setCustomId("VerificationModeSetup")
+                  .setLabel("Mode: ______")
+                  .setStyle(ButtonStyle.Primary),
+                new ButtonBuilder()
+                  .setCustomId("VerificationDescSetup")
+                  .setLabel("Change Description")
+                  .setStyle(ButtonStyle.Primary),
+                new ButtonBuilder()
+                  .setCustomId("MainSetupMenu")
+                  .setEmoji("⏩")
+                  .setLabel("Back")
+                  .setStyle(ButtonStyle.Primary)
+              ),
+            ],
           });
           const data = msg.components[0];
           const newActionRow = ActionRowBuilder.from(data);
           if (setupData.VerificationMode === false) {
             newActionRow.components[0]
-              .setLabel("Mode: Captcha")
-              .setStyle(ButtonStyle.Primary);
-            await setupDB.findOneAndUpdate(
-              { GuildID: guild.id },
-              { VerificationMode: true }
-            );
-          } else if (setupData.VerificationMode === true) {
-            newActionRow.components[0]
               .setLabel("Mode: Normal")
               .setStyle(ButtonStyle.Primary);
-            await setupDB.findOneAndUpdate(
-              { GuildID: guild.id },
-              { VerificationMode: false }
-            );
+          } else if (setupData.VerificationMode === true) {
+            newActionRow.components[0]
+              .setLabel("Mode: Captcha")
+              .setStyle(ButtonStyle.Primary);
           }
-          M.edit({ components: [newActionRow, VerfiyConfirm] });
+          M.edit({ components: [newActionRow] });
           break;
         case "TicketSetup":
           break;
