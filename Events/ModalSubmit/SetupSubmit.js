@@ -6,7 +6,6 @@ const {
   ButtonStyle,
 } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
-const draftDB = require("../../src/models/draftDB");
 const wait = require("util").promisify(setTimeout);
 module.exports = {
   name: "interactionCreate",
@@ -14,14 +13,10 @@ module.exports = {
     const { guild, type, customId, message, channel, fields, member } =
       interaction;
     if (type !== InteractionType.ModalSubmit) return;
-    const draftData = await draftDB.findOne({ GuildID: guild.id });
     const msg = await channel.messages.fetch(message.id);
-    const msgEmbed = msg.embeds[0];
-    const MsgEmbed = EmbedBuilder.from(msgEmbed);
     const data = msg.components[0];
     const newActionRow = ActionRowBuilder.from(data);
-    const data2 = msg.components[1];
-    const newActionRow2 = ActionRowBuilder.from(data2);
+    const setupData = await setupDB.findOne({ GuildID: guild.id });
     if (["CommunityModal", "StaffModal", "AdminModal"].includes(customId)) {
       switch (customId) {
         case "CommunityModal":
@@ -76,8 +71,6 @@ module.exports = {
           interaction.update({ components: [newActionRow] });
           break;
       }
-
-      const setupData = await setupDB.findOne({ GuildID: guild.id });
       if (
         setupData.CommunityRoleID &&
         setupData.StaffRoleID &&
@@ -144,7 +137,6 @@ module.exports = {
         });
       }
     } else if (customId === "LogChannelModal") {
-      const setupData = await setupDB.findOne({ GuildID: guild.id });
       const LogChannel = fields.getTextInputValue("LogChannelInput");
       if (!guild.channels.cache.has(LogChannel))
         return interaction.reply({
@@ -338,42 +330,22 @@ module.exports = {
       const VerificationDesc = fields.getTextInputValue(
         "VerificationDescInput"
       );
-      newActionRow.components[1].setStyle(ButtonStyle.Success);
-      await draftDB.findOneAndUpdate(
-        { GuildID: guild.id },
-        { VerificationDesc: `${VerificationDesc}` }
-      );
-      interaction.update({
-        embeds: [
-          MsgEmbed.setDescription(
-            `This is Main Verification Setup Menu,
-            Choose what you want to do from Below!
-
-            There are 2 Modes for Verification System,
-            You can change them by Clicking on Mode Button!
-            
-            **Description Preview:**
-            ${VerificationDesc}`
-          ),
-        ],
-        components: [newActionRow, newActionRow2],
-      });
-    } else if ("VerificationChannelModal" === customId) {
-      const VerificationChannel = fields.getTextInputValue(
-        "VerificationChannelInput"
-      );
-      if (!guild.channels.cache.find((c) => c.id === VerificationChannel))
-        return interaction.reply({
-          content: "The Provided ID for Channel is Invalid.",
-          ephemeral: true,
+      guild.channels
+        .fetch(`${setupData.VerificationChannelID}`)
+        .then((channel) => {
+          channel.messages
+            .fetch(`${setupData.VerificationMessageID}`)
+            .then((message) => {
+              const Embed = message.embeds[0];
+              const editEmbed = EmbedBuilder.from(Embed).setDescription(
+                `${VerificationDesc}`
+              );
+              message.edit({ embeds: [editEmbed] });
+            });
         });
-      newActionRow.components[2].setStyle(ButtonStyle.Success);
-      await draftDB.findOneAndUpdate(
-        { GuildID: guild.id },
-        { VerificationChannelID: VerificationChannel }
-      );
+      newActionRow.components[1].setStyle(ButtonStyle.Success);
       interaction.update({
-        components: [newActionRow, newActionRow2],
+        components: [newActionRow],
       });
     }
   },

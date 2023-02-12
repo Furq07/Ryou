@@ -826,27 +826,7 @@ module.exports = {
           }
           break;
         case "VerificationModeSetup":
-          const data2 = msg.components[1];
-          const newActionRow2 = ActionRowBuilder.from(data2);
-          if (!setupData.VerificationMode) {
-            if (draftData.VerificationMode === false) {
-              newActionRow.components[0]
-                .setLabel("Mode: Captcha")
-                .setStyle(ButtonStyle.Success);
-              await draftDB.findOneAndUpdate(
-                { GuildID: guild.id },
-                { VerificationMode: true }
-              );
-            } else {
-              newActionRow.components[0]
-                .setLabel("Mode: Normal")
-                .setStyle(ButtonStyle.Success);
-              await draftDB.findOneAndUpdate(
-                { GuildID: guild.id },
-                { VerificationMode: false }
-              );
-            }
-          } else if (setupData.VerificationMode === false) {
+          if (setupData.VerificationMode === false) {
             newActionRow.components[0]
               .setLabel("Mode: Captcha")
               .setStyle(ButtonStyle.Success);
@@ -863,7 +843,7 @@ module.exports = {
               { VerificationMode: false }
             );
           }
-          interaction.update({ components: [newActionRow, newActionRow2] });
+          interaction.update({ components: [newActionRow] });
           break;
       }
     } else if (customId === "MainSetupMenu") {

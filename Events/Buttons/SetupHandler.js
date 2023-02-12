@@ -285,7 +285,7 @@ module.exports = {
               new ActionRowBuilder().addComponents(
                 new ButtonBuilder()
                   .setCustomId("VerificationModeSetup")
-                  .setLabel("Mode: ______")
+                  .setLabel("Mode: _____")
                   .setStyle(ButtonStyle.Primary),
                 new ButtonBuilder()
                   .setCustomId("VerificationDescSetup")
@@ -532,20 +532,6 @@ module.exports = {
         new ActionRowBuilder().addComponents(VerificationDescInput)
       );
       await interaction.showModal(VerificationDescModal);
-    } else if (["VerificationChannelID"].includes(customId)) {
-      const VerificationChannelModal = new ModalBuilder()
-        .setCustomId("VerificationChannelModal")
-        .setTitle("Enter ID of Verification Channel");
-      const VerificationChannelInput = new TextInputBuilder()
-        .setCustomId("VerificationChannelInput")
-        .setLabel("Enter the ID Below:")
-        .setRequired(true)
-        .setPlaceholder("Example: 1072950570895278201")
-        .setStyle(TextInputStyle.Short);
-      VerificationChannelModal.addComponents(
-        new ActionRowBuilder().addComponents(VerificationChannelInput)
-      );
-      await interaction.showModal(VerificationChannelModal);
     }
   },
 };
