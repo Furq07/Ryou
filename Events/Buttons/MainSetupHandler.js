@@ -8,12 +8,14 @@ const {
 } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
 const draftDB = require("../../src/models/draftDB");
+const captchaDB = require("../../src/models/captchaDB");
 const wait = require("util").promisify(setTimeout);
 module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
     const { customId, channel, message, member, guild } = interaction;
     if (!interaction.isButton()) return;
+    const captchaData = await captchaDB.findOne({ GuildID: guild.id });
     if (
       ![
         "JTCSetupB",
@@ -834,6 +836,12 @@ module.exports = {
               { GuildID: guild.id },
               { VerificationMode: true }
             );
+            if (!captchaData) {
+              new captchaDB({
+                GuildID: guild.id,
+                Captchas: [],
+              }).save();
+            }
           } else {
             newActionRow.components[0]
               .setLabel("Mode: Normal")
@@ -842,6 +850,9 @@ module.exports = {
               { GuildID: guild.id },
               { VerificationMode: false }
             );
+            if (captchaData) {
+              await captchaDB.deleteOne({ GuildID: guild.id });
+            }
           }
           interaction.update({ components: [newActionRow] });
           break;

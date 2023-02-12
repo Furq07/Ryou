@@ -2,6 +2,7 @@
 const { loadCommands } = require("../../src/Handlers/commandHandler");
 const chalk = require("chalk");
 const { ActivityType } = require("discord.js");
+const cron = require("node-cron");
 // [-------------------[File Initiation]-------------------]
 module.exports = {
   name: "ready",
@@ -35,5 +36,11 @@ module.exports = {
         )
       );
     console.log(chalk.gray("Connected To"), chalk.yellow(`${user.tag}`));
+    client.channels.fetch("1056559754513760276").then(async (channel) => {
+      channel.send({content: "testing"})
+      cron.schedule("*/1 * * * *", function () {
+        channel.send({ content: "testing" });
+      });
+    });
   },
 };
