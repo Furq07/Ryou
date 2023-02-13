@@ -12,7 +12,17 @@ module.exports = {
   async execute(interaction, client) {
     const { guild, type, customId, message, channel, fields, member } =
       interaction;
-    if (type !== InteractionType.ModalSubmit) return;
+    if (
+      type !== InteractionType.ModalSubmit ||
+      ![
+        "CommunityModal",
+        "StaffModal",
+        "AdminModal",
+        "LogChannelModal",
+        "VerificationDescModal",
+      ].includes(customId)
+    )
+      return;
     const msg = await channel.messages.fetch(message.id);
     const data = msg.components[0];
     const newActionRow = ActionRowBuilder.from(data);
