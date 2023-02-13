@@ -11,7 +11,7 @@ module.exports = {
   cooldown: 600,
   category: "Eco",
   async execute(interaction, client) {
-    const { member, guild, channel } = interaction;
+    const { member, guild } = interaction;
     const invData = await invDB.findOne({ MemberID: member.id });
     const embed = new EmbedBuilder()
       .setTitle("WorkPlace")

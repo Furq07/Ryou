@@ -14,15 +14,84 @@ module.exports = {
     const { member, guild } = interaction;
     const { user } = client;
     const setupData = await setupDB.findOne({ GuildID: guild.id });
-    const Embed = new EmbedBuilder()
-      .setColor("#800000")
-      .setAuthor({
-        name: member.user.tag,
-        iconURL: member.user.displayAvatarURL(),
-      })
-      .setTitle("__Startup Setup Menu__")
-      .setDescription(
-        `Click Buttons Below and Provide the Id of the Roles.
+    if (
+      setupData.CommunityRoleID &&
+      setupData.StaffRoleID &&
+      setupData.AdminRoleID
+    ) {
+      const MainMsg = await interaction.reply({
+        fetchReply: true,
+        embeds: [
+          new EmbedBuilder()
+            .setTitle("__Main Setup Menu__")
+            .setAuthor({
+              name: member.user.tag,
+              iconURL: member.user.displayAvatarURL(),
+            })
+            .setDescription(
+              `This is the Main Setup Menu, you can choose what you want for your server and leave things that you don't need!
+              
+              Simply go ahead and click on the Buttons and Complete them, when you have setup the things you want, you can just click on the Confirm Button!`
+            )
+            .setFooter({
+              text: "Ryou - Utility",
+              iconURL: client.user.displayAvatarURL(),
+            }),
+        ],
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId("JTCSetup")
+              .setLabel("Join to Create")
+              .setStyle(ButtonStyle.Danger),
+            new ButtonBuilder()
+              .setCustomId("VerificationSetup")
+              .setLabel("Verification")
+              .setStyle(ButtonStyle.Danger),
+            new ButtonBuilder()
+              .setCustomId("LogsSetup")
+              .setLabel("Logs")
+              .setStyle(ButtonStyle.Danger),
+            new ButtonBuilder()
+              .setCustomId("TicketSetup")
+              .setLabel("Ticket")
+              .setStyle(ButtonStyle.Danger),
+            new ButtonBuilder()
+              .setCustomId("DefaultRolesSetup")
+              .setLabel("Default Roles")
+              .setStyle(ButtonStyle.Primary)
+          ),
+        ],
+      });
+      await setupDB.findOne({ GuildID: guild.id }).then((DB) => {
+        const data = MainMsg.components[0];
+        const newActionRow = ActionRowBuilder.from(data);
+        if (DB.JTCChannelID) {
+          newActionRow.components[0].setStyle(ButtonStyle.Success);
+        }
+        if (DB.VerificationChannelID) {
+          newActionRow.components[1].setStyle(ButtonStyle.Success);
+        }
+        if (DB.LogChannelID) {
+          newActionRow.components[2].setStyle(ButtonStyle.Success);
+        }
+        if (DB.TicketParentID) {
+          newActionRow.components[3].setStyle(ButtonStyle.Success);
+        }
+        MainMsg.edit({
+          components: [newActionRow],
+        });
+      });
+    } else {
+      const Embed = new EmbedBuilder()
+        .setColor("#800000")
+        .setAuthor({
+          name: member.user.tag,
+          iconURL: member.user.displayAvatarURL(),
+        })
+        .setTitle("__Startup Setup Menu__")
+        .setDescription(
+          `Click Buttons Below and Provide the Id of the Roles.
         
         **For example:**
         If its Bot Role, go ahead and copy the id of the Role that you Assign to your Bots,
@@ -35,51 +104,26 @@ module.exports = {
         On Android press and hold the Server name above the channel list.
         You should see the last item on the drop-down menu: 'Copy ID'.
         Click Copy ID to get the ID.`
-      )
-      .setFooter({
-        text: "Ryou - Utility",
-        iconURL: user.displayAvatarURL(),
-      });
-    let Buttons = new ActionRowBuilder().addComponents(
-      new ButtonBuilder()
-        .setCustomId("CommunityRole")
-        .setLabel("Community Role")
-
-        .setStyle(ButtonStyle.Danger),
-      new ButtonBuilder()
-        .setCustomId("StaffRole")
-        .setLabel("Staff Role")
-        .setStyle(ButtonStyle.Danger),
-      new ButtonBuilder()
-        .setCustomId("AdminRole")
-        .setLabel("Admin Role")
-        .setStyle(ButtonStyle.Danger)
-    );
-    if (
-      setupData.CommunityRoleID &&
-      setupData.StaffRoleID &&
-      setupData.AdminRoleID
-    )
-      Buttons = new ActionRowBuilder().addComponents(
+        )
+        .setFooter({
+          text: "Ryou - Utility",
+          iconURL: user.displayAvatarURL(),
+        });
+      const Buttons = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
           .setCustomId("CommunityRole")
           .setLabel("Community Role")
-          .setStyle(ButtonStyle.Success),
+          .setStyle(ButtonStyle.Danger),
         new ButtonBuilder()
           .setCustomId("StaffRole")
           .setLabel("Staff Role")
-          .setStyle(ButtonStyle.Success),
+          .setStyle(ButtonStyle.Danger),
         new ButtonBuilder()
           .setCustomId("AdminRole")
           .setLabel("Admin Role")
-          .setStyle(ButtonStyle.Success),
-        new ButtonBuilder()
-          .setCustomId("MainSetupMenu")
-          .setLabel("Main Setup Menu")
-          .setEmoji("⏩")
-          .setStyle(ButtonStyle.Primary)
+          .setStyle(ButtonStyle.Danger)
       );
-
-    interaction.reply({ embeds: [Embed], components: [Buttons] });
+      interaction.reply({ embeds: [Embed], components: [Buttons] });
+    }
   },
 };

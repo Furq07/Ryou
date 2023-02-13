@@ -7,13 +7,12 @@ const {
   PermissionFlagsBits,
 } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
-const draftDB = require("../../src/models/draftDB");
 const captchaDB = require("../../src/models/captchaDB");
 const wait = require("util").promisify(setTimeout);
 module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
-    const { customId, channel, message, member, guild } = interaction;
+    const { customId, channel, message, member, guild, user } = interaction;
     if (!interaction.isButton()) return;
     const captchaData = await captchaDB.findOne({ GuildID: guild.id });
     if (
@@ -38,11 +37,11 @@ module.exports = {
         "LogRoleDeleteSetup",
         "LogRoleUpdateSetup",
         "MainSetupMenu",
+        "DefaultRolesSetup",
       ].includes(customId)
     )
       return;
     const setupData = await setupDB.findOne({ GuildID: guild.id });
-    const draftData = await draftDB.findOne({ GuildID: guild.id });
     const msg = await channel.messages.fetch(message.id);
     const data = msg.components[0];
     const newActionRow = ActionRowBuilder.from(data);
@@ -223,7 +222,11 @@ module.exports = {
                       new ButtonBuilder()
                         .setCustomId("TicketSetup")
                         .setLabel("Ticket")
-                        .setStyle(ButtonStyle.Danger)
+                        .setStyle(ButtonStyle.Danger),
+                      new ButtonBuilder()
+                        .setCustomId("DefaultRolesSetup")
+                        .setLabel("Default Roles")
+                        .setStyle(ButtonStyle.Primary)
                     ),
                   ],
                 });
@@ -476,7 +479,11 @@ module.exports = {
                   new ButtonBuilder()
                     .setCustomId("TicketSetup")
                     .setLabel("Ticket")
-                    .setStyle(ButtonStyle.Danger)
+                    .setStyle(ButtonStyle.Danger),
+                  new ButtonBuilder()
+                    .setCustomId("DefaultRolesSetup")
+                    .setLabel("Default Roles")
+                    .setStyle(ButtonStyle.Primary)
                 ),
               ],
             });
@@ -802,7 +809,11 @@ module.exports = {
                   new ButtonBuilder()
                     .setCustomId("TicketSetup")
                     .setLabel("Ticket")
-                    .setStyle(ButtonStyle.Danger)
+                    .setStyle(ButtonStyle.Danger),
+                  new ButtonBuilder()
+                    .setCustomId("DefaultRolesSetup")
+                    .setLabel("Default Roles")
+                    .setStyle(ButtonStyle.Primary)
                 ),
               ],
             });
@@ -894,7 +905,11 @@ module.exports = {
             new ButtonBuilder()
               .setCustomId("TicketSetup")
               .setLabel("Ticket")
-              .setStyle(ButtonStyle.Danger)
+              .setStyle(ButtonStyle.Danger),
+            new ButtonBuilder()
+              .setCustomId("DefaultRolesSetup")
+              .setLabel("Default Roles")
+              .setStyle(ButtonStyle.Primary)
           ),
         ],
       });
@@ -917,6 +932,53 @@ module.exports = {
           components: [newActionRow],
         });
       });
+    } else if (customId === "DefaultRolesSetup") {
+      const Embed = new EmbedBuilder()
+        .setColor("#800000")
+        .setAuthor({
+          name: member.user.tag,
+          iconURL: member.user.displayAvatarURL(),
+        })
+        .setTitle("__Startup Setup Menu__")
+        .setDescription(
+          `Click Buttons Below and Provide the Id of the Roles.
+        
+        **For example:**
+        If its Bot Role, go ahead and copy the id of the Role that you Assign to your Bots,
+
+        **If you don't know how to do that read this Below:**
+        Enable developer mode in the Appearance section of your user settings,
+        then go to the role menu in the server settings and right click on the role you want the ID of,
+        then click "Copy ID".
+        
+        On Android press and hold the Server name above the channel list.
+        You should see the last item on the drop-down menu: 'Copy ID'.
+        Click Copy ID to get the ID.`
+        )
+        .setFooter({
+          text: "Ryou - Utility",
+          iconURL: user.displayAvatarURL(),
+        });
+      const Buttons = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId("CommunityRole")
+          .setLabel("Community Role")
+          .setStyle(ButtonStyle.Primary),
+        new ButtonBuilder()
+          .setCustomId("StaffRole")
+          .setLabel("Staff Role")
+          .setStyle(ButtonStyle.Primary),
+        new ButtonBuilder()
+          .setCustomId("AdminRole")
+          .setLabel("Admin Role")
+          .setStyle(ButtonStyle.Primary),
+        new ButtonBuilder()
+          .setCustomId("MainSetupMenu")
+          .setEmoji("⏩")
+          .setLabel("Back")
+          .setStyle(ButtonStyle.Primary)
+      );
+      interaction.reply({ embeds: [Embed], components: [Buttons] });
     }
   },
 };

@@ -9,7 +9,6 @@ const {
 } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
 const captchaDB = require("../../src/models/captchaDB");
-const draftDB = require("../../src/models/draftDB");
 module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
@@ -132,8 +131,8 @@ module.exports = {
                     .setStyle(ButtonStyle.Success),
                   new ButtonBuilder()
                     .setCustomId("MainSetupMenu")
-                    .setLabel("Main Setup Menu")
-                    .setEmoji("⏪")
+                    .setEmoji("⏩")
+                    .setLabel("Back")
                     .setStyle(ButtonStyle.Primary)
                 ),
               ],
@@ -165,8 +164,8 @@ module.exports = {
                   .setStyle(ButtonStyle.Primary),
                 new ButtonBuilder()
                   .setCustomId("MainSetupMenu")
-                  .setLabel("Main Setup Menu")
-                  .setEmoji("⏪")
+                  .setEmoji("⏩")
+                  .setLabel("Back")
                   .setStyle(ButtonStyle.Primary)
               ),
             ],
@@ -181,8 +180,8 @@ module.exports = {
               .setStyle(ButtonStyle.Danger),
             new ButtonBuilder()
               .setCustomId("MainSetupMenu")
-              .setLabel("Main Setup Menu")
-              .setEmoji("⏪")
+              .setEmoji("⏩")
+              .setLabel("Back")
               .setStyle(ButtonStyle.Primary)
           );
           if (setupData.LogChannelID)
@@ -197,8 +196,8 @@ module.exports = {
                 .setStyle(ButtonStyle.Primary),
               new ButtonBuilder()
                 .setCustomId("MainSetupMenu")
-                .setLabel("Main Setup Menu")
-                .setEmoji("⏪")
+                .setEmoji("⏩")
+                .setLabel("Back")
                 .setStyle(ButtonStyle.Primary)
             );
 
@@ -408,8 +407,8 @@ module.exports = {
                   .setStyle(ButtonStyle.Danger),
                 new ButtonBuilder()
                   .setCustomId("MainSetupMenu")
-                  .setLabel("Main Setup Menu")
-                  .setEmoji("⏪")
+                  .setEmoji("⏩")
+                  .setLabel("Back")
                   .setStyle(ButtonStyle.Primary)
               ),
             ],

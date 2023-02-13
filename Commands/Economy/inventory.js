@@ -1,7 +1,7 @@
 const {
   EmbedBuilder,
   ActionRowBuilder,
-  SelectMenuBuilder,
+  StringSelectMenuBuilder,
   ComponentType,
 } = require("discord.js");
 const invDB = require("../../src/models/invDB");
@@ -13,11 +13,11 @@ module.exports = {
     const { member, guild, channel } = interaction;
     const invData = await invDB.findOne({ MemberID: member.id });
     const collector = channel.createMessageComponentCollector({
-      componentType: ComponentType.SelectMenu,
+      componentType: ComponentType.StringSelect,
       time: 90000,
     });
     const selectMenu = new ActionRowBuilder().addComponents(
-      new SelectMenuBuilder()
+      new StringSelectMenuBuilder()
         .setCustomId("inventory")
         .setPlaceholder("Choose Category Here!")
         .setMinValues(1)

@@ -2,12 +2,14 @@ const {
   PermissionsBitField,
   ComponentType,
   EmbedBuilder,
-  InteractionType,
+  ButtonBuilder,
+  ButtonStyle,
+  ActionRowBuilder,
 } = require("discord.js");
 const ecoDB = require("../../src/models/ecoDB");
 const setupDB = require("../../src/models/setupDB");
+const invDB = require("../../src/models/invDB");
 const cooldownDB = require("../../src/models/cooldownDB");
-const draftDB = require("../../src/models/draftDB");
 module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
@@ -17,7 +19,7 @@ module.exports = {
       // < ==============[Data Imports]============== >
       const collector = channel.createMessageComponentCollector({
         componentType: ComponentType.Button,
-        time: 15000,
+        time: 30000,
       });
       const setupData = await setupDB.findOne({ GuildID: guild.id });
       const ecoData = await ecoDB.findOne({ MemberID: member.id });
@@ -94,7 +96,7 @@ module.exports = {
             I'm at your server to manage it.
               
             To start off, you must set me up.
-            Use the command </setup:1008455318881189948> for that!
+            Use the command </setup:1056172939885682699> for that!
               
             If this is your second time adding me,
             it's conceivable that I'm already set up,
@@ -106,7 +108,6 @@ module.exports = {
         new setupDB({
           GuildID: guild.id,
         }).save();
-        new draftDB({ GuildID: guild.id }).save();
         return;
       }
       if (
@@ -120,7 +121,7 @@ module.exports = {
             embed.setDescription(
               `I don't believe you have yet set me up on this server.
               You have to set me up before you can use my commands.
-              Use </setup:1008455318881189948> to achieve it!`
+              Use </setup:1056172939885682699> to achieve it!`
             ),
           ],
         });
@@ -158,8 +159,8 @@ module.exports = {
           fetchReply: true,
         });
         collector.on("collect", async (collected) => {
-          if (collected.user.id !== member.id) {
-            collected.reply({
+          if (collected.user.id !== member.id)
+            return collected.reply({
               embeds: [
                 embed.setDescription(
                   "I don't Believe these Buttons are for you, Please Refrain from using it!"
@@ -167,8 +168,6 @@ module.exports = {
               ],
               ephemeral: true,
             });
-            return;
-          }
           if (["eco-no", "eco-yes"].includes(collected.customId)) {
             if (collected.customId == "eco-yes") {
               M.edit({
