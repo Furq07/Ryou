@@ -8,7 +8,7 @@ const { readdirSync } = require("fs");
 module.exports = {
   name: "help",
   description: "This Command Gives Help!",
-  async execute(client, interaction, args) {
+  async execute(interaction, client) {
     const { member, guild, channel } = interaction;
     var pages = [];
     let i = 0,

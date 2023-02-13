@@ -17,7 +17,7 @@ module.exports = {
     },
   ],
 
-  async execute(client, interaction, args) {
+  async execute(interaction, client) {
     const { member, options } = interaction;
     const Member = options.getMember("member") || member;
     if (Member === member.bot)
