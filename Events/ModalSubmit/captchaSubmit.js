@@ -27,7 +27,7 @@ module.exports = {
           {
             GuildID: guild.id,
           },
-          { $pull: { Captchas: { id: guild.user.id } } }
+          { $pull: { Captchas: { id: interaction.user.id } } }
         );
         guild.members.fetch(`${captchaFound.id}`).then(async (user) => {
           const CommunityRole = guild.roles.cache.find(
