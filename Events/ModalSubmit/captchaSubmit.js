@@ -25,14 +25,9 @@ module.exports = {
       if (captchaVerifyInput === captchaFound.captcha) {
         await captchaDB.updateOne(
           {
-            GuildID: interaction.guild.id,
-            "Captchas.id": interaction.user.id,
+            GuildID: guild.id,
           },
-          {
-            $set: {
-              "Captchas.$.verified": true,
-            },
-          }
+          { $pull: { Captchas: { id: guild.user.id } } }
         );
         guild.members.fetch(`${captchaFound.id}`).then(async (user) => {
           const CommunityRole = guild.roles.cache.find(
