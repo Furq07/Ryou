@@ -45,11 +45,11 @@ module.exports = {
         case "jtc-delete-vc-button":
           const deleteChannelIsFound = setupData.JTCInfo.find((element) => {
             if (element.owner === interaction.user.id) {
-              return element.channels;
+              return element.channel;
             }
           });
           interaction.guild.channels.cache
-            .find((r) => r.id === deleteChannelIsFound.channels)
+            .find((r) => r.id === deleteChannelIsFound.channel)
             .delete();
 
           await setupDB.updateOne(
@@ -73,7 +73,7 @@ module.exports = {
         case "jtc-user-limit-button":
           const userLimitIsFound = setupData.JTCInfo.find((element) => {
             if (element.owner === interaction.user.id) {
-              return element.channels;
+              return element.channel;
             }
           });
           const changeuserModal = new ModalBuilder()
@@ -98,7 +98,7 @@ module.exports = {
         case "jtc-rename-vc-button":
           const userLimitIsFound2 = setupData.JTCInfo.find((element) => {
             if (element.owner === interaction.user.id) {
-              return element.channels;
+              return element.channel;
             }
           });
 
@@ -123,12 +123,12 @@ module.exports = {
         case "jtc-unlock-channel-button":
           const userLimitIsFound3 = setupData.JTCInfo.find((element) => {
             if (element.owner === interaction.user.id) {
-              return element.channels;
+              return element.channel;
             }
           });
           if (
             interaction.guild.channels.cache
-              .get(userLimitIsFound3.channels)
+              .get(userLimitIsFound3.channel)
               .permissionsFor(interaction.guild.roles.everyone.id)
               .has("Connect")
           )
@@ -138,7 +138,7 @@ module.exports = {
             });
 
           interaction.guild.channels.cache
-            .get(userLimitIsFound3.channels)
+            .get(userLimitIsFound3.channel)
             .permissionOverwrites.edit(interaction.guild.roles.everyone.id, {
               Connect: true,
               Speak: true,
@@ -148,7 +148,7 @@ module.exports = {
               EmbedBuilder.from(globalEmbed)
                 .setTitle("Unlocked your custom vc")
                 .setDescription(
-                  `You have successfully unlocked your custom vc to everyone\n\n**Vc Information**\n**Name**: <#${userLimitIsFound3.channels}>\n**ID**: ${userLimitIsFound3.channels}\n**User Limit**: ${userLimitIsFound3.userLimit}`
+                  `You have successfully unlocked your custom vc to everyone\n\n**Vc Information**\n**Name**: <#${userLimitIsFound3.channel}>\n**ID**: ${userLimitIsFound3.channel}\n**User Limit**: ${userLimitIsFound3.userLimit}`
                 ),
             ],
             components: [],
@@ -164,7 +164,7 @@ module.exports = {
           });
           if (
             !interaction.guild.channels.cache
-              .get(userLimitIsFound4.channels)
+              .get(userLimitIsFound4.channel)
               .permissionsFor(interaction.guild.roles.everyone.id)
               .has("Connect")
           )
@@ -174,7 +174,7 @@ module.exports = {
             });
 
           interaction.guild.channels.cache
-            .get(userLimitIsFound4.channels)
+            .get(userLimitIsFound4.channel)
             .permissionOverwrites.edit(interaction.guild.roles.everyone.id, {
               Connect: false,
               Speak: false,
@@ -184,7 +184,7 @@ module.exports = {
               EmbedBuilder.from(globalEmbed)
                 .setTitle("Locked your custom vc")
                 .setDescription(
-                  `You have successfully locked your custom vc to everyone\n\n**Vc Information**\n**Name**: <#${userLimitIsFound4.channels}>\n**ID**: ${userLimitIsFound4.channels}\n**User Limit**: ${userLimitIsFound4.userLimit}`
+                  `You have successfully locked your custom vc to everyone\n\n**Vc Information**\n**Name**: <#${userLimitIsFound4.channel}>\n**ID**: ${userLimitIsFound4.channel}\n**User Limit**: ${userLimitIsFound4.userLimit}`
                 ),
             ],
             components: [],
@@ -224,7 +224,7 @@ module.exports = {
           });
           if (
             !interaction.guild.channels.cache
-              .get(userLimitIsFound5.channels)
+              .get(userLimitIsFound5.channel)
               .permissionsFor(interaction.guild.roles.everyone.id)
               .has("ViewChannel")
           )
@@ -239,7 +239,7 @@ module.exports = {
               });
 
           interaction.guild.channels.cache
-            .get(userLimitIsFound5.channels)
+            .get(userLimitIsFound5.channel)
             .permissionOverwrites.edit(interaction.guild.roles.everyone.id, {
               ViewChannel: false,
             });
@@ -256,12 +256,12 @@ module.exports = {
                 .then((user) => {
                   if (
                     !interaction.guild.channels.cache
-                      .get(`${userLimitIsFound5.channels}`)
+                      .get(`${userLimitIsFound5.channel}`)
                       .permissionsFor(`${user.id}`)
                       .has("Connect")
                   ) {
                     interaction.guild.channels.cache
-                      .get(userLimitIsFound5.channels)
+                      .get(userLimitIsFound5.channel)
                       .permissionOverwrites.edit(user, {
                         ViewChannel: false,
                       });
@@ -289,7 +289,7 @@ module.exports = {
               EmbedBuilder.from(globalEmbed)
                 .setTitle("Hided your custom vc")
                 .setDescription(
-                  `You have successfully hided your custom vc to everyone except for the users you have added yourself\n\n**Vc Information**\n**Name**: <#${userLimitIsFound5.channels}>\n**ID**: ${userLimitIsFound5.channels}\n**User Limit**: ${userLimitIsFound5.userLimit}`
+                  `You have successfully hided your custom vc to everyone except for the users you have added yourself\n\n**Vc Information**\n**Name**: <#${userLimitIsFound5.channel}>\n**ID**: ${userLimitIsFound5.channel}\n**User Limit**: ${userLimitIsFound5.userLimit}`
                 ),
             ],
             components: [],
@@ -305,7 +305,7 @@ module.exports = {
 
           if (
             interaction.guild.channels.cache
-              .get(userLimitIsFound6.channels)
+              .get(userLimitIsFound6.channel)
               .permissionsFor(interaction.guild.roles.everyone.id)
               .has("ViewChannel")
           )
@@ -315,7 +315,7 @@ module.exports = {
             });
 
           interaction.guild.channels.cache
-            .get(userLimitIsFound6.channels)
+            .get(userLimitIsFound6.channel)
             .permissionOverwrites.edit(interaction.guild.roles.everyone.id, {
               ViewChannel: true,
             });
@@ -330,7 +330,7 @@ module.exports = {
                 .fetch(`${jtcusers[i].id}`)
                 .then((user) => {
                   interaction.guild.channels.cache
-                    .get(`${userLimitIsFound6.channels}`)
+                    .get(`${userLimitIsFound6.channel}`)
                     .permissionOverwrites.edit(user, {
                       ViewChannel: true,
                     });
@@ -354,7 +354,7 @@ module.exports = {
               EmbedBuilder.from(globalEmbed)
                 .setTitle("UnHided your custom vc")
                 .setDescription(
-                  `You have successfully unhided your custom vc to everyone\n\n**Vc Information**\n**Name**: <#${userLimitIsFound6.channels}>\n**ID**: ${userLimitIsFound6.channels}\n**User Limit**: ${userLimitIsFound6.userLimit}`
+                  `You have successfully unhided your custom vc to everyone\n\n**Vc Information**\n**Name**: <#${userLimitIsFound6.channel}>\n**ID**: ${userLimitIsFound6.channel}\n**User Limit**: ${userLimitIsFound6.userLimit}`
                 ),
             ],
             components: [],

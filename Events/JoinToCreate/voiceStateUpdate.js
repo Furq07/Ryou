@@ -48,8 +48,9 @@ module.exports = {
                     $addToSet: {
                       JTCInfo: {
                         owner: channelUser.id,
-                        channels: channel.id,
+                        channel: channel.id,
                         userLimit: 1,
+                        lastJoinedTime: new Date(),
                         users: [],
                       },
                     },
