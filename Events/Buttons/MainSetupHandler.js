@@ -978,7 +978,7 @@ module.exports = {
           .setLabel("Back")
           .setStyle(ButtonStyle.Primary)
       );
-      interaction.reply({ embeds: [Embed], components: [Buttons] });
+      interaction.update({ embeds: [Embed], components: [Buttons] });
     }
   },
 };
