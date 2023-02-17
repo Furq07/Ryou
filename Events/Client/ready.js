@@ -35,5 +35,6 @@ module.exports = {
         )
       );
     console.log(chalk.gray("Connected To"), chalk.yellow(`${user.tag}`));
+
   },
 };
