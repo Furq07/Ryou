@@ -1,7 +1,7 @@
 // [-------------------[Imports]-------------------]
 const { loadCommands } = require("../../src/Handlers/commandHandler");
 const chalk = require("chalk");
-const { ActivityType } = require("discord.js")
+const { ActivityType } = require("discord.js");
 // [-------------------[File Initiation]-------------------]
 module.exports = {
   name: "ready",
