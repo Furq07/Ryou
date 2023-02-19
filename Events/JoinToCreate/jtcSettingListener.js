@@ -48,9 +48,28 @@ module.exports = {
               return element.channel;
             }
           });
-          interaction.guild.channels.cache
-            .find((r) => r.id === deleteChannelIsFound.channel)
-            .delete();
+          try {
+            interaction.guild.channels.cache
+              .find((r) => r.id === deleteChannelIsFound.channel)
+              .delete();
+          } catch {
+            interaction.reply({
+              embeds: [
+                EmbedBuilder.from(globalEmbed)
+                  .setTitle("Deleted your custom vc")
+                  .setDescription(
+                    `You have successfully deleted your custom vc\n\nIf you want to create a new one just hop into <#${setupData.JTCChannelID}>`
+                  ),
+              ],
+              ephemeral: true,
+            });
+            await setupDB.updateOne(
+              {
+                GuildID: interaction.guild.id,
+              },
+              { $pull: { JTCInfo: { owner: interaction.user.id } } }
+            );
+          }
 
           await setupDB.updateOne(
             {
