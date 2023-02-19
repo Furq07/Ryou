@@ -6,6 +6,7 @@ const {
   TextInputBuilder,
   TextInputStyle,
   EmbedBuilder,
+  RoleSelectMenuBuilder,
 } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
 const captchaDB = require("../../src/models/captchaDB");
@@ -27,11 +28,16 @@ module.exports = {
         "TicketSetup",
         "LogSettingsSetup",
         "LogChannelIDSetup",
+        "CommunityRoleFirst",
+        "StaffRoleFirst",
+        "AdminRoleFirst",
       ].includes(customId)
     )
       return;
     const setupData = await setupDB.findOne({ GuildID: guild.id });
     const msg = await channel.messages.fetch(message.id);
+    const data = msg.components[0];
+    const newActionRow = ActionRowBuilder.from(data);
     const msgEmbed = msg.embeds[0];
     const author = msgEmbed.author.name;
     if (author !== member.user.tag)
@@ -40,59 +46,108 @@ module.exports = {
         ephemeral: true,
       });
     // Startup Setup Menu
-    if (["CommunityRole", "StaffRole", "AdminRole"].includes(customId)) {
+    if (
+      [
+        "CommunityRole",
+        "StaffRole",
+        "AdminRole",
+        "CommunityRoleFirst",
+        "StaffRoleFirst",
+        "AdminRoleFirst",
+      ].includes(customId)
+    ) {
       switch (customId) {
         case "CommunityRole":
-          const CommunityModal = new ModalBuilder()
-            .setCustomId("CommunityModal")
-            .setTitle("Enter Community Role ID:");
-          const CommunityRoleInput = new TextInputBuilder()
-            .setCustomId("CommunityRoleInput")
-            .setLabel("Enter the Id of Community Role Below:")
-            .setRequired(true)
-            .setMinLength(15)
-            .setMaxLength(30)
-            .setPlaceholder("Example: 1008473719599018134")
-            .setStyle(TextInputStyle.Short);
-          CommunityModal.addComponents(
-            new ActionRowBuilder().addComponents(CommunityRoleInput)
-          );
-          await interaction.showModal(CommunityModal);
+          newActionRow.components[0].setDisabled(true);
+          newActionRow.components[1].setDisabled(true);
+          newActionRow.components[2].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new RoleSelectMenuBuilder()
+                  .setCustomId("CommunityRoleMenu")
+                  .setPlaceholder("Choose the Community Role!")
+              ),
+            ],
+          });
           break;
         case "StaffRole":
-          const StaffModal = new ModalBuilder()
-            .setCustomId("StaffModal")
-            .setTitle("Enter Staff Role ID:");
-          const StaffRoleInput = new TextInputBuilder()
-            .setCustomId("StaffRoleInput")
-            .setLabel("Enter the Id of Staff Role Below:")
-            .setRequired(true)
-            .setMinLength(15)
-            .setMaxLength(30)
-            .setPlaceholder("Example: 1008848000853999789")
-            .setStyle(TextInputStyle.Short);
-          StaffModal.addComponents(
-            new ActionRowBuilder().addComponents(StaffRoleInput)
-          );
-          await interaction.showModal(StaffModal);
+          newActionRow.components[0].setDisabled(true);
+          newActionRow.components[1].setDisabled(true);
+          newActionRow.components[2].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new RoleSelectMenuBuilder()
+                  .setCustomId("StaffRoleMenu")
+                  .setPlaceholder("Choose the Staff Role!")
+              ),
+            ],
+          });
+
           break;
         case "AdminRole":
-          const AdminModal = new ModalBuilder()
-            .setCustomId("AdminModal")
-            .setTitle("Enter Admin Role ID:");
-          const AdminRoleInput = new TextInputBuilder()
-            .setCustomId("AdminRoleInput")
-            .setLabel("Enter the Id of Admin Role Below:")
-            .setRequired(true)
-            .setMinLength(15)
-            .setMaxLength(30)
-            .setPlaceholder("Example: 1008164208363454605")
-            .setStyle(TextInputStyle.Short);
-          AdminModal.addComponents(
-            new ActionRowBuilder().addComponents(AdminRoleInput)
-          );
+          newActionRow.components[0].setDisabled(true);
+          newActionRow.components[1].setDisabled(true);
+          newActionRow.components[2].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new RoleSelectMenuBuilder()
+                  .setCustomId("AdminRoleMenu")
+                  .setPlaceholder("Choose the Admin Role!")
+              ),
+            ],
+          });
+          break;
+        case "CommunityRoleFirst":
+          newActionRow.components[0].setDisabled(true);
+          newActionRow.components[1].setDisabled(true);
+          newActionRow.components[2].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new RoleSelectMenuBuilder()
+                  .setCustomId("CommunityRoleMenuFirst")
+                  .setPlaceholder("Choose the Community Role!")
+              ),
+            ],
+          });
+          break;
+        case "StaffRoleFirst":
+          newActionRow.components[0].setDisabled(true);
+          newActionRow.components[1].setDisabled(true);
+          newActionRow.components[2].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new RoleSelectMenuBuilder()
+                  .setCustomId("StaffRoleMenuFirst")
+                  .setPlaceholder("Choose the Staff Role!")
+              ),
+            ],
+          });
 
-          await interaction.showModal(AdminModal);
+          break;
+        case "AdminRoleFirst":
+          newActionRow.components[0].setDisabled(true);
+          newActionRow.components[1].setDisabled(true);
+          newActionRow.components[2].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new RoleSelectMenuBuilder()
+                  .setCustomId("AdminRoleMenuFirst")
+                  .setPlaceholder("Choose the Admin Role!")
+              ),
+            ],
+          });
           break;
       }
       // Main Setup Menu

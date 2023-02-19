@@ -111,15 +111,15 @@ module.exports = {
         });
       const Buttons = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
-          .setCustomId("CommunityRole")
+          .setCustomId("CommunityRoleFirst")
           .setLabel("Community Role")
           .setStyle(ButtonStyle.Danger),
         new ButtonBuilder()
-          .setCustomId("StaffRole")
+          .setCustomId("StaffRoleFirst")
           .setLabel("Staff Role")
           .setStyle(ButtonStyle.Danger),
         new ButtonBuilder()
-          .setCustomId("AdminRole")
+          .setCustomId("AdminRoleFirst")
           .setLabel("Admin Role")
           .setStyle(ButtonStyle.Danger)
       );

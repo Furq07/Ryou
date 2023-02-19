@@ -409,7 +409,7 @@ module.exports = {
                         await channel.setPosition(2);
                         setupData.JTCInfo.forEach(async (owner) => {
                           await guild.channels.cache
-                            .find((r) => r.id === owner.channels)
+                            .find((r) => r.id === owner.channel)
                             .setParent(categoryName.id, {
                               lockPermissions: false,
                             });
