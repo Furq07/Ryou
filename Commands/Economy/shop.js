@@ -13,7 +13,7 @@ module.exports = {
     const { member, guild, channel } = interaction;
     const invData = await invDB.findOne({ MemberID: member.id });
     const collector = channel.createMessageComponentCollector({
-      componentType: ComponentType.SelectMenu,
+      componentType: ComponentType.StringSelect,
       time: 60000,
     });
     const selectMenu = new ActionRowBuilder().addComponents(
