@@ -14,139 +14,14 @@ module.exports = {
       interaction;
     if (
       type !== InteractionType.ModalSubmit ||
-      ![
-        "CommunityModal",
-        "StaffModal",
-        "AdminModal",
-        "LogChannelModal",
-        "VerificationDescModal",
-      ].includes(customId)
+      !["LogChannelModal", "VerificationDescModal"].includes(customId)
     )
       return;
     const msg = await channel.messages.fetch(message.id);
     const data = msg.components[0];
     const newActionRow = ActionRowBuilder.from(data);
     const setupData = await setupDB.findOne({ GuildID: guild.id });
-    if (["CommunityModal", "StaffModal", "AdminModal"].includes(customId)) {
-      switch (customId) {
-        case "CommunityModal":
-          const CommunityRole = fields.getTextInputValue("CommunityRoleInput");
-          if (!guild.roles.cache.has(CommunityRole))
-            return interaction.reply({
-              content: "The ID was Incorrect, Please Enter an Correct ID!",
-              ephemeral: true,
-            });
-          await setupDB.findOneAndUpdate(
-            { GuildID: guild.id },
-            { CommunityRoleID: CommunityRole }
-          );
-          newActionRow.components[0]
-            .setDisabled(true)
-            .setStyle(ButtonStyle.Success);
-
-          interaction.update({ components: [newActionRow] });
-          break;
-        case "StaffModal":
-          const StaffRole = fields.getTextInputValue("StaffRoleInput");
-          if (!guild.roles.cache.has(StaffRole))
-            return interaction.reply({
-              content: "The ID was Incorrect, Please Enter an Correct ID!",
-              ephemeral: true,
-            });
-          await setupDB.findOneAndUpdate(
-            { GuildID: guild.id },
-            { StaffRoleID: StaffRole }
-          );
-          newActionRow.components[1]
-            .setDisabled(true)
-            .setStyle(ButtonStyle.Success);
-
-          interaction.update({ components: [newActionRow] });
-          break;
-        case "AdminModal":
-          const AdminRole = fields.getTextInputValue("AdminRoleInput");
-          if (!guild.roles.cache.has(AdminRole))
-            return interaction.reply({
-              content: "The ID was Incorrect, Please Enter an Correct ID!",
-              ephemeral: true,
-            });
-          await setupDB.findOneAndUpdate(
-            { GuildID: guild.id },
-            { AdminRoleID: AdminRole }
-          );
-          newActionRow.components[2]
-            .setDisabled(true)
-            .setStyle(ButtonStyle.Success);
-
-          interaction.update({ components: [newActionRow] });
-          break;
-      }
-      if (
-        setupData.CommunityRoleID &&
-        setupData.StaffRoleID &&
-        setupData.AdminRoleID
-      ) {
-        const MainMsg = await msg.edit({
-          fetchReply: true,
-          embeds: [
-            new EmbedBuilder()
-              .setTitle("__Main Setup Menu__")
-              .setAuthor({
-                name: member.user.tag,
-                iconURL: member.user.displayAvatarURL(),
-              })
-              .setDescription(
-                `This is the Main Setup Menu, you can choose what you want for your server and leave things that you don't need!
-              
-              Simply go ahead and click on the Buttons and Complete them, when you have setup the things you want, you can just click on the Confirm Button!`
-              )
-              .setFooter({
-                text: "Ryou - Utility",
-                iconURL: client.user.displayAvatarURL(),
-              }),
-          ],
-          components: [
-            new ActionRowBuilder().addComponents(
-              new ButtonBuilder()
-                .setCustomId("JTCSetup")
-                .setLabel("Join to Create")
-                .setStyle(ButtonStyle.Danger),
-              new ButtonBuilder()
-                .setCustomId("VerificationSetup")
-                .setLabel("Verification")
-                .setStyle(ButtonStyle.Danger),
-              new ButtonBuilder()
-                .setCustomId("LogsSetup")
-                .setLabel("Logs")
-                .setStyle(ButtonStyle.Danger),
-              new ButtonBuilder()
-                .setCustomId("TicketSetup")
-                .setLabel("Ticket")
-                .setStyle(ButtonStyle.Danger)
-            ),
-          ],
-        });
-        await setupDB.findOne({ GuildID: guild.id }).then((DB) => {
-          const data = MainMsg.components[0];
-          const newActionRow = ActionRowBuilder.from(data);
-          if (DB.JTCChannelID) {
-            newActionRow.components[0].setStyle(ButtonStyle.Success);
-          }
-          if (DB.VerificationChannelID) {
-            newActionRow.components[1].setStyle(ButtonStyle.Success);
-          }
-          if (DB.LogChannelID) {
-            newActionRow.components[2].setStyle(ButtonStyle.Success);
-          }
-          if (DB.TicketParentID) {
-            newActionRow.components[3].setStyle(ButtonStyle.Success);
-          }
-          MainMsg.edit({
-            components: [newActionRow],
-          });
-        });
-      }
-    } else if (customId === "LogChannelModal") {
+    if (customId === "LogChannelModal") {
       const LogChannel = fields.getTextInputValue("LogChannelInput");
       if (!guild.channels.cache.has(LogChannel))
         return interaction.reply({

@@ -1,13 +1,13 @@
 {
   "name": "ryou",
   "version": "0.1.0",
-  "description": "A All in one Package for your Server!",
+  "description": "Ryou: Reliable, Young, One-Stop, User-Friendly",
   "main": "src/bot.js",
   "scripts": {
     "test": "node ."
   },
   "keywords": [],
-  "author": "",
+  "author": "Ryou Devs",
   "license": "ISC",
   "dependencies": {
     "@iamtraction/google-translate": "^2.0.1",
