@@ -165,90 +165,101 @@ module.exports = {
                           { GuildID: guild.id },
                           { JTCCategoryID: categoryName.id }
                         );
+                        await interaction.update({
+                          embeds: [
+                            new EmbedBuilder()
+                              .setTitle("JTC Setup Complete!")
+                              .setColor("#800000")
+                              .setAuthor({
+                                name: member.user.tag,
+                                iconURL: member.user.displayAvatarURL(),
+                              })
+                              .setDescription(
+                                "JTC has been setup You can go ahead and Enjoy it!"
+                              )
+                              .setFooter({
+                                text: "Ryou - Utility",
+                                iconURL: client.user.displayAvatarURL(),
+                              }),
+                          ],
+                          components: [],
+                        });
+                        await wait(3000);
+                        const MainMsg = await msg.edit({
+                          fetchReply: true,
+                          embeds: [
+                            new EmbedBuilder()
+                              .setTitle("__Main Setup Menu__")
+                              .setAuthor({
+                                name: member.user.tag,
+                                iconURL: member.user.displayAvatarURL(),
+                              })
+                              .setDescription(
+                                `This is the Main Setup Menu, you can choose what you want for your server and leave things that you don't need!
+                              
+                              Simply go ahead and click on the Buttons and Complete them, when you have setup the things you want, you can just click on the Confirm Button!`
+                              )
+                              .setFooter({
+                                text: "Ryou - Utility",
+                                iconURL: client.user.displayAvatarURL(),
+                              }),
+                          ],
+                          components: [
+                            new ActionRowBuilder().addComponents(
+                              new ButtonBuilder()
+                                .setCustomId("JTCSetup")
+                                .setLabel("Join to Create")
+                                .setStyle(ButtonStyle.Danger),
+                              new ButtonBuilder()
+                                .setCustomId("VerificationSetup")
+                                .setLabel("Verification")
+                                .setStyle(ButtonStyle.Danger),
+                              new ButtonBuilder()
+                                .setCustomId("LogsSetup")
+                                .setLabel("Logs")
+                                .setStyle(ButtonStyle.Danger),
+                              new ButtonBuilder()
+                                .setCustomId("TicketSetup")
+                                .setLabel("Ticket")
+                                .setStyle(ButtonStyle.Danger),
+                              new ButtonBuilder()
+                                .setCustomId("DefaultRolesSetup")
+                                .setLabel("Default Roles")
+                                .setStyle(ButtonStyle.Primary)
+                            ),
+                          ],
+                        });
+                        await setupDB
+                          .findOne({ GuildID: guild.id })
+                          .then((DB) => {
+                            const data = MainMsg.components[0];
+                            const newActionRow = ActionRowBuilder.from(data);
+                            if (DB.JTCChannelID) {
+                              newActionRow.components[0].setStyle(
+                                ButtonStyle.Success
+                              );
+                            }
+                            if (DB.VerificationChannelID) {
+                              newActionRow.components[1].setStyle(
+                                ButtonStyle.Success
+                              );
+                            }
+                            if (DB.LogChannelID) {
+                              newActionRow.components[2].setStyle(
+                                ButtonStyle.Success
+                              );
+                            }
+                            if (DB.TicketParentID) {
+                              newActionRow.components[3].setStyle(
+                                ButtonStyle.Success
+                              );
+                            }
+                            MainMsg.edit({
+                              components: [newActionRow],
+                            });
+                          });
                       });
                   });
-                interaction.update({
-                  embeds: [
-                    new EmbedBuilder()
-                      .setTitle("JTC Setup Complete!")
-                      .setColor("#800000")
-                      .setAuthor({
-                        name: member.user.tag,
-                        iconURL: member.user.displayAvatarURL(),
-                      })
-                      .setDescription(
-                        "JTC has been setup You can go ahead and Enjoy it!"
-                      )
-                      .setFooter({
-                        text: "Ryou - Utility",
-                        iconURL: client.user.displayAvatarURL(),
-                      }),
-                  ],
-                  components: [],
-                });
-                const MainMsg = await msg.edit({
-                  fetchReply: true,
-                  embeds: [
-                    new EmbedBuilder()
-                      .setTitle("__Main Setup Menu__")
-                      .setAuthor({
-                        name: member.user.tag,
-                        iconURL: member.user.displayAvatarURL(),
-                      })
-                      .setDescription(
-                        `This is the Main Setup Menu, you can choose what you want for your server and leave things that you don't need!
-                      
-                      Simply go ahead and click on the Buttons and Complete them, when you have setup the things you want, you can just click on the Confirm Button!`
-                      )
-                      .setFooter({
-                        text: "Ryou - Utility",
-                        iconURL: client.user.displayAvatarURL(),
-                      }),
-                  ],
-                  components: [
-                    new ActionRowBuilder().addComponents(
-                      new ButtonBuilder()
-                        .setCustomId("JTCSetup")
-                        .setLabel("Join to Create")
-                        .setStyle(ButtonStyle.Danger),
-                      new ButtonBuilder()
-                        .setCustomId("VerificationSetup")
-                        .setLabel("Verification")
-                        .setStyle(ButtonStyle.Danger),
-                      new ButtonBuilder()
-                        .setCustomId("LogsSetup")
-                        .setLabel("Logs")
-                        .setStyle(ButtonStyle.Danger),
-                      new ButtonBuilder()
-                        .setCustomId("TicketSetup")
-                        .setLabel("Ticket")
-                        .setStyle(ButtonStyle.Danger),
-                      new ButtonBuilder()
-                        .setCustomId("DefaultRolesSetup")
-                        .setLabel("Default Roles")
-                        .setStyle(ButtonStyle.Primary)
-                    ),
-                  ],
-                });
-                await setupDB.findOne({ GuildID: guild.id }).then((DB) => {
-                  const data = MainMsg.components[0];
-                  const newActionRow = ActionRowBuilder.from(data);
-                  if (DB.JTCChannelID) {
-                    newActionRow.components[0].setStyle(ButtonStyle.Success);
-                  }
-                  if (DB.VerificationChannelID) {
-                    newActionRow.components[1].setStyle(ButtonStyle.Success);
-                  }
-                  if (DB.LogChannelID) {
-                    newActionRow.components[2].setStyle(ButtonStyle.Success);
-                  }
-                  if (DB.TicketParentID) {
-                    newActionRow.components[3].setStyle(ButtonStyle.Success);
-                  }
-                  MainMsg.edit({
-                    components: [newActionRow],
-                  });
-                });
               });
           }
           break;
@@ -418,94 +429,102 @@ module.exports = {
                           { GuildID: guild.id },
                           { Resetting: false }
                         );
+                        msg.edit({
+                          embeds: [
+                            new EmbedBuilder()
+                              .setTitle("JTC Resetup Complete!")
+                              .setColor("#800000")
+                              .setAuthor({
+                                name: member.user.tag,
+                                iconURL: member.user.displayAvatarURL(),
+                              })
+                              .setDescription(
+                                "JTC has been Resetup You can go ahead and Enjoy it!"
+                              )
+                              .setFooter({
+                                text: "Ryou - Utility",
+                                iconURL: client.user.displayAvatarURL(),
+                              }),
+                          ],
+                          components: [],
+                        });
+                        await wait(3000);
+                        const MainMsg = await msg.edit({
+                          fetchReply: true,
+                          embeds: [
+                            new EmbedBuilder()
+                              .setTitle("__Main Setup Menu__")
+                              .setAuthor({
+                                name: member.user.tag,
+                                iconURL: member.user.displayAvatarURL(),
+                              })
+                              .setDescription(
+                                `This is the Main Setup Menu, you can choose what you want for your server and leave things that you don't need!
+                                
+                                Simply go ahead and click on the Buttons and Complete them, when you have setup the things you want, you can just click on the Confirm Button!`
+                              )
+                              .setFooter({
+                                text: "Ryou - Utility",
+                                iconURL: client.user.displayAvatarURL(),
+                              }),
+                          ],
+                          components: [
+                            new ActionRowBuilder().addComponents(
+                              new ButtonBuilder()
+                                .setCustomId("JTCSetup")
+                                .setLabel("Join to Create")
+                                .setStyle(ButtonStyle.Danger),
+                              new ButtonBuilder()
+                                .setCustomId("VerificationSetup")
+                                .setLabel("Verification")
+                                .setStyle(ButtonStyle.Danger),
+                              new ButtonBuilder()
+                                .setCustomId("LogsSetup")
+                                .setLabel("Logs")
+                                .setStyle(ButtonStyle.Danger),
+                              new ButtonBuilder()
+                                .setCustomId("TicketSetup")
+                                .setLabel("Ticket")
+                                .setStyle(ButtonStyle.Danger),
+                              new ButtonBuilder()
+                                .setCustomId("DefaultRolesSetup")
+                                .setLabel("Default Roles")
+                                .setStyle(ButtonStyle.Primary)
+                            ),
+                          ],
+                        });
+                        await setupDB
+                          .findOne({ GuildID: guild.id })
+                          .then((DB) => {
+                            const data = MainMsg.components[0];
+                            const newActionRow = ActionRowBuilder.from(data);
+                            if (DB.JTCChannelID) {
+                              newActionRow.components[0].setStyle(
+                                ButtonStyle.Success
+                              );
+                            }
+                            if (DB.VerificationChannelID) {
+                              newActionRow.components[1].setStyle(
+                                ButtonStyle.Success
+                              );
+                            }
+                            if (DB.LogChannelID) {
+                              newActionRow.components[2].setStyle(
+                                ButtonStyle.Success
+                              );
+                            }
+                            if (DB.TicketParentID) {
+                              newActionRow.components[3].setStyle(
+                                ButtonStyle.Success
+                              );
+                            }
+                            MainMsg.edit({
+                              components: [newActionRow],
+                            });
+                          });
                       });
                   });
               });
-
-            await wait(3000);
-            msg.edit({
-              embeds: [
-                new EmbedBuilder()
-                  .setTitle("JTC Resetup Complete!")
-                  .setColor("#800000")
-                  .setAuthor({
-                    name: member.user.tag,
-                    iconURL: member.user.displayAvatarURL(),
-                  })
-                  .setDescription(
-                    "JTC has been Resetup You can go ahead and Enjoy it!"
-                  )
-                  .setFooter({
-                    text: "Ryou - Utility",
-                    iconURL: client.user.displayAvatarURL(),
-                  }),
-              ],
-              components: [],
-            });
-            await wait(5000);
-            const MainMsg = await msg.edit({
-              fetchReply: true,
-              embeds: [
-                new EmbedBuilder()
-                  .setTitle("__Main Setup Menu__")
-                  .setAuthor({
-                    name: member.user.tag,
-                    iconURL: member.user.displayAvatarURL(),
-                  })
-                  .setDescription(
-                    `This is the Main Setup Menu, you can choose what you want for your server and leave things that you don't need!
-                    
-                    Simply go ahead and click on the Buttons and Complete them, when you have setup the things you want, you can just click on the Confirm Button!`
-                  )
-                  .setFooter({
-                    text: "Ryou - Utility",
-                    iconURL: client.user.displayAvatarURL(),
-                  }),
-              ],
-              components: [
-                new ActionRowBuilder().addComponents(
-                  new ButtonBuilder()
-                    .setCustomId("JTCSetup")
-                    .setLabel("Join to Create")
-                    .setStyle(ButtonStyle.Danger),
-                  new ButtonBuilder()
-                    .setCustomId("VerificationSetup")
-                    .setLabel("Verification")
-                    .setStyle(ButtonStyle.Danger),
-                  new ButtonBuilder()
-                    .setCustomId("LogsSetup")
-                    .setLabel("Logs")
-                    .setStyle(ButtonStyle.Danger),
-                  new ButtonBuilder()
-                    .setCustomId("TicketSetup")
-                    .setLabel("Ticket")
-                    .setStyle(ButtonStyle.Danger),
-                  new ButtonBuilder()
-                    .setCustomId("DefaultRolesSetup")
-                    .setLabel("Default Roles")
-                    .setStyle(ButtonStyle.Primary)
-                ),
-              ],
-            });
-            await setupDB.findOne({ GuildID: guild.id }).then((DB) => {
-              const data = MainMsg.components[0];
-              const newActionRow = ActionRowBuilder.from(data);
-              if (DB.JTCChannelID) {
-                newActionRow.components[0].setStyle(ButtonStyle.Success);
-              }
-              if (DB.VerificationChannelID) {
-                newActionRow.components[1].setStyle(ButtonStyle.Success);
-              }
-              if (DB.LogChannelID) {
-                newActionRow.components[2].setStyle(ButtonStyle.Success);
-              }
-              if (DB.TicketParentID) {
-                newActionRow.components[3].setStyle(ButtonStyle.Success);
-              }
-              MainMsg.edit({
-                components: [newActionRow],
-              });
-            });
           }
           break;
       }
