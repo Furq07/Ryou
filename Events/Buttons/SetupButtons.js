@@ -7,6 +7,7 @@ const {
   TextInputStyle,
   EmbedBuilder,
   RoleSelectMenuBuilder,
+  ChannelSelectMenuBuilder,
 } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
 const captchaDB = require("../../src/models/captchaDB");
@@ -28,6 +29,7 @@ module.exports = {
         "TicketSetup",
         "LogSettingsSetup",
         "LogChannelIDSetup",
+        "LogChannelIDSetupMain",
         "CommunityRoleFirst",
         "StaffRoleFirst",
         "AdminRoleFirst",
@@ -242,9 +244,9 @@ module.exports = {
           if (setupData.LogChannelID)
             Buttons = new ActionRowBuilder().addComponents(
               new ButtonBuilder()
-                .setCustomId("LogChannelIDSetup")
+                .setCustomId("LogChannelIDSetupMain")
                 .setLabel("Log Channel")
-                .setStyle(ButtonStyle.Success),
+                .setStyle(ButtonStyle.Primary),
               new ButtonBuilder()
                 .setCustomId("LogSettingsSetup")
                 .setLabel("Log Settings")
@@ -369,7 +371,13 @@ module.exports = {
         case "TicketSetup":
           break;
       }
-    } else if (["LogSettingsSetup", "LogChannelIDSetup"].includes(customId)) {
+    } else if (
+      [
+        "LogSettingsSetup",
+        "LogChannelIDSetup",
+        "LogChannelIDSetupMain",
+      ].includes(customId)
+    ) {
       switch (customId) {
         case "LogSettingsSetup":
           const LogMsg = await interaction.update({
@@ -552,22 +560,37 @@ module.exports = {
             ],
           });
           break;
-        case "LogChannelIDSetup":
-          const LogChannelModal = new ModalBuilder()
-            .setCustomId("LogChannelModal")
-            .setTitle("Enter Log Channel ID:");
-          const LogChannelInput = new TextInputBuilder()
-            .setCustomId("LogChannelInput")
-            .setLabel("Enter the Id of Log Channel Below:")
-            .setRequired(true)
-            .setMinLength(15)
-            .setMaxLength(30)
-            .setPlaceholder("Example: 1056253370354114602")
-            .setStyle(TextInputStyle.Short);
-          LogChannelModal.addComponents(
-            new ActionRowBuilder().addComponents(LogChannelInput)
-          );
-          await interaction.showModal(LogChannelModal);
+        case "LogChannelIDSetup": {
+          const data = msg.components[0];
+          const newActionRow = ActionRowBuilder.from(data);
+          newActionRow.components[0].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new ChannelSelectMenuBuilder()
+                  .setCustomId("LogChannelMenu")
+                  .setPlaceholder("Choose the Logs Channel!")
+              ),
+            ],
+          });
+        }
+        case "LogChannelIDSetupMain":
+          {
+            const data = msg.components[0];
+            const newActionRow = ActionRowBuilder.from(data);
+            newActionRow.components[0].setDisabled(true);
+            interaction.update({
+              components: [
+                newActionRow,
+                new ActionRowBuilder().addComponents(
+                  new ChannelSelectMenuBuilder()
+                    .setCustomId("LogChannelMenuMain")
+                    .setPlaceholder("Choose the Logs Channel!")
+                ),
+              ],
+            });
+          }
           break;
       }
     } else if (["VerificationDescSetup"].includes(customId)) {
