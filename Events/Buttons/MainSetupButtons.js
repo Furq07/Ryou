@@ -447,7 +447,7 @@ module.exports = {
                           ],
                           components: [],
                         });
-                        await wait(5000);
+                        await wait(3000);
                         const MainMsg = await msg.edit({
                           fetchReply: true,
                           embeds: [
