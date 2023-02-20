@@ -165,7 +165,7 @@ module.exports = {
                           { GuildID: guild.id },
                           { JTCCategoryID: categoryName.id }
                         );
-                        interaction.update({
+                        await interaction.update({
                           embeds: [
                             new EmbedBuilder()
                               .setTitle("JTC Setup Complete!")
@@ -184,6 +184,7 @@ module.exports = {
                           ],
                           components: [],
                         });
+                        await wait(3000);
                         const MainMsg = await msg.edit({
                           fetchReply: true,
                           embeds: [
