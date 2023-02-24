@@ -14,20 +14,19 @@ module.exports = {
       .setColor("#800000")
       .setTitle("Thank You for Adding Me!")
       .setThumbnail(guild.iconURL({ dynamic: true }))
+      .setDescription(
+        `
+    Hi I'm **Ryou**.
+    I'm at your server to manage it.
+      
+    To start off, you must set me up.
+    Use the command </setup:1056172939885682699> for that!
+    `
+      )
       .setFooter({
         iconURL: user.displayAvatarURL({ dynamic: true }),
         text: "Ryou",
-      }).setDescription(`
-        Hi I go by **Ryou**.
-        I'm at your server to manage it.
-
-        To start off, you must set me up.
-        Use the command </setup:1008455318881189948> for that!
-
-        If this is your second time adding me,
-        it's conceivable that I'm already set up,
-        but it's ideal if you do it again!
-      `);
+      });
     if (!channelToSend) {
       guild
         .fetchAuditLogs({ type: AuditLogEvent.BotAdd, limit: 1 })

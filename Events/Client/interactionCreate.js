@@ -24,11 +24,11 @@ module.exports = {
       const setupData = await setupDB.findOne({ GuildID: guild.id });
       const ecoData = await ecoDB.findOne({ MemberID: member.id });
       const embed = new EmbedBuilder()
-        .setTitle("Whoopsi")
+        .setTitle("🙀 Whoopsi...")
         .setColor("#800000")
         .setFooter({
           iconURL: user.displayAvatarURL(),
-          text: "Ryou",
+          text: "Ryou - Error",
         })
         .setThumbnail(guild.iconURL());
       const cmd = commands.get(commandName);
@@ -60,9 +60,8 @@ module.exports = {
         return interaction.reply({
           embeds: [
             embed.setDescription(
-              `It Looks like I don't have Administrator Permissions,
-              I need them to be able to completely Handle the Server,
-              I would really Appreciate if you could give me the Permissions!`
+              `It Looks like I don't have \`Administrator\` Permissions,
+              I need it to be able to completely Manage the Server.`
             ),
           ],
           ephemeral: true,
@@ -72,7 +71,7 @@ module.exports = {
           embeds: [
             embed.setDescription(
               `You don't appear to have permission to use this command,
-                If you believe this to be an mistake,
+                If you believe this to be a mistake,
                 Please let your administrator know right away!`
             ),
           ],
@@ -80,29 +79,25 @@ module.exports = {
         });
       // < ==============[Join Message]============== >
       if (!setupData) {
-        const joinEmbed = new EmbedBuilder()
-          .setColor("#800000")
-          .setTitle("Thank You for Adding Me!")
-          .setThumbnail(guild.iconURL({ dynamic: true }))
-          .setFooter({
-            iconURL: user.displayAvatarURL({ dynamic: true }),
-            text: "Ryou",
-          });
         interaction.reply({
           embeds: [
-            joinEmbed.setDescription(
-              `
-            Hi I go by **Ryou**.
+            new EmbedBuilder()
+              .setColor("#800000")
+              .setTitle("Thank You for Adding Me!")
+              .setThumbnail(guild.iconURL({ dynamic: true }))
+              .setDescription(
+                `
+            Hi I'm **Ryou**.
             I'm at your server to manage it.
               
             To start off, you must set me up.
             Use the command </setup:1056172939885682699> for that!
-              
-            If this is your second time adding me,
-            it's conceivable that I'm already set up,
-            but it's ideal if you do it again!
             `
-            ),
+              )
+              .setFooter({
+                iconURL: user.displayAvatarURL({ dynamic: true }),
+                text: "Ryou",
+              }),
           ],
         });
         new setupDB({
@@ -119,9 +114,9 @@ module.exports = {
         interaction.reply({
           embeds: [
             embed.setDescription(
-              `I don't believe you have yet set me up on this server.
-              You have to set me up before you can use my commands.
-              Use </setup:1056172939885682699> to achieve it!`
+              `I don't think you have yet set me up on this server.
+              Before using my commands, you must set me up.
+              To accomplish it, use </setup:1056172939885682699>!`
             ),
           ],
         });
@@ -239,10 +234,10 @@ module.exports = {
 
             const embed = new EmbedBuilder()
               .setColor("#800000")
-              .setTitle(`Whoopsi`)
+              .setTitle(`🙀 Whoopsi...`)
               .setDescription(
-                `Looks like you have to wait a Bit,
-                    Before you can use \`${cmd.name}\` again!`
+                `Looks like you have to wait a bit,
+                 Before you can use \`${cmd.name}\` again!`
               )
               .setThumbnail(guild.iconURL({ dynamic: true }))
               .setFooter({
