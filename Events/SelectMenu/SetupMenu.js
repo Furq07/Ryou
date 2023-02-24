@@ -10,12 +10,12 @@ module.exports = {
   async execute(interaction, client) {
     if (!interaction.isAnySelectMenu()) return;
     const { customId, guild, values, message, channel, member } = interaction;
+    let customIdE = customId;
     const msg = await channel.messages.fetch(message.id);
     const data = msg.components[0];
     const newActionRow = ActionRowBuilder.from(data);
     const Value = values.join(", ");
     const setupData = await setupDB.findOne({ GuildID: guild.id });
-    let customIdE = customId;
     if (customId === "CommunityRoleMenuFirst") customIdE = "CommunityRoleMenu";
     if (customId === "StaffRoleMenuFirst") customIdE = "StaffRoleMenu";
     if (customId === "AdminRoleMenuFirst") customIdE = "AdminRoleMenu";
