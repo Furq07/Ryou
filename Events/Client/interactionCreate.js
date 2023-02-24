@@ -28,7 +28,7 @@ module.exports = {
         .setColor("#800000")
         .setFooter({
           iconURL: user.displayAvatarURL(),
-          text: "Ryou - Error",
+          text: "Ryou",
         })
         .setThumbnail(guild.iconURL());
       const cmd = commands.get(commandName);
