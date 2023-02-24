@@ -71,8 +71,8 @@ module.exports = {
           embeds: [
             embed.setDescription(
               `You don't appear to have permission to use this command,
-                If you believe this to be a mistake,
-                Please let your administrator know right away!`
+              If you believe this to be a mistake,
+              Please let your administrator know right away!`
             ),
           ],
           ephemeral: true,
@@ -87,12 +87,11 @@ module.exports = {
               .setThumbnail(guild.iconURL({ dynamic: true }))
               .setDescription(
                 `
-            Hi I'm **Ryou**.
-            I'm at your server to manage it.
+                Hi I'm **Ryou**.
+                I'm at your server to manage it.
               
-            To start off, you must set me up.
-            Use the command </setup:1056172939885682699> for that!
-            `
+                To start off, you must set me up.
+                Use the command </setup:1056172939885682699> for that!`
               )
               .setFooter({
                 iconURL: user.displayAvatarURL({ dynamic: true }),
