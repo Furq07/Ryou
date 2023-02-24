@@ -2,7 +2,6 @@ const {
   InteractionType,
   EmbedBuilder,
   ActionRowBuilder,
-  ButtonBuilder,
   ButtonStyle,
 } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");

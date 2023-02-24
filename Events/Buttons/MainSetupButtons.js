@@ -189,15 +189,18 @@ module.exports = {
                           fetchReply: true,
                           embeds: [
                             new EmbedBuilder()
-                              .setTitle("__Main Setup Menu__")
+                              .setTitle("__Settings Menu__")
                               .setAuthor({
                                 name: member.user.tag,
                                 iconURL: member.user.displayAvatarURL(),
                               })
                               .setDescription(
-                                `This is the Main Setup Menu, you can choose what you want for your server and leave things that you don't need!
+                                `This is the Settings Menu, you can choose what you want for your server,
+                              and leave things that you don't need!
                               
-                              Simply go ahead and click on the Buttons and Complete them, when you have setup the things you want, you can just click on the Confirm Button!`
+                              Simply go ahead and click on the Buttons and Complete them,
+                              when you have setup the things you want,
+                              you can just click on the Confirm Button!`
                               )
                               .setFooter({
                                 text: "Ryou - Utility",
@@ -453,15 +456,18 @@ module.exports = {
                           fetchReply: true,
                           embeds: [
                             new EmbedBuilder()
-                              .setTitle("__Main Setup Menu__")
+                              .setTitle("__Settings Menu__")
                               .setAuthor({
                                 name: member.user.tag,
                                 iconURL: member.user.displayAvatarURL(),
                               })
                               .setDescription(
-                                `This is the Main Setup Menu, you can choose what you want for your server and leave things that you don't need!
-                                
-                                Simply go ahead and click on the Buttons and Complete them, when you have setup the things you want, you can just click on the Confirm Button!`
+                                `This is the Settings Menu, you can choose what you want for your server,
+                              and leave things that you don't need!
+                              
+                              Simply go ahead and click on the Buttons and Complete them,
+                              when you have setup the things you want,
+                              you can just click on the Confirm Button!`
                               )
                               .setFooter({
                                 text: "Ryou - Utility",
@@ -796,15 +802,18 @@ module.exports = {
               fetchReply: true,
               embeds: [
                 new EmbedBuilder()
-                  .setTitle("__Main Setup Menu__")
+                  .setTitle("__Settings Menu__")
                   .setAuthor({
                     name: member.user.tag,
                     iconURL: member.user.displayAvatarURL(),
                   })
                   .setDescription(
-                    `This is the Main Setup Menu, you can choose what you want for your server and leave things that you don't need!
-                      
-                      Simply go ahead and click on the Buttons and Complete them, when you have setup the things you want, you can just click on the Confirm Button!`
+                    `This is the Settings Menu, you can choose what you want for your server,
+                  and leave things that you don't need!
+                  
+                  Simply go ahead and click on the Buttons and Complete them,
+                  when you have setup the things you want,
+                  you can just click on the Confirm Button!`
                   )
                   .setFooter({
                     text: "Ryou - Utility",
@@ -892,15 +901,18 @@ module.exports = {
         fetchReply: true,
         embeds: [
           new EmbedBuilder()
-            .setTitle("__Main Setup Menu__")
+            .setTitle("__Settings Menu__")
             .setAuthor({
               name: member.user.tag,
               iconURL: member.user.displayAvatarURL(),
             })
             .setDescription(
-              `This is the Main Setup Menu, you can choose what you want for your server and leave things that you don't need!
+              `This is the Settings Menu, you can choose what you want for your server,
+              and leave things that you don't need!
               
-              Simply go ahead and click on the Buttons and Complete them, when you have setup the things you want, you can just click on the Confirm Button!`
+              Simply go ahead and click on the Buttons and Complete them,
+              when you have setup the things you want,
+              you can just click on the Confirm Button!`
             )
             .setFooter({
               text: "Ryou - Utility",
@@ -958,21 +970,13 @@ module.exports = {
           name: member.user.tag,
           iconURL: member.user.displayAvatarURL(),
         })
-        .setTitle("__Startup Setup Menu__")
+        .setTitle("__Default Roles Menu__")
         .setDescription(
-          `Click Buttons Below and Provide the Id of the Roles.
-        
-        **For example:**
-        If its Bot Role, go ahead and copy the id of the Role that you Assign to your Bots,
-
-        **If you don't know how to do that read this Below:**
-        Enable developer mode in the Appearance section of your user settings,
-        then go to the role menu in the server settings and right click on the role you want the ID of,
-        then click "Copy ID".
-        
-        On Android press and hold the Server name above the channel list.
-        You should see the last item on the drop-down menu: 'Copy ID'.
-        Click Copy ID to get the ID.`
+          `Click Buttons Below and Provide the Roles!
+      
+        **For Example:**
+        If its Community Role, click on it, select it from the Select Menu and its Done!
+        Do the same for all of them then click the Next button!`
         )
         .setFooter({
           text: "Ryou - Utility",
