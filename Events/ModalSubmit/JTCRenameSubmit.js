@@ -115,7 +115,6 @@ module.exports = {
               .setThumbnail(interaction.guild.iconURL({ dynamic: true })),
           ],
           components: [],
-          embeds: [],
           ephemeral: true,
         });
 
