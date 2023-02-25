@@ -37,7 +37,18 @@ module.exports = {
     ) {
       if (isFound === false) {
         return interaction.reply({
-          content: "You dont own any custom vc yet",
+          embeds: [
+            globalEmbed
+              .setTitle("Whoopsi...")
+              .setDescription(
+                `Seems you don't own any Custom VC yet.\n\n You can make one by joining <#${setupData.JTCChannelID}>`
+              )
+              .setFooter({
+                iconURL: client.user.displayAvatarURL(),
+                text: "Ryou - Error",
+              })
+              .setThumbnail(guild.iconURL({ dynamic: true })),
+          ],
           ephemeral: true,
         });
       }
@@ -55,10 +66,10 @@ module.exports = {
           } catch {
             interaction.reply({
               embeds: [
-                EmbedBuilder.from(globalEmbed)
-                  .setTitle("Deleted your custom vc")
+                globalEmbed
+                  .setTitle("Deleted your Custom VC")
                   .setDescription(
-                    `You have successfully deleted your custom vc\n\nIf you want to create a new one just hop into <#${setupData.JTCChannelID}>`
+                    `You have successfully deleted your Custom VC\n\nIf you want to create a new one just hop into <#${setupData.JTCChannelID}>`
                   ),
               ],
               ephemeral: true,
@@ -79,8 +90,8 @@ module.exports = {
           );
           await interaction.reply({
             embeds: [
-              EmbedBuilder.from(globalEmbed)
-                .setTitle("Deleted your custom vc")
+              globalEmbed
+                .setTitle("Deleted your Custom VC")
                 .setDescription(
                   `You have successfully deleted your custom vc\n\nIf you want to create a new one just hop into <#${setupData.JTCChannelID}>`
                 ),
@@ -90,11 +101,6 @@ module.exports = {
           });
           break;
         case "jtc-user-limit-button":
-          const userLimitIsFound = setupData.JTCInfo.find((element) => {
-            if (element.owner === interaction.user.id) {
-              return element.channel;
-            }
-          });
           const changeuserModal = new ModalBuilder()
             .setCustomId(`jtc-update-user-limit-modal`)
             .setTitle(`Update your custom vc user limit`);
@@ -110,17 +116,9 @@ module.exports = {
           changeuserModal.addComponents(
             new ActionRowBuilder().addComponents(changeUserLimitTextInput)
           );
-          interaction.showModal(changeuserModal).then(() => {
-            return;
-          });
+          interaction.showModal(changeuserModal);
           break;
         case "jtc-rename-vc-button":
-          const userLimitIsFound2 = setupData.JTCInfo.find((element) => {
-            if (element.owner === interaction.user.id) {
-              return element.channel;
-            }
-          });
-
           const changeNameModal = new ModalBuilder()
             .setCustomId(`jtc-change-name-modal`)
             .setTitle(`Rename your custom vc`);
@@ -152,7 +150,18 @@ module.exports = {
               .has("Connect")
           )
             return interaction.reply({
-              content: "You have already unlocked your vc",
+              embeds: [
+                globalEmbed
+                  .setTitle("Whoopsi...")
+                  .setDescription(
+                    `It looks like your Custom VC is already been unlocked.\n\nYou can lock it by using the \`Lock VC\`button from above.`
+                  )
+                  .setFooter({
+                    iconURL: client.user.displayAvatarURL(),
+                    text: "Ryou - Error",
+                  })
+                  .setThumbnail(guild.iconURL({ dynamic: true })),
+              ],
               ephemeral: true,
             });
 
@@ -164,10 +173,10 @@ module.exports = {
             });
           await interaction.reply({
             embeds: [
-              EmbedBuilder.from(globalEmbed)
-                .setTitle("Unlocked your custom vc")
+              globalEmbed
+                .setTitle("Unlocked your Custom VC")
                 .setDescription(
-                  `You have successfully unlocked your custom vc to everyone\n\n**Vc Information**\n**Name**: <#${userLimitIsFound3.channel}>\n**ID**: ${userLimitIsFound3.channel}\n**User Limit**: ${userLimitIsFound3.userLimit}`
+                  `You have successfully unlocked your Custom VC for <@${guild.roles.everyoneid}>.\n\n**Vc Information**\n**Name**: <#${userLimitIsFound3.channel}>\n**ID**: ${userLimitIsFound3.channel}\n**User Limit**: ${userLimitIsFound3.userLimit}`
                 ),
             ],
             components: [],
@@ -188,7 +197,18 @@ module.exports = {
               .has("Connect")
           )
             return interaction.reply({
-              content: "You have already locked your vc",
+              embeds: [
+                globalEmbed
+                  .setTitle("Whoopsi...")
+                  .setDescription(
+                    `It looks like your Custom VC is already been locked.\n\nYou can unlock it by using the \`Lock VC\` button from above.`
+                  )
+                  .setFooter({
+                    iconURL: client.user.displayAvatarURL(),
+                    text: "Ryou - Error",
+                  })
+                  .setThumbnail(guild.iconURL({ dynamic: true })),
+              ],
               ephemeral: true,
             });
 
@@ -200,10 +220,10 @@ module.exports = {
             });
           interaction.reply({
             embeds: [
-              EmbedBuilder.from(globalEmbed)
-                .setTitle("Locked your custom vc")
+              globalEmbed
+                .setTitle("Locked your Custom VC")
                 .setDescription(
-                  `You have successfully locked your custom vc to everyone\n\n**Vc Information**\n**Name**: <#${userLimitIsFound4.channel}>\n**ID**: ${userLimitIsFound4.channel}\n**User Limit**: ${userLimitIsFound4.userLimit}`
+                  `You have successfully locked your Custom VC for <@${guild.roles.everyone.id}>.`
                 ),
             ],
             components: [],
@@ -215,9 +235,9 @@ module.exports = {
             embeds: [
               new EmbedBuilder()
                 .setColor("#800000")
-                .setTitle("Add user to your custom vc")
+                .setTitle("Add user to your Custom VC")
                 .setDescription(
-                  `If you want to add a user to your custom vc, use </add-user:1043238993405415466> command to\nadd in any command channel`
+                  `If you want to add a user to your Custom VC, use </add-user:1055520156073328766> command to\nadd in any command channel`
                 ),
             ],
             ephemeral: true,
@@ -226,10 +246,10 @@ module.exports = {
         case "jtc-remove-user-button":
           interaction.reply({
             embeds: [
-              EmbedBuilder.from(globalEmbed)
+              globalEmbed
                 .setTitle("Remove user from your custom vc")
                 .setDescription(
-                  `If you want to remove a user from your custom vc, use </remove-user:1043432322378244177> command to\nadd in any command channel`
+                  `If you want to remove a user from your Custom VC, use </remove-user:1055520156073328767> command to\nadd in any command channel`
                 ),
             ],
             ephemeral: true,
@@ -249,8 +269,18 @@ module.exports = {
           )
             return interaction
               .reply({
-                content:
-                  "Your channel is already hidden to everyone except for the users you have added yourself",
+                embeds: [
+                  globalEmbed
+                    .setTitle("Whoopsi...")
+                    .setDescription(
+                      `Your Custom VC is already hidden for <@${guild.roles.everyone.id}> role except for the user(s) you added yourself.\n\nYou can unhide it by using the \`Unhide VC\` button fromabove.`
+                    )
+                    .setFooter({
+                      iconURL: client.user.displayAvatarURL(),
+                      text: "Ryou - Error",
+                    })
+                    .setThumbnail(guild.iconURL({ dynamic: true })),
+                ],
                 ephemeral: true,
               })
               .catch(() => {
@@ -305,10 +335,10 @@ module.exports = {
           );
           await interaction.reply({
             embeds: [
-              EmbedBuilder.from(globalEmbed)
-                .setTitle("Hided your custom vc")
+              globalEmbed
+                .setTitle("Hided your Custom VC")
                 .setDescription(
-                  `You have successfully hided your custom vc to everyone except for the users you have added yourself\n\n**Vc Information**\n**Name**: <#${userLimitIsFound5.channel}>\n**ID**: ${userLimitIsFound5.channel}\n**User Limit**: ${userLimitIsFound5.userLimit}`
+                  `You have successfully hided your Custom VC for ${guild.roles.everyone.id} except for the users you added yourself.`
                 ),
             ],
             components: [],
@@ -329,7 +359,18 @@ module.exports = {
               .has("ViewChannel")
           )
             return interaction.reply({
-              content: "Your channel is already unhided to everyone",
+              embeds: [
+                globalEmbed
+                  .setTitle("Whoopsi...")
+                  .setDescription(
+                    `Your channel is already unhided for <@${guild.roles.everyone.id}> role.\n\nYou can hide it by using the \`Hide VC\` button from above.`
+                  )
+                  .setFooter({
+                    iconURL: client.user.displayAvatarURL(),
+                    text: "Ryou - Error",
+                  })
+                  .setThumbnail(guild.iconURL({ dynamic: true })),
+              ],
               ephemeral: true,
             });
 
@@ -370,10 +411,10 @@ module.exports = {
           );
           interaction.reply({
             embeds: [
-              EmbedBuilder.from(globalEmbed)
-                .setTitle("UnHided your custom vc")
+              globalEmbed
+                .setTitle("UnHided your Custom VC")
                 .setDescription(
-                  `You have successfully unhided your custom vc to everyone\n\n**Vc Information**\n**Name**: <#${userLimitIsFound6.channel}>\n**ID**: ${userLimitIsFound6.channel}\n**User Limit**: ${userLimitIsFound6.userLimit}`
+                  `You have successfully unhided your Custom VC for <@${guild.roles.everyone.id}>.`
                 ),
             ],
             components: [],

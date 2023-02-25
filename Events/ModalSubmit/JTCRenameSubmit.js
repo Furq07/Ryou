@@ -20,7 +20,7 @@ module.exports = {
       );
       const userChannelIsFound = setupData.JTCInfo.find((element) => {
         if (element.owner === interaction.user.id) {
-          return element.channels;
+          return element.channel;
         }
       });
       const bad_words = [
@@ -102,24 +102,33 @@ module.exports = {
 
       if (bad_words.includes(renameChannelInputValue))
         return interaction.reply({
-          content: `That word is a profane word, which is not allowed `,
+          embeds: [
+            new EmbedBuilder()
+              .setTitle("Whoopsi...")
+              .setDescription(
+                `The given name is a slang, which cant be put as channel name.`
+              )
+              .setFooter({
+                iconURL: client.user.displayAvatarURL(),
+                text: "Ryou - Error",
+              })
+              .setThumbnail(interaction.guild.iconURL({ dynamic: true })),
+          ],
           components: [],
           embeds: [],
           ephemeral: true,
         });
 
       interaction.guild.channels.cache
-        .find((r) => r.id === userChannelIsFound.channels)
+        .find((r) => r.id === userChannelIsFound.channel)
         .setName(renameChannelInputValue);
 
       interaction.reply({
         embeds: [
           new EmbedBuilder()
             .setColor("#800000")
-            .setTitle("Renamed your custom vc")
-            .setDescription(
-              `You have successfully renamed your custom vc\n\n**Vc Information**\n**New name**: <#${userChannelIsFound.channels}>\n**ID**: ${userChannelIsFound.channels}`
-            ),
+            .setTitle("Renamed your Custom VC")
+            .setDescription(`You have successfully renamed your Custom VC.`),
         ],
         components: [],
         ephemeral: true,

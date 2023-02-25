@@ -5,7 +5,7 @@ const {
   AttachmentBuilder,
   EmbedBuilder,
 } = require("discord.js");
-const { CaptchaGenerator } = require("captcha-canvas");
+// const { CaptchaGenerator } = require("captcha-canvas");
 const captchaDB = require("../../src/models/captchaDB");
 const setupDB = require("../../src/models/setupDB");
 module.exports = {
@@ -16,11 +16,6 @@ module.exports = {
     const captchaData = await captchaDB.findOne({ GuildID: guild.id });
     const setupData = await setupDB.findOne({ GuildID: guild.id });
     if (setupData.VerificationMode === true) {
-      const captchaFound = captchaData.Captchas.find((element) => {
-        if (element.id === member.id) {
-          return element;
-        }
-      });
       function generateWord() {
         const alphabet = "abcdefghijkmnopqrstuvwxyz";
         const alphabet_capital = "ABCDEFGHJKLMNOPQRSTUVWXYZ";

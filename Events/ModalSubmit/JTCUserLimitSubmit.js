@@ -41,23 +41,33 @@ module.exports = {
         }
         if (input < size + 1 && input !== 0) {
           await interaction.reply({
-            content:
-              "User limit less than your channels members is not allowed, set some higher limit",
+            embeds: [
+              new EmbedBuilder()
+                .setTitle("Whoopsi...")
+                .setDescription(
+                  `User limit less than your channels members is not allowed, set some higher limit.`
+                )
+                .setFooter({
+                  iconURL: client.user.displayAvatarURL(),
+                  text: "Ryou - Error",
+                })
+                .setThumbnail(interaction.guild.iconURL({ dynamic: true })),
+            ],
             ephemeral: true,
           });
         } else {
           let userLimit = interaction.guild.channels.cache.get(
-            userChannelIsFound.channels
+            userChannelIsFound.channel
           ).userLimit;
           if (input == 0) {
             userLimit = "Unlimited";
           } else {
             userLimit = interaction.guild.channels.cache.get(
-              userChannelIsFound.channels
+              userChannelIsFound.channel
             ).userLimit;
           }
           interaction.guild.channels.cache
-            .find((r) => r.id === userChannelIsFound.channels)
+            .find((r) => r.id === userChannelIsFound.channel)
             .setUserLimit(newUserLimitInputValue);
           await setupDB.updateOne(
             {
@@ -94,21 +104,13 @@ module.exports = {
               embeds: [
                 new EmbedBuilder()
                   .setColor("#800000")
-                  .setTitle("Changed custom vc user limit")
+                  .setTitle("Changed Custom VC user limit")
                   .setDescription(
-                    `You have successfully changed your user limit of your custom vc\n\n**Vc Information**\n**Name**: <#${
-                      userChannelIsFound.channels
-                    }>\n**ID**: ${
-                      userChannelIsFound.channels
-                    }\n**New User Limit**: ${
-                      newUserLimitInputValue == 0
-                        ? userLimit
-                        : newUserLimitInputValue
-                    }`
+                    `You have successfully changed your user limit of your Custom VC.`
                   ),
               ],
               components: [],
-              ephemeral: true
+              ephemeral: true,
             })
             .catch((err) => {
               return;
@@ -118,3 +120,19 @@ module.exports = {
     }
   },
 };
+
+
+
+
+
+
+// future
+// \n\n**Vc Information**\n**Name**: <#${
+//   userChannelIsFound.channel
+// }>\n**ID**: ${
+//   userChannelIsFound.channel
+// }\n**New User Limit**: ${
+//   newUserLimitInputValue == 0
+//     ? userLimit
+//     : newUserLimitInputValue
+// }`
