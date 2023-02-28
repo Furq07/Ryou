@@ -20,7 +20,13 @@ module.exports = {
       setupData.JTCSettingID
     );
     const jtcChannel = channel.guild.channels.cache.get(setupData.JTCChannelID);
-    if (setupData.Resetting === true || setupData.Resetting) return;
+    if (
+      setupData.Resetting === true ||
+      setupData.Resetting ||
+      setupData.JTCAutoRecover === false
+    )
+      return;
+
     if (channel.id === setupData.JTCChannelID) {
       if (jtcCategory) {
         await channel.guild.channels

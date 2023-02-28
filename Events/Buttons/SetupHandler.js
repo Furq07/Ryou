@@ -68,6 +68,16 @@ module.exports = {
                     .setEmoji("🔁")
                     .setStyle(ButtonStyle.Success),
                   new ButtonBuilder()
+                    .setCustomId("JTCAutoRecover")
+                    .setLabel("Auto Recover")
+                    .setEmoji("🛠️")
+                    .setStyle(ButtonStyle.Success),
+                  new ButtonBuilder()
+                    .setCustomId("JTCLogs")
+                    .setLabel("JTC Logs")
+                    .setEmoji("📃")
+                    .setStyle(ButtonStyle.Success),
+                  new ButtonBuilder()
                     .setCustomId("MainSetupMenu")
                     .setEmoji("⏩")
                     .setLabel("Back")

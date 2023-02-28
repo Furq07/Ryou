@@ -9,6 +9,7 @@ module.exports = {
   name: "messageDelete",
   async execute(message, client) {
     let setupData = await setupDB.findOne({ GuildID: message.guild.id });
+    if (setupData.JTCAutoRecover === false) return;
     if (message.id === setupData.JTCSettingMessageID) {
       message.guild.channels.cache
         .get(setupData.JTCSettingID)
