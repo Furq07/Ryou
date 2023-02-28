@@ -5,6 +5,11 @@ const {
   EmbedBuilder,
   ChannelType,
   PermissionFlagsBits,
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle,
+  RoleSelectMenuBuilder,
+  ChannelSelectMenuBuilder,
 } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
 const captchaDB = require("../../src/models/captchaDB");
@@ -12,13 +17,21 @@ const wait = require("util").promisify(setTimeout);
 module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
-    const { customId, channel, message, member, guild, user } = interaction;
+    const { customId, channel, message, member, guild } = interaction;
     if (!interaction.isButton()) return;
-    const captchaData = await captchaDB.findOne({ GuildID: guild.id });
     if (
       ![
+        "CommunityRole",
+        "StaffRole",
+        "AdminRole",
+        "CommunityRoleFirst",
+        "StaffRoleFirst",
+        "AdminRoleFirst",
         "JTCSetupB",
         "JTCResetup",
+        "LogSettingsSetup",
+        "LogChannelIDSetup",
+        "LogChannelIDSetupMain",
         "LogChannelCreateSetup",
         "LogChannelDeleteSetup",
         "LogVCJoinSetup",
@@ -29,19 +42,18 @@ module.exports = {
         "LogKickUserSetup",
         "LogUpdateUserSetup",
         "LogInviteCreateSetup",
-        "VerificationModeSetup",
-        "VerificationSetupCreate",
         "LogMessageDeleteSetup",
         "LogMessageUpdateSetup",
         "LogRoleCreateSetup",
         "LogRoleDeleteSetup",
         "LogRoleUpdateSetup",
-        "MainSetupMenu",
-        "DefaultRolesSetup",
+        "VerificationModeSetup",
+        "VerificationSetupCreate",
+        "VerificationDescSetup",
       ].includes(customId)
     )
       return;
-    const setupData = await setupDB.findOne({ GuildID: guild.id });
+    let setupData = await setupDB.findOne({ GuildID: guild.id });
     const msg = await channel.messages.fetch(message.id);
     const data = msg.components[0];
     const newActionRow = ActionRowBuilder.from(data);
@@ -52,7 +64,112 @@ module.exports = {
         content: `These Buttons aren't for You!`,
         ephemeral: true,
       });
-    if (["JTCSetupB", "JTCResetup"].includes(customId)) {
+
+    if (
+      [
+        "CommunityRole",
+        "StaffRole",
+        "AdminRole",
+        "CommunityRoleFirst",
+        "StaffRoleFirst",
+        "AdminRoleFirst",
+      ].includes(customId)
+    ) {
+      switch (customId) {
+        case "CommunityRole":
+          newActionRow.components[0].setDisabled(true);
+          newActionRow.components[1].setDisabled(true);
+          newActionRow.components[2].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new RoleSelectMenuBuilder()
+                  .setCustomId("CommunityRoleMenu")
+                  .setPlaceholder("Choose the Community Role!")
+              ),
+            ],
+          });
+          break;
+        case "StaffRole":
+          newActionRow.components[0].setDisabled(true);
+          newActionRow.components[1].setDisabled(true);
+          newActionRow.components[2].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new RoleSelectMenuBuilder()
+                  .setCustomId("StaffRoleMenu")
+                  .setPlaceholder("Choose the Staff Role!")
+              ),
+            ],
+          });
+
+          break;
+        case "AdminRole":
+          newActionRow.components[0].setDisabled(true);
+          newActionRow.components[1].setDisabled(true);
+          newActionRow.components[2].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new RoleSelectMenuBuilder()
+                  .setCustomId("AdminRoleMenu")
+                  .setPlaceholder("Choose the Admin Role!")
+              ),
+            ],
+          });
+          break;
+        case "CommunityRoleFirst":
+          newActionRow.components[0].setDisabled(true);
+          newActionRow.components[1].setDisabled(true);
+          newActionRow.components[2].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new RoleSelectMenuBuilder()
+                  .setCustomId("CommunityRoleMenuFirst")
+                  .setPlaceholder("Choose the Community Role!")
+              ),
+            ],
+          });
+          break;
+        case "StaffRoleFirst":
+          newActionRow.components[0].setDisabled(true);
+          newActionRow.components[1].setDisabled(true);
+          newActionRow.components[2].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new RoleSelectMenuBuilder()
+                  .setCustomId("StaffRoleMenuFirst")
+                  .setPlaceholder("Choose the Staff Role!")
+              ),
+            ],
+          });
+
+          break;
+        case "AdminRoleFirst":
+          newActionRow.components[0].setDisabled(true);
+          newActionRow.components[1].setDisabled(true);
+          newActionRow.components[2].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new RoleSelectMenuBuilder()
+                  .setCustomId("AdminRoleMenuFirst")
+                  .setPlaceholder("Choose the Admin Role!")
+              ),
+            ],
+          });
+          break;
+      }
+    } else if (["JTCSetupB", "JTCResetup"].includes(customId)) {
       switch (customId) {
         case "JTCSetupB":
           {
@@ -537,6 +654,228 @@ module.exports = {
       // Log Setup
     } else if (
       [
+        "LogSettingsSetup",
+        "LogChannelIDSetup",
+        "LogChannelIDSetupMain",
+      ].includes(customId)
+    ) {
+      switch (customId) {
+        case "LogSettingsSetup":
+          const LogMsg = await interaction.update({
+            fetchReply: true,
+            embeds: [
+              new EmbedBuilder()
+                .setColor("#800000")
+                .setAuthor({
+                  name: member.user.tag,
+                  iconURL: member.user.displayAvatarURL(),
+                })
+                .setTitle("__Logs Setup Menu__")
+                .setFooter({
+                  text: "Ryou - Utility",
+                  iconURL: client.user.displayAvatarURL(),
+                })
+                .setDescription(
+                  `Just click on the Buttons below and Turn off or On the things you want!`
+                ),
+            ],
+            components: [
+              new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                  .setCustomId("LogChannelCreateSetup")
+                  .setLabel("Create Channel")
+                  .setStyle(ButtonStyle.Danger),
+                new ButtonBuilder()
+                  .setCustomId("LogChannelDeleteSetup")
+                  .setLabel("Delete Channel")
+                  .setStyle(ButtonStyle.Danger),
+                new ButtonBuilder()
+                  .setCustomId("LogVCJoinSetup")
+                  .setLabel("Join VC")
+                  .setStyle(ButtonStyle.Danger)
+              ),
+              new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                  .setCustomId("LogVCLeaveSetup")
+                  .setLabel("Leave VC")
+                  .setStyle(ButtonStyle.Danger),
+                new ButtonBuilder()
+                  .setCustomId("LogChannelUpdateSetup")
+                  .setLabel("Channel Update")
+                  .setStyle(ButtonStyle.Danger),
+                new ButtonBuilder()
+                  .setCustomId("LogBanSetup")
+                  .setLabel("Ban User")
+                  .setStyle(ButtonStyle.Danger)
+              ),
+              new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                  .setCustomId("LogUnbanSetup")
+                  .setLabel("Unban User")
+                  .setStyle(ButtonStyle.Danger),
+                new ButtonBuilder()
+                  .setCustomId("LogKickUserSetup")
+                  .setLabel("Kick User")
+                  .setStyle(ButtonStyle.Danger),
+                new ButtonBuilder()
+                  .setCustomId("LogUpdateUserSetup")
+                  .setLabel("User Update")
+                  .setStyle(ButtonStyle.Danger)
+              ),
+              new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                  .setCustomId("LogInviteCreateSetup")
+                  .setLabel("Invite Create")
+                  .setStyle(ButtonStyle.Danger),
+                new ButtonBuilder()
+                  .setCustomId("LogMessageDeleteSetup")
+                  .setLabel("Message Delete")
+                  .setStyle(ButtonStyle.Danger),
+                new ButtonBuilder()
+                  .setCustomId("LogMessageUpdateSetup")
+                  .setLabel("Update Message")
+                  .setStyle(ButtonStyle.Danger)
+              ),
+              new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                  .setCustomId("LogRoleCreateSetup")
+                  .setLabel("Create Role")
+                  .setStyle(ButtonStyle.Danger),
+                new ButtonBuilder()
+                  .setCustomId("LogRoleDeleteSetup")
+                  .setLabel("Delete Role")
+                  .setStyle(ButtonStyle.Danger),
+                new ButtonBuilder()
+                  .setCustomId("LogRoleUpdateSetup")
+                  .setLabel("Update Role")
+                  .setStyle(ButtonStyle.Danger),
+                new ButtonBuilder()
+                  .setCustomId("MainSetupMenu")
+                  .setEmoji("⏩")
+                  .setLabel("Back")
+                  .setStyle(ButtonStyle.Primary)
+              ),
+            ],
+          });
+          const data = LogMsg.components[0];
+          const data2 = LogMsg.components[1];
+          const data3 = LogMsg.components[2];
+          const data4 = LogMsg.components[3];
+          const data5 = LogMsg.components[4];
+          const newActionRow = ActionRowBuilder.from(data);
+          const newActionRow2 = ActionRowBuilder.from(data2);
+          const newActionRow3 = ActionRowBuilder.from(data3);
+          const newActionRow4 = ActionRowBuilder.from(data4);
+          const newActionRow5 = ActionRowBuilder.from(data5);
+          const ButtonIds = [
+            { name: "LogChannelCreateSetup", ID: 0 },
+            { name: "LogChannelDeleteSetup", ID: 1 },
+            { name: "LogVCJoinSetup", ID: 2 },
+            { name: "LogVCLeaveSetup", ID: 0 },
+            { name: "LogChannelUpdateSetup", ID: 1 },
+            { name: "LogBanSetup", ID: 2 },
+            { name: "LogUnbanSetup", ID: 0 },
+            { name: "LogKickUserSetup", ID: 1 },
+            { name: "LogUpdateUserSetup", ID: 2 },
+            { name: "LogInviteCreateSetup", ID: 0 },
+            { name: "LogMessageDeleteSetup", ID: 1 },
+            { name: "LogMessageUpdateSetup", ID: 2 },
+            { name: "LogRoleCreateSetup", ID: 0 },
+            { name: "LogRoleDeleteSetup", ID: 1 },
+            { name: "LogRoleUpdateSetup", ID: 2 },
+          ];
+          ButtonIds.forEach((element) => {
+            const name = element.name;
+            const ID = element.ID;
+            if (setupData[name] === true) {
+              if (
+                [
+                  "LogChannelCreateSetup",
+                  "LogChannelDeleteSetup",
+                  "LogVCJoinSetup",
+                ].includes(name)
+              ) {
+                newActionRow.components[ID].setStyle(ButtonStyle.Success);
+              } else if (
+                [
+                  "LogVCLeaveSetup",
+                  "LogChannelUpdateSetup",
+                  "LogBanSetup",
+                ].includes(name)
+              ) {
+                newActionRow2.components[ID].setStyle(ButtonStyle.Success);
+              } else if (
+                [
+                  "LogUnbanSetup",
+                  "LogKickUserSetup",
+                  "LogUpdateUserSetup",
+                ].includes(name)
+              ) {
+                newActionRow3.components[ID].setStyle(ButtonStyle.Success);
+              } else if (
+                [
+                  "LogInviteCreateSetup",
+                  "LogMessageDeleteSetup",
+                  "LogMessageUpdateSetup",
+                ].includes(name)
+              ) {
+                newActionRow4.components[ID].setStyle(ButtonStyle.Success);
+              } else if (
+                [
+                  "LogRoleCreateSetup",
+                  "LogRoleDeleteSetup",
+                  "LogRoleUpdateSetup",
+                ].includes(name)
+              ) {
+                newActionRow5.components[ID].setStyle(ButtonStyle.Success);
+              }
+            }
+          });
+          LogMsg.edit({
+            components: [
+              newActionRow,
+              newActionRow2,
+              newActionRow3,
+              newActionRow4,
+              newActionRow5,
+            ],
+          });
+          break;
+        case "LogChannelIDSetup": {
+          const data = msg.components[0];
+          const newActionRow = ActionRowBuilder.from(data);
+          newActionRow.components[0].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new ChannelSelectMenuBuilder()
+                  .setCustomId("LogChannelMenu")
+                  .setPlaceholder("Choose the Logs Channel!")
+              ),
+            ],
+          });
+        }
+        case "LogChannelIDSetupMain":
+          {
+            const data = msg.components[0];
+            const newActionRow = ActionRowBuilder.from(data);
+            newActionRow.components[0].setDisabled(true);
+            interaction.update({
+              components: [
+                newActionRow,
+                new ActionRowBuilder().addComponents(
+                  new ChannelSelectMenuBuilder()
+                    .setCustomId("LogChannelMenuMain")
+                    .setPlaceholder("Choose the Logs Channel!")
+                ),
+              ],
+            });
+          }
+          break;
+      }
+    } else if (
+      [
         "LogChannelCreateSetup",
         "LogChannelDeleteSetup",
         "LogVCJoinSetup",
@@ -896,112 +1235,22 @@ module.exports = {
           interaction.update({ components: [newActionRow] });
           break;
       }
-    } else if (customId === "MainSetupMenu") {
-      const MainMsg = await interaction.update({
-        fetchReply: true,
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("__Settings Menu__")
-            .setAuthor({
-              name: member.user.tag,
-              iconURL: member.user.displayAvatarURL(),
-            })
-            .setDescription(
-              `This is the Settings Menu, you can choose what you want for your server,
-              and leave things that you don't need!
-              
-              Simply go ahead and click on the Buttons and Complete them,
-              when you have setup the things you want,
-              you can just click on the Confirm Button!`
-            )
-            .setFooter({
-              text: "Ryou - Utility",
-              iconURL: client.user.displayAvatarURL(),
-            }),
-        ],
-        components: [
-          new ActionRowBuilder().addComponents(
-            new ButtonBuilder()
-              .setCustomId("JTCSetup")
-              .setLabel("Join to Create")
-              .setStyle(ButtonStyle.Danger),
-            new ButtonBuilder()
-              .setCustomId("VerificationSetup")
-              .setLabel("Verification")
-              .setStyle(ButtonStyle.Danger),
-            new ButtonBuilder()
-              .setCustomId("LogsSetup")
-              .setLabel("Logs")
-              .setStyle(ButtonStyle.Danger),
-            new ButtonBuilder()
-              .setCustomId("TicketSetup")
-              .setLabel("Ticket")
-              .setStyle(ButtonStyle.Danger),
-            new ButtonBuilder()
-              .setCustomId("DefaultRolesSetup")
-              .setLabel("Default Roles")
-              .setStyle(ButtonStyle.Primary)
-          ),
-        ],
-      });
-      await setupDB.findOne({ GuildID: guild.id }).then((DB) => {
-        const data = MainMsg.components[0];
-        const newActionRow = ActionRowBuilder.from(data);
-        if (DB.JTCChannelID) {
-          newActionRow.components[0].setStyle(ButtonStyle.Success);
-        }
-        if (DB.VerificationChannelID) {
-          newActionRow.components[1].setStyle(ButtonStyle.Success);
-        }
-        if (DB.LogChannelID) {
-          newActionRow.components[2].setStyle(ButtonStyle.Success);
-        }
-        if (DB.TicketParentID) {
-          newActionRow.components[3].setStyle(ButtonStyle.Success);
-        }
-        MainMsg.edit({
-          components: [newActionRow],
-        });
-      });
-    } else if (customId === "DefaultRolesSetup") {
-      const Embed = new EmbedBuilder()
-        .setColor("#800000")
-        .setAuthor({
-          name: member.user.tag,
-          iconURL: member.user.displayAvatarURL(),
-        })
-        .setTitle("__Default Roles Menu__")
-        .setDescription(
-          `Click Buttons Below and Provide the Roles!
-      
-        **For Example:**
-        If its Community Role, click on it, select it from the Select Menu and its Done!
-        Do the same for all of them then click the Next button!`
+    } else if (["VerificationDescSetup"].includes(customId)) {
+      const VerificationDescModal = new ModalBuilder()
+        .setCustomId("VerificationDescModal")
+        .setTitle("Enter Description For Embed:");
+      const VerificationDescInput = new TextInputBuilder()
+        .setCustomId("VerificationDescInput")
+        .setLabel("Enter the Description Below:")
+        .setRequired(true)
+        .setPlaceholder(
+          "This is Verification Section, Click on the Button Below to Unlock the Server!"
         )
-        .setFooter({
-          text: "Ryou - Utility",
-          iconURL: user.displayAvatarURL(),
-        });
-      const Buttons = new ActionRowBuilder().addComponents(
-        new ButtonBuilder()
-          .setCustomId("CommunityRole")
-          .setLabel("Community Role")
-          .setStyle(ButtonStyle.Primary),
-        new ButtonBuilder()
-          .setCustomId("StaffRole")
-          .setLabel("Staff Role")
-          .setStyle(ButtonStyle.Primary),
-        new ButtonBuilder()
-          .setCustomId("AdminRole")
-          .setLabel("Admin Role")
-          .setStyle(ButtonStyle.Primary),
-        new ButtonBuilder()
-          .setCustomId("MainSetupMenu")
-          .setEmoji("⏩")
-          .setLabel("Back")
-          .setStyle(ButtonStyle.Primary)
+        .setStyle(TextInputStyle.Paragraph);
+      VerificationDescModal.addComponents(
+        new ActionRowBuilder().addComponents(VerificationDescInput)
       );
-      interaction.update({ embeds: [Embed], components: [Buttons] });
+      await interaction.showModal(VerificationDescModal);
     }
   },
 };
