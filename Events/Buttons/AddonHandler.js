@@ -263,8 +263,7 @@ module.exports = {
                               components: [],
                             });
                             await wait(3000);
-                            const MainMsg = await msg.edit({
-                              fetchReply: true,
+                            interaction.update({
                               embeds: [
                                 new EmbedBuilder()
                                   .setTitle("__Settings Menu__")
@@ -275,14 +274,14 @@ module.exports = {
                                   .setDescription(
                                     `This is the Settings Menu, you can choose what you want for your server,
                                     and leave things that you don't need!
-
+                                    
                                     Simply go ahead and click on the Buttons and Complete them,
                                     when you have setup the things you want,
                                     you can just click on the Confirm Button!`
                                   )
                                   .setFooter({
                                     text: "Ryou - Utility",
-                                    iconURL: user.displayAvatarURL(),
+                                    iconURL: client.user.displayAvatarURL(),
                                   }),
                               ],
                               components: [
@@ -290,19 +289,35 @@ module.exports = {
                                   new ButtonBuilder()
                                     .setCustomId("JTCSetup")
                                     .setLabel("Join to Create")
-                                    .setStyle(ButtonStyle.Danger),
+                                    .setStyle(
+                                      setupData.JTCChannelID
+                                        ? ButtonStyle.Success
+                                        : ButtonStyle.Danger
+                                    ),
                                   new ButtonBuilder()
                                     .setCustomId("VerificationSetup")
                                     .setLabel("Verification")
-                                    .setStyle(ButtonStyle.Danger),
+                                    .setStyle(
+                                      setupData.VerificationChannelID
+                                        ? ButtonStyle.Success
+                                        : ButtonStyle.Danger
+                                    ),
                                   new ButtonBuilder()
                                     .setCustomId("LogsSetup")
                                     .setLabel("Logs")
-                                    .setStyle(ButtonStyle.Danger),
+                                    .setStyle(
+                                      setupData.LogChannelID
+                                        ? ButtonStyle.Success
+                                        : ButtonStyle.Danger
+                                    ),
                                   new ButtonBuilder()
                                     .setCustomId("TicketSetup")
                                     .setLabel("Ticket")
-                                    .setStyle(ButtonStyle.Danger),
+                                    .setStyle(
+                                      setupData.TicketParentID
+                                        ? ButtonStyle.Success
+                                        : ButtonStyle.Danger
+                                    ),
                                   new ButtonBuilder()
                                     .setCustomId("DefaultRolesSetup")
                                     .setLabel("Default Roles")
@@ -310,36 +325,6 @@ module.exports = {
                                 ),
                               ],
                             });
-                            await setupDB
-                              .findOne({ GuildID: guild.id })
-                              .then((DB) => {
-                                const data = MainMsg.components[0];
-                                const newActionRow =
-                                  ActionRowBuilder.from(data);
-                                if (DB.JTCChannelID) {
-                                  newActionRow.components[0].setStyle(
-                                    ButtonStyle.Success
-                                  );
-                                }
-                                if (DB.VerificationChannelID) {
-                                  newActionRow.components[1].setStyle(
-                                    ButtonStyle.Success
-                                  );
-                                }
-                                if (DB.LogChannelID) {
-                                  newActionRow.components[2].setStyle(
-                                    ButtonStyle.Success
-                                  );
-                                }
-                                if (DB.TicketParentID) {
-                                  newActionRow.components[3].setStyle(
-                                    ButtonStyle.Success
-                                  );
-                                }
-                                MainMsg.edit({
-                                  components: [newActionRow],
-                                });
-                              });
                           });
                       });
                   });
@@ -602,8 +587,7 @@ module.exports = {
                               components: [],
                             });
                             await wait(3000);
-                            const MainMsg = await msg.edit({
-                              fetchReply: true,
+                            interaction.update({
                               embeds: [
                                 new EmbedBuilder()
                                   .setTitle("__Settings Menu__")
@@ -613,15 +597,15 @@ module.exports = {
                                   })
                                   .setDescription(
                                     `This is the Settings Menu, you can choose what you want for your server,
-                                and leave things that you don't need!
-                                
-                                Simply go ahead and click on the Buttons and Complete them,
-                                when you have setup the things you want,
-                                you can just click on the Confirm Button!`
+                                    and leave things that you don't need!
+                                    
+                                    Simply go ahead and click on the Buttons and Complete them,
+                                    when you have setup the things you want,
+                                    you can just click on the Confirm Button!`
                                   )
                                   .setFooter({
                                     text: "Ryou - Utility",
-                                    iconURL: user.displayAvatarURL(),
+                                    iconURL: client.user.displayAvatarURL(),
                                   }),
                               ],
                               components: [
@@ -629,19 +613,35 @@ module.exports = {
                                   new ButtonBuilder()
                                     .setCustomId("JTCSetup")
                                     .setLabel("Join to Create")
-                                    .setStyle(ButtonStyle.Danger),
+                                    .setStyle(
+                                      setupData.JTCChannelID
+                                        ? ButtonStyle.Success
+                                        : ButtonStyle.Danger
+                                    ),
                                   new ButtonBuilder()
                                     .setCustomId("VerificationSetup")
                                     .setLabel("Verification")
-                                    .setStyle(ButtonStyle.Danger),
+                                    .setStyle(
+                                      setupData.VerificationChannelID
+                                        ? ButtonStyle.Success
+                                        : ButtonStyle.Danger
+                                    ),
                                   new ButtonBuilder()
                                     .setCustomId("LogsSetup")
                                     .setLabel("Logs")
-                                    .setStyle(ButtonStyle.Danger),
+                                    .setStyle(
+                                      setupData.LogChannelID
+                                        ? ButtonStyle.Success
+                                        : ButtonStyle.Danger
+                                    ),
                                   new ButtonBuilder()
                                     .setCustomId("TicketSetup")
                                     .setLabel("Ticket")
-                                    .setStyle(ButtonStyle.Danger),
+                                    .setStyle(
+                                      setupData.TicketParentID
+                                        ? ButtonStyle.Success
+                                        : ButtonStyle.Danger
+                                    ),
                                   new ButtonBuilder()
                                     .setCustomId("DefaultRolesSetup")
                                     .setLabel("Default Roles")
@@ -649,36 +649,6 @@ module.exports = {
                                 ),
                               ],
                             });
-                            await setupDB
-                              .findOne({ GuildID: guild.id })
-                              .then((DB) => {
-                                const data = MainMsg.components[0];
-                                const newActionRow =
-                                  ActionRowBuilder.from(data);
-                                if (DB.JTCChannelID) {
-                                  newActionRow.components[0].setStyle(
-                                    ButtonStyle.Success
-                                  );
-                                }
-                                if (DB.VerificationChannelID) {
-                                  newActionRow.components[1].setStyle(
-                                    ButtonStyle.Success
-                                  );
-                                }
-                                if (DB.LogChannelID) {
-                                  newActionRow.components[2].setStyle(
-                                    ButtonStyle.Success
-                                  );
-                                }
-                                if (DB.TicketParentID) {
-                                  newActionRow.components[3].setStyle(
-                                    ButtonStyle.Success
-                                  );
-                                }
-                                MainMsg.edit({
-                                  components: [newActionRow],
-                                });
-                              });
                           });
                       });
                   });
@@ -1027,8 +997,7 @@ module.exports = {
               components: [],
             });
             await wait(5000);
-            const MainMsg = await msg.edit({
-              fetchReply: true,
+            interaction.update({
               embeds: [
                 new EmbedBuilder()
                   .setTitle("__Settings Menu__")
@@ -1038,15 +1007,15 @@ module.exports = {
                   })
                   .setDescription(
                     `This is the Settings Menu, you can choose what you want for your server,
-                  and leave things that you don't need!
-                  
-                  Simply go ahead and click on the Buttons and Complete them,
-                  when you have setup the things you want,
-                  you can just click on the Confirm Button!`
+                    and leave things that you don't need!
+                    
+                    Simply go ahead and click on the Buttons and Complete them,
+                    when you have setup the things you want,
+                    you can just click on the Confirm Button!`
                   )
                   .setFooter({
                     text: "Ryou - Utility",
-                    iconURL: user.displayAvatarURL(),
+                    iconURL: client.user.displayAvatarURL(),
                   }),
               ],
               components: [
@@ -1054,44 +1023,41 @@ module.exports = {
                   new ButtonBuilder()
                     .setCustomId("JTCSetup")
                     .setLabel("Join to Create")
-                    .setStyle(ButtonStyle.Danger),
+                    .setStyle(
+                      setupData.JTCChannelID
+                        ? ButtonStyle.Success
+                        : ButtonStyle.Danger
+                    ),
                   new ButtonBuilder()
                     .setCustomId("VerificationSetup")
                     .setLabel("Verification")
-                    .setStyle(ButtonStyle.Danger),
+                    .setStyle(
+                      setupData.VerificationChannelID
+                        ? ButtonStyle.Success
+                        : ButtonStyle.Danger
+                    ),
                   new ButtonBuilder()
                     .setCustomId("LogsSetup")
                     .setLabel("Logs")
-                    .setStyle(ButtonStyle.Danger),
+                    .setStyle(
+                      setupData.LogChannelID
+                        ? ButtonStyle.Success
+                        : ButtonStyle.Danger
+                    ),
                   new ButtonBuilder()
                     .setCustomId("TicketSetup")
                     .setLabel("Ticket")
-                    .setStyle(ButtonStyle.Danger),
+                    .setStyle(
+                      setupData.TicketParentID
+                        ? ButtonStyle.Success
+                        : ButtonStyle.Danger
+                    ),
                   new ButtonBuilder()
                     .setCustomId("DefaultRolesSetup")
                     .setLabel("Default Roles")
                     .setStyle(ButtonStyle.Primary)
                 ),
               ],
-            });
-            await setupDB.findOne({ GuildID: guild.id }).then((DB) => {
-              const data = MainMsg.components[0];
-              const newActionRow = ActionRowBuilder.from(data);
-              if (DB.JTCChannelID) {
-                newActionRow.components[0].setStyle(ButtonStyle.Success);
-              }
-              if (DB.VerificationChannelID) {
-                newActionRow.components[1].setStyle(ButtonStyle.Success);
-              }
-              if (DB.LogChannelID) {
-                newActionRow.components[2].setStyle(ButtonStyle.Success);
-              }
-              if (DB.TicketParentID) {
-                newActionRow.components[3].setStyle(ButtonStyle.Success);
-              }
-              MainMsg.edit({
-                components: [newActionRow],
-              });
             });
           }
           break;
@@ -1238,8 +1204,7 @@ module.exports = {
         components: [],
       });
       await wait(3000);
-      const MainMsg = await msg.edit({
-        fetchReply: true,
+      interaction.update({
         embeds: [
           new EmbedBuilder()
             .setTitle("__Settings Menu__")
@@ -1249,15 +1214,15 @@ module.exports = {
             })
             .setDescription(
               `This is the Settings Menu, you can choose what you want for your server,
-                  and leave things that you don't need!
-                  
-                  Simply go ahead and click on the Buttons and Complete them,
-                  when you have setup the things you want,
-                  you can just click on the Confirm Button!`
+              and leave things that you don't need!
+              
+              Simply go ahead and click on the Buttons and Complete them,
+              when you have setup the things you want,
+              you can just click on the Confirm Button!`
             )
             .setFooter({
               text: "Ryou - Utility",
-              iconURL: user.displayAvatarURL(),
+              iconURL: client.user.displayAvatarURL(),
             }),
         ],
         components: [
@@ -1265,44 +1230,41 @@ module.exports = {
             new ButtonBuilder()
               .setCustomId("JTCSetup")
               .setLabel("Join to Create")
-              .setStyle(ButtonStyle.Danger),
+              .setStyle(
+                setupData.JTCChannelID
+                  ? ButtonStyle.Success
+                  : ButtonStyle.Danger
+              ),
             new ButtonBuilder()
               .setCustomId("VerificationSetup")
               .setLabel("Verification")
-              .setStyle(ButtonStyle.Danger),
+              .setStyle(
+                setupData.VerificationChannelID
+                  ? ButtonStyle.Success
+                  : ButtonStyle.Danger
+              ),
             new ButtonBuilder()
               .setCustomId("LogsSetup")
               .setLabel("Logs")
-              .setStyle(ButtonStyle.Danger),
+              .setStyle(
+                setupData.LogChannelID
+                  ? ButtonStyle.Success
+                  : ButtonStyle.Danger
+              ),
             new ButtonBuilder()
               .setCustomId("TicketSetup")
               .setLabel("Ticket")
-              .setStyle(ButtonStyle.Danger),
+              .setStyle(
+                setupData.TicketParentID
+                  ? ButtonStyle.Success
+                  : ButtonStyle.Danger
+              ),
             new ButtonBuilder()
               .setCustomId("DefaultRolesSetup")
               .setLabel("Default Roles")
               .setStyle(ButtonStyle.Primary)
           ),
         ],
-      });
-      await setupDB.findOne({ GuildID: guild.id }).then((DB) => {
-        const data = MainMsg.components[0];
-        const newActionRow = ActionRowBuilder.from(data);
-        if (DB.JTCChannelID) {
-          newActionRow.components[0].setStyle(ButtonStyle.Success);
-        }
-        if (DB.VerificationChannelID) {
-          newActionRow.components[1].setStyle(ButtonStyle.Success);
-        }
-        if (DB.LogChannelID) {
-          newActionRow.components[2].setStyle(ButtonStyle.Success);
-        }
-        if (DB.TicketParentID) {
-          newActionRow.components[3].setStyle(ButtonStyle.Success);
-        }
-        MainMsg.edit({
-          components: [newActionRow],
-        });
       });
     }
   },

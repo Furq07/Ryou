@@ -417,8 +417,7 @@ module.exports = {
           break;
       }
     } else if (customId === "MainSetupMenu") {
-      const MainMsg = await interaction.update({
-        fetchReply: true,
+      interaction.update({
         embeds: [
           new EmbedBuilder()
             .setTitle("__Settings Menu__")
@@ -444,44 +443,41 @@ module.exports = {
             new ButtonBuilder()
               .setCustomId("JTCSetup")
               .setLabel("Join to Create")
-              .setStyle(ButtonStyle.Danger),
+              .setStyle(
+                setupData.JTCChannelID
+                  ? ButtonStyle.Success
+                  : ButtonStyle.Danger
+              ),
             new ButtonBuilder()
               .setCustomId("VerificationSetup")
               .setLabel("Verification")
-              .setStyle(ButtonStyle.Danger),
+              .setStyle(
+                setupData.VerificationChannelID
+                  ? ButtonStyle.Success
+                  : ButtonStyle.Danger
+              ),
             new ButtonBuilder()
               .setCustomId("LogsSetup")
               .setLabel("Logs")
-              .setStyle(ButtonStyle.Danger),
+              .setStyle(
+                setupData.LogChannelID
+                  ? ButtonStyle.Success
+                  : ButtonStyle.Danger
+              ),
             new ButtonBuilder()
               .setCustomId("TicketSetup")
               .setLabel("Ticket")
-              .setStyle(ButtonStyle.Danger),
+              .setStyle(
+                setupData.TicketParentID
+                  ? ButtonStyle.Success
+                  : ButtonStyle.Danger
+              ),
             new ButtonBuilder()
               .setCustomId("DefaultRolesSetup")
               .setLabel("Default Roles")
               .setStyle(ButtonStyle.Primary)
           ),
         ],
-      });
-      await setupDB.findOne({ GuildID: guild.id }).then((DB) => {
-        const data = MainMsg.components[0];
-        const newActionRow = ActionRowBuilder.from(data);
-        if (DB.JTCChannelID) {
-          newActionRow.components[0].setStyle(ButtonStyle.Success);
-        }
-        if (DB.VerificationChannelID) {
-          newActionRow.components[1].setStyle(ButtonStyle.Success);
-        }
-        if (DB.LogChannelID) {
-          newActionRow.components[2].setStyle(ButtonStyle.Success);
-        }
-        if (DB.TicketParentID) {
-          newActionRow.components[3].setStyle(ButtonStyle.Success);
-        }
-        MainMsg.edit({
-          components: [newActionRow],
-        });
       });
     } else if (customId === "DefaultRolesSetup") {
       const Embed = new EmbedBuilder()
