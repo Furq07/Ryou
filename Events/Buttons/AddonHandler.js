@@ -1146,10 +1146,6 @@ module.exports = {
               ],
             })
             .then(async (channel) => {
-              await setupDB.findOneAndUpdate(
-                { GuildID: guild.id },
-                { JTCSettingID: channel.id }
-              );
               channel
                 .send({
                   embeds: [
