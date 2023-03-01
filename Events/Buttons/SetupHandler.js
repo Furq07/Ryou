@@ -179,12 +179,20 @@ module.exports = {
                     .setStyle(ButtonStyle.Success),
                   new ButtonBuilder()
                     .setCustomId("JTCAutoRecover")
-                    .setLabel("Auto Recover")
+                    .setLabel(
+                      setupData.JTCAutoRecover === true
+                        ? "Auto Recover: True"
+                        : "Auto Recover: False"
+                    )
                     .setEmoji("🛠️")
                     .setStyle(ButtonStyle.Success),
                   new ButtonBuilder()
                     .setCustomId("JTCLogs")
-                    .setLabel("JTC Logs")
+                    .setLabel(
+                      setupData.JTCLogsEnabled === true
+                        ? "JTC Logs: True"
+                        : "JTC Logs: False"
+                    )
                     .setEmoji("📃")
                     .setStyle(ButtonStyle.Success),
                   new ButtonBuilder()

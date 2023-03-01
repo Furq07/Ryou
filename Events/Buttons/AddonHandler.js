@@ -42,6 +42,8 @@ module.exports = {
         "TicketSetupCreate",
         "MainSetupMenu",
         "DefaultRolesSetup",
+        "JTCAutoRecover",
+        "JTCLogs",
       ].includes(customId)
     )
       return;
@@ -57,7 +59,11 @@ module.exports = {
         content: `These Buttons aren't for You!`,
         ephemeral: true,
       });
-    if (["JTCSetupB", "JTCResetup", "JTCAutoRecover"].includes(customId)) {
+    if (
+      ["JTCSetupB", "JTCResetup", "JTCAutoRecover", "JTCLogs"].includes(
+        customId
+      )
+    ) {
       switch (customId) {
         case "JTCSetupB":
           {
@@ -77,7 +83,7 @@ module.exports = {
                 ],
               })
               .then(async (categoryName) => {
-                await guild.channels
+                guild.channels
                   .create({
                     name: "jtc-settings",
                     type: ChannelType.GuildText,
@@ -154,7 +160,7 @@ module.exports = {
                           { JTCSettingMessageID: message.id }
                         );
                       });
-                    await guild.channels
+                    guild.channels
                       .create({
                         name: "jtc-admin",
                         type: ChannelType.GuildText,
@@ -220,7 +226,7 @@ module.exports = {
                           { GuildID: guild.id },
                           { JTCAdminSettingID: jtcAdminpanel.id }
                         );
-                        await guild.channels
+                        guild.channels
                           .create({
                             name: `Join to Create`,
                             type: ChannelType.GuildVoice,
@@ -404,7 +410,7 @@ module.exports = {
                 ],
               })
               .then(async (categoryName) => {
-                await guild.channels
+                guild.channels
                   .create({
                     name: "jtc-settings",
                     type: ChannelType.GuildText,
@@ -481,7 +487,7 @@ module.exports = {
                           { JTCSettingMessageID: message.id }
                         );
                       });
-                    await guild.channels
+                    guild.channels
                       .create({
                         name: "jtc-admin",
                         type: ChannelType.GuildText,
@@ -547,7 +553,7 @@ module.exports = {
                           { GuildID: guild.id },
                           { JTCAdminSettingID: jtcAdminpanel.id }
                         );
-                        await guild.channels
+                        guild.channels
                           .create({
                             name: `Join to Create`,
                             type: ChannelType.GuildVoice,
@@ -678,28 +684,83 @@ module.exports = {
               });
           }
           break;
-        case "JTCAutoRecover": {
-          if (setupData.JTCAutoRecover === false) {
-            newActionRow.components[1]
-              .setLabel("Auto Recover: True")
-              .setStyle(ButtonStyle.Success);
-            await setupDB.findOneAndUpdate(
-              { GuildID: guild.id },
-              { JTCAutoRecover: true }
-            );
-          } else {
-            newActionRow.components[1]
-              .setLabel("Auto Recover: False")
-              .setStyle(ButtonStyle.Success);
-            await setupDB.findOneAndUpdate(
-              { GuildID: guild.id },
-              { JTCAutoRecover: false }
-            );
+        case "JTCAutoRecover":
+          {
+            if (setupData.JTCAutoRecover === false) {
+              newActionRow.components[1]
+                .setLabel("Auto Recover: True")
+                .setStyle(ButtonStyle.Success);
+              await setupDB.findOneAndUpdate(
+                { GuildID: guild.id },
+                { JTCAutoRecover: true }
+              );
+            } else {
+              newActionRow.components[1]
+                .setLabel("Auto Recover: False")
+                .setStyle(ButtonStyle.Success);
+              await setupDB.findOneAndUpdate(
+                { GuildID: guild.id },
+                { JTCAutoRecover: false }
+              );
+            }
+            interaction.update({ components: [newActionRow] });
           }
-          interaction.update({ components: [newActionRow] });
-        }
-        case "JTCLogs": {
-        }
+          break;
+        case "JTCLogs":
+          {
+            if (
+              !guild.channels.cache.get(setupData.JTCCategoryID) ||
+              !setupData.JTCCategoryID
+            )
+              return;
+            if (setupData.JTCLogsID) {
+              const jtcLogsChannel = guild.channels.cache.get(
+                setupData.JTCLogsID
+              );
+              if (jtcLogsChannel) await jtcLogsChannel.delete();
+              await setupDB.findOneAndUpdate(
+                { GuildID: guild.id },
+                { $unset: { JTCLogsID: "" } }
+              );
+              await setupDB.findOneAndUpdate(
+                { GuildID: guild.id },
+                { JTCLogsEnabled: false }
+              );
+              interaction.reply({ content: "test", ephemeral: true });
+              newActionRow.components[2]
+                .setLabel("JTC Logs: False")
+                .setStyle(ButtonStyle.Success);
+              interaction.update({ components: [newActionRow] });
+              return;
+            }
+            newActionRow.components[2]
+              .setLabel("JTC Logs: True")
+              .setStyle(ButtonStyle.Success);
+            await guild.channels
+              .create({
+                name: "jtc-logs",
+                type: ChannelType.GuildText,
+                parent: setupData.JTCCategoryID,
+                permissionOverwrites: [
+                  {
+                    id: guild.roles.everyone.id,
+                    deny: [PermissionFlagsBits.ViewChannel],
+                  },
+                ],
+              })
+              .then(async (jtcLogChannel) => {
+                await setupDB.findOneAndUpdate(
+                  { GuildID: guild.id },
+                  { JTCLogsID: jtcLogChannel.id }
+                );
+                await setupDB.findOneAndUpdate(
+                  { GuildID: guild.id },
+                  { JTCLogsEnabled: true }
+                );
+              });
+            interaction.update({ components: [newActionRow] });
+          }
+          break;
       }
       // Log Setup
     } else if (

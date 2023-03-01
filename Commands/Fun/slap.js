@@ -4,7 +4,6 @@ const {
   AttachmentBuilder,
 } = require("discord.js");
 const Canvas = require("canvas");
-const { draw } = require("../../Commands/Fun/whisper");
 module.exports = {
   name: "slap",
   description: "Slap someone",
@@ -35,6 +34,9 @@ module.exports = {
     );
     const randomImage = images[Math.floor(Math.random() * images.length)];
     const image = await Canvas.loadImage(randomImage);
+
+    await interaction.deferReply({ ephemeral: false });
+
     switch (randomImage) {
       case "src/images/slap.jpg":
         context.drawImage(image, 0, 0, canvas.width, canvas.height);
@@ -69,6 +71,6 @@ module.exports = {
     }
 
     const attachment = new AttachmentBuilder(canvas.toBuffer(), "slap.jpg");
-    interaction.channel.send({ files: [attachment] });
+    await interaction.editReply({ files: [attachment] });
   },
 };

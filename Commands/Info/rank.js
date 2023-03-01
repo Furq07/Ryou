@@ -3,7 +3,7 @@ const {
   ApplicationCommandOptionType,
 } = require("discord.js");
 const levelDB = require("../../src/models/levelDB");
-const canvacord = require("canvacord");
+// const canvacord = require("canvacord");
 
 module.exports = {
   name: "rank",

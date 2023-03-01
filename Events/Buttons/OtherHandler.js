@@ -20,12 +20,9 @@ module.exports = {
     let captchaData = await captchaDB.findOne({ GuildID: guild.id });
     let setupData = await setupDB.findOne({ GuildID: guild.id });
     if (
-      [
-        "unban-button",
-        "send-invite-button",
-        "captcha-verify",
-        "verification-resetup",
-      ].includes(customId)
+      ["unban-button", "send-invite-button", "captcha-verify"].includes(
+        customId
+      )
     ) {
       switch (customId) {
         case "unban-button":

@@ -36,7 +36,7 @@ module.exports = {
     const whispererAvatar = await Canvas.loadImage(
       interaction.user.displayAvatarURL({ extension: "jpg" })
     );
-
+    await interaction.deferReply({ ephemeral: false });
     context.drawImage(image, 0, 0, canvas.width, canvas.height);
     context.save();
     context.rotate((10 * Math.PI) / 180);
@@ -80,6 +80,6 @@ module.exports = {
       canvas.toBuffer(),
       "whisper-image.png"
     );
-    await interaction.channel.send({ files: [attachment] });
+    await interaction.editReply({ files: [attachment] });
   },
 };
