@@ -14,11 +14,11 @@ module.exports = {
   async execute(interaction, client) {
     const { customId, channel, message, member, guild, user } = interaction;
     if (!interaction.isButton()) return;
-    const captchaData = await captchaDB.findOne({ GuildID: guild.id });
     if (
       ![
         "JTCSetupB",
         "JTCResetup",
+        "JTCAutoRecover",
         "LogChannelCreateSetup",
         "LogChannelDeleteSetup",
         "LogVCJoinSetup",
@@ -36,13 +36,17 @@ module.exports = {
         "LogRoleCreateSetup",
         "LogRoleDeleteSetup",
         "LogRoleUpdateSetup",
+        "VerificationModeSetup",
+        "VerificationSetupCreate",
+        "VerificationDescSetup",
+        "TicketSetupCreate",
         "MainSetupMenu",
         "DefaultRolesSetup",
-        "JTCAutoRecover",
       ].includes(customId)
     )
       return;
     const setupData = await setupDB.findOne({ GuildID: guild.id });
+    const captchaData = await captchaDB.findOne({ guildID: guild.id });
     const msg = await channel.messages.fetch(message.id);
     const data = msg.components[0];
     const newActionRow = ActionRowBuilder.from(data);
@@ -63,7 +67,7 @@ module.exports = {
                 type: ChannelType.GuildCategory,
                 permissionOverwrites: [
                   {
-                    id: guild.roles.everyone.id,
+                    id: guild.id,
                     allow: [
                       PermissionFlagsBits.Connect,
                       PermissionFlagsBits.Speak,
@@ -80,7 +84,7 @@ module.exports = {
                     parent: categoryName,
                     permissionOverwrites: [
                       {
-                        id: guild.roles.everyone.id,
+                        id: guild.id,
                         deny: [PermissionFlagsBits.SendMessages],
                         allow: [PermissionFlagsBits.ViewChannel],
                       },
@@ -390,7 +394,7 @@ module.exports = {
                 type: ChannelType.GuildCategory,
                 permissionOverwrites: [
                   {
-                    id: guild.roles.everyone.id,
+                    id: guild.id,
                     allow: [
                       PermissionFlagsBits.Connect,
                       PermissionFlagsBits.Speak,
@@ -407,7 +411,7 @@ module.exports = {
                     parent: categoryName,
                     permissionOverwrites: [
                       {
-                        id: guild.roles.everyone.id,
+                        id: guild.id,
                         deny: [PermissionFlagsBits.SendMessages],
                         allow: [PermissionFlagsBits.ViewChannel],
                       },
@@ -1059,8 +1063,158 @@ module.exports = {
           interaction.update({ components: [newActionRow] });
           break;
       }
-    } else if (customId === "MainSetupMenu") {
-      const MainMsg = await interaction.update({
+    } else if (["TicketSetupCreate"].includes(customId)) {
+      guild.channels
+        .create({
+          name: "Opened Ticket",
+          type: ChannelType.GuildCategory,
+          permissionOverwrites: [
+            {
+              id: guild.id,
+              deny: [PermissionFlagsBits.ViewChannel],
+            },
+            {
+              id: setupData.AdminRoleID,
+              allow: [PermissionFlagsBits.ViewChannel],
+            },
+            {
+              id: setupData.StaffRoleID,
+              allow: [PermissionFlagsBits.ViewChannel],
+            },
+          ],
+        })
+        .then(async (categoryName) => {
+          await setupDB.findOneAndUpdate(
+            { GuildID: guild.id },
+            { TicketOpenedID: categoryName.id }
+          );
+        });
+      guild.channels
+        .create({
+          name: "Closed Ticket",
+          type: ChannelType.GuildCategory,
+          permissionOverwrites: [
+            {
+              id: guild.id,
+              deny: [PermissionFlagsBits.ViewChannel],
+            },
+            {
+              id: setupData.AdminRoleID,
+              allow: [PermissionFlagsBits.ViewChannel],
+            },
+            {
+              id: setupData.StaffRoleID,
+              allow: [PermissionFlagsBits.ViewChannel],
+            },
+          ],
+        })
+        .then(async (categoryName) => {
+          await setupDB.findOneAndUpdate(
+            { GuildID: guild.id },
+            { TicketLockedID: categoryName.id }
+          );
+        });
+      guild.channels
+        .create({
+          name: "Support Area",
+          type: ChannelType.GuildCategory,
+          permissionOverwrites: [
+            {
+              id: guild.id,
+              allow: [PermissionFlagsBits.ViewChannel],
+            },
+            {
+              id: setupData.AdminRoleID,
+              allow: [PermissionFlagsBits.ViewChannel],
+            },
+            {
+              id: setupData.StaffRoleID,
+              allow: [PermissionFlagsBits.ViewChannel],
+            },
+          ],
+        })
+        .then(async (categoryName) => {
+          guild.channels
+            .create({
+              name: "create-ticket",
+              type: ChannelType.GuildText,
+              parent: categoryName,
+              permissionOverwrites: [
+                {
+                  id: guild.id,
+                  deny: [PermissionFlagsBits.SendMessages],
+                  allow: [
+                    PermissionFlagsBits.ViewChannel,
+                    PermissionFlagsBits.ReadMessageHistory,
+                  ],
+                },
+              ],
+            })
+            .then(async (channel) => {
+              await setupDB.findOneAndUpdate(
+                { GuildID: guild.id },
+                { JTCSettingID: channel.id }
+              );
+              channel
+                .send({
+                  embeds: [
+                    new EmbedBuilder()
+                      .setColor("#800000")
+                      .setTitle("Ticket System")
+                      .setDescription("Create a Ticket if you need a Help!")
+                      .setColor("#800000")
+                      .setFooter({
+                        text: "Ryou - Ticket",
+                        iconURL: client.user.displayAvatarURL(),
+                      }),
+                  ],
+                  components: [
+                    new ActionRowBuilder().addComponents(
+                      new ButtonBuilder()
+                        .setCustomId("CreateTicket")
+                        .setLabel("Create Ticket")
+                        .setEmoji("🎫")
+                        .setStyle(ButtonStyle.Primary)
+                    ),
+                  ],
+                })
+                .then(async (message) => {
+                  await setupDB.findOneAndUpdate(
+                    { GuildID: guild.id },
+                    { TicketMessageID: message.id }
+                  );
+                });
+              await setupDB.findOneAndUpdate(
+                { GuildID: guild.id },
+                { TicketChannelID: channel.id }
+              );
+            });
+          await setupDB.findOneAndUpdate(
+            { GuildID: guild.id },
+            { TicketParentID: categoryName.id }
+          );
+        });
+      await interaction.update({
+        embeds: [
+          new EmbedBuilder()
+            .setTitle("Ticket Setup Complete!")
+            .setColor("#800000")
+            .setAuthor({
+              name: member.user.tag,
+              iconURL: member.user.displayAvatarURL(),
+            })
+            .setDescription(
+              "Ticket has been setup You can go ahead and Use it!"
+            )
+            .setFooter({
+              text: "Ryou - Utility",
+              iconURL: client.user.displayAvatarURL(),
+            }),
+        ],
+        components: [],
+      });
+      await wait(3000);
+      const MainMsg = await msg.edit({
         fetchReply: true,
         embeds: [
           new EmbedBuilder()
@@ -1071,11 +1225,11 @@ module.exports = {
             })
             .setDescription(
               `This is the Settings Menu, you can choose what you want for your server,
-              and leave things that you don't need!
-              
-              Simply go ahead and click on the Buttons and Complete them,
-              when you have setup the things you want,
-              you can just click on the Confirm Button!`
+                  and leave things that you don't need!
+                  
+                  Simply go ahead and click on the Buttons and Complete them,
+                  when you have setup the things you want,
+                  you can just click on the Confirm Button!`
             )
             .setFooter({
               text: "Ryou - Utility",
@@ -1126,45 +1280,6 @@ module.exports = {
           components: [newActionRow],
         });
       });
-    } else if (customId === "DefaultRolesSetup") {
-      const Embed = new EmbedBuilder()
-        .setColor("#800000")
-        .setAuthor({
-          name: member.user.tag,
-          iconURL: member.user.displayAvatarURL(),
-        })
-        .setTitle("__Default Roles Menu__")
-        .setDescription(
-          `Click Buttons Below and Provide the Roles!
-      
-        **For Example:**
-        If its Community Role, click on it, select it from the Select Menu and its Done!
-        Do the same for all of them then click the Next button!`
-        )
-        .setFooter({
-          text: "Ryou - Utility",
-          iconURL: user.displayAvatarURL(),
-        });
-      const Buttons = new ActionRowBuilder().addComponents(
-        new ButtonBuilder()
-          .setCustomId("CommunityRole")
-          .setLabel("Community Role")
-          .setStyle(ButtonStyle.Primary),
-        new ButtonBuilder()
-          .setCustomId("StaffRole")
-          .setLabel("Staff Role")
-          .setStyle(ButtonStyle.Primary),
-        new ButtonBuilder()
-          .setCustomId("AdminRole")
-          .setLabel("Admin Role")
-          .setStyle(ButtonStyle.Primary),
-        new ButtonBuilder()
-          .setCustomId("MainSetupMenu")
-          .setEmoji("⏩")
-          .setLabel("Back")
-          .setStyle(ButtonStyle.Primary)
-      );
-      interaction.update({ embeds: [Embed], components: [Buttons] });
     }
   },
 };

@@ -3,6 +3,7 @@ const {
   ButtonBuilder,
   ButtonStyle,
   EmbedBuilder,
+  RoleSelectMenuBuilder,
 } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
 module.exports = {
@@ -13,6 +14,12 @@ module.exports = {
     if (!interaction.isButton()) return;
     if (
       ![
+        "CommunityRole",
+        "StaffRole",
+        "AdminRole",
+        "CommunityRoleFirst",
+        "StaffRoleFirst",
+        "AdminRoleFirst",
         "JTCSetup",
         "VerificationSetup",
         "LogsSetup",
@@ -25,6 +32,7 @@ module.exports = {
     const setupData = await setupDB.findOne({ GuildID: guild.id });
     const msg = await channel.messages.fetch(message.id);
     const data = msg.components[0];
+    const newActionRow = ActionRowBuilder.from(data);
     const msgEmbed = msg.embeds[0];
     const author = msgEmbed.author.name;
     if (author !== member.user.tag)
@@ -32,9 +40,111 @@ module.exports = {
         content: `These Buttons aren't for You!`,
         ephemeral: true,
       });
-
-    // Setup Menu
     if (
+      [
+        "CommunityRole",
+        "StaffRole",
+        "AdminRole",
+        "CommunityRoleFirst",
+        "StaffRoleFirst",
+        "AdminRoleFirst",
+      ].includes(customId)
+    ) {
+      switch (customId) {
+        case "CommunityRole":
+          newActionRow.components[0].setDisabled(true);
+          newActionRow.components[1].setDisabled(true);
+          newActionRow.components[2].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new RoleSelectMenuBuilder()
+                  .setCustomId("CommunityRoleMenu")
+                  .setPlaceholder("Choose the Community Role!")
+              ),
+            ],
+          });
+          break;
+        case "StaffRole":
+          newActionRow.components[0].setDisabled(true);
+          newActionRow.components[1].setDisabled(true);
+          newActionRow.components[2].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new RoleSelectMenuBuilder()
+                  .setCustomId("StaffRoleMenu")
+                  .setPlaceholder("Choose the Staff Role!")
+              ),
+            ],
+          });
+
+          break;
+        case "AdminRole":
+          newActionRow.components[0].setDisabled(true);
+          newActionRow.components[1].setDisabled(true);
+          newActionRow.components[2].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new RoleSelectMenuBuilder()
+                  .setCustomId("AdminRoleMenu")
+                  .setPlaceholder("Choose the Admin Role!")
+              ),
+            ],
+          });
+          break;
+        case "CommunityRoleFirst":
+          newActionRow.components[0].setDisabled(true);
+          newActionRow.components[1].setDisabled(true);
+          newActionRow.components[2].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new RoleSelectMenuBuilder()
+                  .setCustomId("CommunityRoleMenuFirst")
+                  .setPlaceholder("Choose the Community Role!")
+              ),
+            ],
+          });
+          break;
+        case "StaffRoleFirst":
+          newActionRow.components[0].setDisabled(true);
+          newActionRow.components[1].setDisabled(true);
+          newActionRow.components[2].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new RoleSelectMenuBuilder()
+                  .setCustomId("StaffRoleMenuFirst")
+                  .setPlaceholder("Choose the Staff Role!")
+              ),
+            ],
+          });
+          break;
+        case "AdminRoleFirst":
+          newActionRow.components[0].setDisabled(true);
+          newActionRow.components[1].setDisabled(true);
+          newActionRow.components[2].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new RoleSelectMenuBuilder()
+                  .setCustomId("AdminRoleMenuFirst")
+                  .setPlaceholder("Choose the Admin Role!")
+              ),
+            ],
+          });
+          break;
+      }
+      // Setup Menu
+    } else if (
       ["JTCSetup", "VerificationSetup", "LogsSetup", "TicketSetup"].includes(
         customId
       )
@@ -248,18 +358,54 @@ module.exports = {
           });
           const data = msg.components[0];
           const newActionRow = ActionRowBuilder.from(data);
-          if (setupData.VerificationMode === false) {
-            newActionRow.components[0]
-              .setLabel("Mode: Normal")
-              .setStyle(ButtonStyle.Primary);
-          } else if (setupData.VerificationMode === true) {
-            newActionRow.components[0]
-              .setLabel("Mode: Captcha")
-              .setStyle(ButtonStyle.Primary);
-          }
-          M.edit({ components: [newActionRow] });
+          M.edit({
+            components: [
+              newActionRow.components[0]
+                .setLabel(
+                  setupData.VerificationMode === false
+                    ? "Mode: Normal"
+                    : "Mode: Captcha"
+                )
+                .setStyle(ButtonStyle.Primary),
+            ],
+          });
           break;
         case "TicketSetup":
+          if (!setupData.TicketParentID)
+            return interaction.update({
+              embeds: [
+                new EmbedBuilder()
+                  .setTitle("__Ticket Settings__")
+                  .setDescription(
+                    `
+                  Do you wanna try out the Ticket System?
+                  Alright Then, Simply go ahead and provide the Things below!`
+                  )
+                  .setFooter({
+                    text: "Ryou - Utility",
+                    iconURL: client.user.displayAvatarURL(),
+                  })
+                  .setColor("#800000")
+                  .setAuthor({
+                    name: member.user.tag,
+                    iconURL: member.user.displayAvatarURL(),
+                  }),
+              ],
+              components: [
+                new ActionRowBuilder().addComponents(
+                  new ButtonBuilder()
+                    .setCustomId("TicketSetupCreate")
+                    .setLabel("Setup")
+                    .setEmoji("✅")
+                    .setStyle(ButtonStyle.Primary),
+                  new ButtonBuilder()
+                    .setCustomId("MainSetupMenu")
+                    .setEmoji("⏩")
+                    .setLabel("Back")
+                    .setStyle(ButtonStyle.Primary)
+                ),
+              ],
+            });
           break;
       }
     } else if (customId === "MainSetupMenu") {

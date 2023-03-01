@@ -11,6 +11,8 @@ module.exports = mongoose.model(
     TicketParentID: String,
     TicketOpenedID: String,
     TicketLockedID: String,
+    TicketMessageID: String,
+    TicketChannelID: String,
     TicketTranscriptID: String,
     JTCChannelID: String,
     JTCSettingID: String,
