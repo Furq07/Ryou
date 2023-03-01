@@ -54,7 +54,7 @@ mongoose
   .then(() => console.log(chalk.gray("Connected To"), chalk.yellow(`MongoDB`)))
   .catch((err) => console.error(err));
 // ———————————————[Login Into Bot]———————————————
-client.login(client.config.token);
+client.login(client.config.alphaToken);
 
 // ———————————————[Error Handling]———————————————
 process.on("unhandledRejection", (reason, p) => {
