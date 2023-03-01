@@ -379,7 +379,7 @@ module.exports = {
           });
           break;
         case "TicketSetup":
-          if (!setupData.TicketParentID)
+          if (setupData.TicketParentID === undefined)
             return interaction.update({
               embeds: [
                 new EmbedBuilder()

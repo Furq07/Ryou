@@ -12,7 +12,8 @@ const wait = require("util").promisify(setTimeout);
 module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
-    const { customId, channel, message, member, guild, user } = interaction;
+    const { user } = client;
+    const { customId, channel, message, member, guild } = interaction;
     if (!interaction.isButton()) return;
     if (
       ![
@@ -256,7 +257,7 @@ module.exports = {
                                   )
                                   .setFooter({
                                     text: "Ryou - Utility",
-                                    iconURL: client.user.displayAvatarURL(),
+                                    iconURL: user.displayAvatarURL(),
                                   }),
                               ],
                               components: [],
@@ -281,7 +282,7 @@ module.exports = {
                                   )
                                   .setFooter({
                                     text: "Ryou - Utility",
-                                    iconURL: client.user.displayAvatarURL(),
+                                    iconURL: user.displayAvatarURL(),
                                   }),
                               ],
                               components: [
@@ -377,7 +378,7 @@ module.exports = {
                   .setDescription("Please wait a Moment!")
                   .setFooter({
                     text: "Ryou - Utility",
-                    iconURL: client.user.displayAvatarURL(),
+                    iconURL: user.displayAvatarURL(),
                   }),
               ],
               components: [],
@@ -595,7 +596,7 @@ module.exports = {
                                   )
                                   .setFooter({
                                     text: "Ryou - Utility",
-                                    iconURL: client.user.displayAvatarURL(),
+                                    iconURL: user.displayAvatarURL(),
                                   }),
                               ],
                               components: [],
@@ -620,7 +621,7 @@ module.exports = {
                                   )
                                   .setFooter({
                                     text: "Ryou - Utility",
-                                    iconURL: client.user.displayAvatarURL(),
+                                    iconURL: user.displayAvatarURL(),
                                   }),
                               ],
                               components: [
@@ -972,7 +973,7 @@ module.exports = {
                             )
                             .setFooter({
                               text: "Ryou - Verification",
-                              iconURL: client.user.displayAvatarURL(),
+                              iconURL: user.displayAvatarURL(),
                             }),
                         ],
                         components: [
@@ -1020,7 +1021,7 @@ module.exports = {
                   )
                   .setFooter({
                     text: "Ryou - Utility",
-                    iconURL: client.user.displayAvatarURL(),
+                    iconURL: user.displayAvatarURL(),
                   }),
               ],
               components: [],
@@ -1045,7 +1046,7 @@ module.exports = {
                   )
                   .setFooter({
                     text: "Ryou - Utility",
-                    iconURL: client.user.displayAvatarURL(),
+                    iconURL: user.displayAvatarURL(),
                   }),
               ],
               components: [
@@ -1127,16 +1128,12 @@ module.exports = {
     } else if (["TicketSetupCreate"].includes(customId)) {
       guild.channels
         .create({
-          name: "Opened Ticket",
+          name: "Tickets",
           type: ChannelType.GuildCategory,
           permissionOverwrites: [
             {
-              id: guild.id,
+              id: setupData.CommunityRoleID,
               deny: [PermissionFlagsBits.ViewChannel],
-            },
-            {
-              id: setupData.AdminRoleID,
-              allow: [PermissionFlagsBits.ViewChannel],
             },
             {
               id: setupData.StaffRoleID,
@@ -1147,32 +1144,7 @@ module.exports = {
         .then(async (categoryName) => {
           await setupDB.findOneAndUpdate(
             { GuildID: guild.id },
-            { TicketOpenedID: categoryName.id }
-          );
-        });
-      guild.channels
-        .create({
-          name: "Closed Ticket",
-          type: ChannelType.GuildCategory,
-          permissionOverwrites: [
-            {
-              id: guild.id,
-              deny: [PermissionFlagsBits.ViewChannel],
-            },
-            {
-              id: setupData.AdminRoleID,
-              allow: [PermissionFlagsBits.ViewChannel],
-            },
-            {
-              id: setupData.StaffRoleID,
-              allow: [PermissionFlagsBits.ViewChannel],
-            },
-          ],
-        })
-        .then(async (categoryName) => {
-          await setupDB.findOneAndUpdate(
-            { GuildID: guild.id },
-            { TicketLockedID: categoryName.id }
+            { TicketParentID: categoryName.id }
           );
         });
       guild.channels
@@ -1181,16 +1153,12 @@ module.exports = {
           type: ChannelType.GuildCategory,
           permissionOverwrites: [
             {
-              id: guild.id,
-              allow: [PermissionFlagsBits.ViewChannel],
-            },
-            {
-              id: setupData.AdminRoleID,
-              allow: [PermissionFlagsBits.ViewChannel],
-            },
-            {
-              id: setupData.StaffRoleID,
-              allow: [PermissionFlagsBits.ViewChannel],
+              id: setupData.CommunityRoleID,
+              allow: [
+                PermissionFlagsBits.ViewChannel,
+                PermissionFlagsBits.ReadMessageHistory,
+              ],
+              deny: [PermissionFlagsBits.SendMessages],
             },
           ],
         })
@@ -1202,7 +1170,7 @@ module.exports = {
               parent: categoryName,
               permissionOverwrites: [
                 {
-                  id: guild.id,
+                  id: setupData.CommunityRoleID,
                   deny: [PermissionFlagsBits.SendMessages],
                   allow: [
                     PermissionFlagsBits.ViewChannel,
@@ -1220,23 +1188,26 @@ module.exports = {
                 .send({
                   embeds: [
                     new EmbedBuilder()
-                      .setColor("#800000")
-                      .setTitle("Ticket System")
-                      .setDescription("Create a Ticket if you need a Help!")
+                      .setAuthor({
+                        name: `${guild.name} | Ticket System`,
+                        iconURL: guild.iconURL({ dynamic: true }),
+                      })
+                      .setDescription(
+                        `Hey, this is an Ticket System,
+                      use the Button Below to create an Ticket!`
+                      )
                       .setColor("#800000")
                       .setFooter({
-                        text: "Ryou - Ticket",
-                        iconURL: client.user.displayAvatarURL(),
+                        text: `Ryou - Ticket System`,
+                        iconURL: user.displayAvatarURL(),
                       }),
                   ],
                   components: [
-                    new ActionRowBuilder().addComponents(
-                      new ButtonBuilder()
-                        .setCustomId("CreateTicket")
-                        .setLabel("Create Ticket")
-                        .setEmoji("🎫")
-                        .setStyle(ButtonStyle.Primary)
-                    ),
+                    new ButtonBuilder()
+                      .setCustomId("TicketButton")
+                      .setLabel("Click to make Ticket!")
+                      .setStyle(ButtonStyle.Danger)
+                      .setEmoji("🎫"),
                   ],
                 })
                 .then(async (message) => {
@@ -1250,10 +1221,6 @@ module.exports = {
                 { TicketChannelID: channel.id }
               );
             });
-          await setupDB.findOneAndUpdate(
-            { GuildID: guild.id },
-            { TicketParentID: categoryName.id }
-          );
         });
       await interaction.update({
         embeds: [
@@ -1269,7 +1236,7 @@ module.exports = {
             )
             .setFooter({
               text: "Ryou - Utility",
-              iconURL: client.user.displayAvatarURL(),
+              iconURL: user.displayAvatarURL(),
             }),
         ],
         components: [],
@@ -1294,7 +1261,7 @@ module.exports = {
             )
             .setFooter({
               text: "Ryou - Utility",
-              iconURL: client.user.displayAvatarURL(),
+              iconURL: user.displayAvatarURL(),
             }),
         ],
         components: [
