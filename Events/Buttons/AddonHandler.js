@@ -1180,6 +1180,10 @@ module.exports = {
               ],
             })
             .then(async (channel) => {
+              await setupDB.findOneAndUpdate(
+                { GuildID: guild.id },
+                { JTCSettingID: channel.id }
+              );
               channel
                 .send({
                   embeds: [
@@ -1199,11 +1203,13 @@ module.exports = {
                       }),
                   ],
                   components: [
-                    new ButtonBuilder()
-                      .setCustomId("TicketButton")
-                      .setLabel("Click to make Ticket!")
-                      .setStyle(ButtonStyle.Danger)
-                      .setEmoji("🎫"),
+                    new ActionRowBuilder().addComponents(
+                      new ButtonBuilder()
+                        .setCustomId("TicketButton")
+                        .setLabel("Click to make Ticket!")
+                        .setStyle(ButtonStyle.Danger)
+                        .setEmoji("🎫")
+                    ),
                   ],
                 })
                 .then(async (message) => {
