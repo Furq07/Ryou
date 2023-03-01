@@ -89,7 +89,7 @@ module.exports = {
           embeds: [
             new EmbedBuilder()
               .setColor("Green")
-              .setTitle("✅ Successuflly verified")
+              .setTitle("✅ Successfully verified")
               .setDescription("You have been successfully verified"),
           ],
           components: [],

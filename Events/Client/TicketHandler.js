@@ -45,7 +45,7 @@ module.exports = {
           .create({
             name: `ticket-${ID}`,
             type: ChannelType.GuildText,
-            parent: "1052899136225169418", //setupData.TicketOpenedID,
+            parent: setupData.TicketParentID,
             permissionOverwrites: [
               {
                 id: member.id,
@@ -56,7 +56,7 @@ module.exports = {
                 deny: [PermissionFlagsBits.SendMessages],
               },
               {
-                id: setupData.mainRoleID,
+                id: setupData.CommunityRoleID,
                 deny: [
                   PermissionFlagsBits.ReadMessageHistory,
                   PermissionFlagsBits.SendMessages,
@@ -64,7 +64,7 @@ module.exports = {
                 ],
               },
               {
-                id: setupData.staffRoleID,
+                id: setupData.StaffRoleID,
                 allow: [
                   PermissionFlagsBits.ReadMessageHistory,
                   PermissionFlagsBits.SendMessages,
@@ -117,12 +117,10 @@ module.exports = {
                 .setStyle(ButtonStyle.Success)
                 .setEmoji("🛄")
             );
-
             c.send({
               embeds: [embed],
               components: [Buttons],
             });
-
             i.reply({
               content: `${member} Your ticket has been created: ${c}`,
               ephemeral: true,
@@ -134,7 +132,7 @@ module.exports = {
         customId
       )
     ) {
-      if (!member.roles.cache.find((r) => r.id === setupData.staffRoleID))
+      if (!member.roles.cache.find((r) => r.id === setupData.StaffRoleID))
         return interaction.reply({
           content: "These Buttons are Staff Only, Please Resist from using it!",
           ephemeral: true,
@@ -194,12 +192,6 @@ module.exports = {
           interaction.reply({
             embeds: [embed.setDescription("🔒 | This Ticket has Been Locked!")],
           });
-          const Locked = guild.channels.find(
-            (c) => c.id == ticketData.TicketLockedID && c.type == "category"
-          );
-          channel.setParent(Locked, {
-            lockPermissions: false,
-          });
           break;
         case "TicketUnlock":
           if (ticketData.LockStatus === false)
@@ -220,12 +212,6 @@ module.exports = {
           interaction.reply({
             embeds: [embed.setDescription("🔓 | This Ticket is now Unlocked.")],
           });
-          const Opened = guild.channels.find(
-            (c) => c.id == ticketData.TicketOpenedID && c.type == "category"
-          );
-          channel.setParent(Opened, {
-            lockPermissions: false,
-          });
           break;
         case "TicketClose":
           const attachment = await createTranscript(channel, {
@@ -235,7 +221,7 @@ module.exports = {
           });
           guild.members.fetch(ticketData.MemberID).then(async (user) => {
             const msg = await guild.channels.cache
-              .get("1052941474792226857") //setupData.TicketTranscriptID
+              .get(setupData.TicketTranscriptID)
               .send({
                 embeds: [
                   new EmbedBuilder()
