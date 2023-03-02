@@ -5,7 +5,7 @@ const {
   AttachmentBuilder,
   EmbedBuilder,
 } = require("discord.js");
-// const { CaptchaGenerator } = require("captcha-canvas");
+const { CaptchaGenerator } = require("captcha-canvas");
 const captchaDB = require("../../src/models/captchaDB");
 const setupDB = require("../../src/models/setupDB");
 module.exports = {

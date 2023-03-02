@@ -68,6 +68,23 @@ module.exports = {
       switch (customId) {
         case "JTCSetupB":
           {
+            await interaction.update({
+              embeds: [
+                new EmbedBuilder()
+                  .setTitle("Setting Up the JTC")
+                  .setColor("#800000")
+                  .setAuthor({
+                    name: member.user.tag,
+                    iconURL: member.user.displayAvatarURL(),
+                  })
+                  .setDescription("Please wait a Moment!")
+                  .setFooter({
+                    text: "Ryou - Utility",
+                    iconURL: user.displayAvatarURL(),
+                  }),
+              ],
+              components: [],
+            });
             await guild.channels
               .create({
                 name: "JTC VCs",
@@ -243,7 +260,7 @@ module.exports = {
                               { GuildID: guild.id },
                               { JTCCategoryID: categoryName.id }
                             );
-                            await interaction.update({
+                            await msg.edit({
                               embeds: [
                                 new EmbedBuilder()
                                   .setTitle("JTC Setup Complete!")
@@ -263,7 +280,8 @@ module.exports = {
                               components: [],
                             });
                             await wait(3000);
-                            interaction.update({
+                            const MainMsg = await msg.edit({
+                              fetchReply: true,
                               embeds: [
                                 new EmbedBuilder()
                                   .setTitle("__Settings Menu__")
@@ -274,14 +292,14 @@ module.exports = {
                                   .setDescription(
                                     `This is the Settings Menu, you can choose what you want for your server,
                                     and leave things that you don't need!
-                                    
+
                                     Simply go ahead and click on the Buttons and Complete them,
                                     when you have setup the things you want,
                                     you can just click on the Confirm Button!`
                                   )
                                   .setFooter({
                                     text: "Ryou - Utility",
-                                    iconURL: client.user.displayAvatarURL(),
+                                    iconURL: user.displayAvatarURL(),
                                   }),
                               ],
                               components: [
@@ -289,35 +307,19 @@ module.exports = {
                                   new ButtonBuilder()
                                     .setCustomId("JTCSetup")
                                     .setLabel("Join to Create")
-                                    .setStyle(
-                                      setupData.JTCChannelID
-                                        ? ButtonStyle.Success
-                                        : ButtonStyle.Danger
-                                    ),
+                                    .setStyle(ButtonStyle.Danger),
                                   new ButtonBuilder()
                                     .setCustomId("VerificationSetup")
                                     .setLabel("Verification")
-                                    .setStyle(
-                                      setupData.VerificationChannelID
-                                        ? ButtonStyle.Success
-                                        : ButtonStyle.Danger
-                                    ),
+                                    .setStyle(ButtonStyle.Danger),
                                   new ButtonBuilder()
                                     .setCustomId("LogsSetup")
                                     .setLabel("Logs")
-                                    .setStyle(
-                                      setupData.LogChannelID
-                                        ? ButtonStyle.Success
-                                        : ButtonStyle.Danger
-                                    ),
+                                    .setStyle(ButtonStyle.Danger),
                                   new ButtonBuilder()
                                     .setCustomId("TicketSetup")
                                     .setLabel("Ticket")
-                                    .setStyle(
-                                      setupData.TicketParentID
-                                        ? ButtonStyle.Success
-                                        : ButtonStyle.Danger
-                                    ),
+                                    .setStyle(ButtonStyle.Danger),
                                   new ButtonBuilder()
                                     .setCustomId("DefaultRolesSetup")
                                     .setLabel("Default Roles")
@@ -325,6 +327,36 @@ module.exports = {
                                 ),
                               ],
                             });
+                            await setupDB
+                              .findOne({ GuildID: guild.id })
+                              .then((DB) => {
+                                const data = MainMsg.components[0];
+                                const newActionRow =
+                                  ActionRowBuilder.from(data);
+                                if (DB.JTCChannelID) {
+                                  newActionRow.components[0].setStyle(
+                                    ButtonStyle.Success
+                                  );
+                                }
+                                if (DB.VerificationChannelID) {
+                                  newActionRow.components[1].setStyle(
+                                    ButtonStyle.Success
+                                  );
+                                }
+                                if (DB.LogChannelID) {
+                                  newActionRow.components[2].setStyle(
+                                    ButtonStyle.Success
+                                  );
+                                }
+                                if (DB.TicketParentID) {
+                                  newActionRow.components[3].setStyle(
+                                    ButtonStyle.Success
+                                  );
+                                }
+                                MainMsg.edit({
+                                  components: [newActionRow],
+                                });
+                              });
                           });
                       });
                   });
