@@ -1108,7 +1108,7 @@ module.exports = {
                 Captchas: [],
               }).save();
             }
-          } else {
+          } else if (setupData.VerificationMode === true) {
             newActionRow.components[0]
               .setLabel("Mode: Normal")
               .setStyle(ButtonStyle.Success);
@@ -1116,9 +1116,9 @@ module.exports = {
               { GuildID: guild.id },
               { VerificationMode: false }
             );
-            if (captchaData) {
-              await captchaDB.deleteOne({ GuildID: guild.id });
-            }
+            await captchaDB.deleteOne({ GuildID: guild.id }).catch(() => {
+              return;
+            });
           }
           interaction.update({ components: [newActionRow] });
           break;

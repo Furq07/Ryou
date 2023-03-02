@@ -68,12 +68,13 @@ module.exports = {
           ),
         ],
       });
+
       await captchaDB.updateOne(
         {
           GuildID: guild.id,
         },
         {
-          $addToSet: {
+          $set: {
             Captchas: { id: member.id, captcha: captcha.text },
           },
         }
