@@ -1,6 +1,6 @@
 {
   "name": "ryou",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Ryou: Reliable, Young, One-Stop, User-Friendly",
   "main": "src/bot.js",
   "scripts": {
@@ -10,17 +10,14 @@
   "author": "Ryou Devs",
   "license": "ISC",
   "dependencies": {
-    "@iamtraction/google-translate": "^2.0.1",
     "canvacord": "^5.4.8",
     "canvas": "^2.11.0",
-    "captcha-canvas": "3.2.1",
     "chalk": "^4.1.2",
     "discord-html-transcripts": "^3.1.2",
     "discord.js": "^14.7.1",
     "glob": "^8.0.3",
     "moment": "^2.29.4",
     "mongoose": "^6.10.0",
-    "node-cron": "^3.0.2",
     "undici": "^5.14.0",
     "util": "^0.12.5"
   }

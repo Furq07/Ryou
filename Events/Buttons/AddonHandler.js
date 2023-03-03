@@ -8,7 +8,6 @@ const {
   ChannelSelectMenuBuilder,
 } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
-const captchaDB = require("../../src/models/captchaDB");
 const wait = require("util").promisify(setTimeout);
 module.exports = {
   name: "interactionCreate",
@@ -52,7 +51,6 @@ module.exports = {
     )
       return;
     const setupData = await setupDB.findOne({ GuildID: guild.id });
-    const captchaData = await captchaDB.findOne({ guildID: guild.id });
     const msg = await channel.messages.fetch(message.id);
     const data = msg.components[0];
     const newActionRow = ActionRowBuilder.from(data);
@@ -1280,12 +1278,6 @@ module.exports = {
               { GuildID: guild.id },
               { VerificationMode: true }
             );
-            if (!captchaData) {
-              new captchaDB({
-                GuildID: guild.id,
-                Captchas: [],
-              }).save();
-            }
           } else {
             newActionRow.components[0]
               .setLabel("Mode: Normal")
@@ -1294,7 +1286,6 @@ module.exports = {
               { GuildID: guild.id },
               { VerificationMode: false }
             );
-            await captchaDB.deleteOne({ GuildID: guild.id });
           }
           interaction.update({ components: [newActionRow] });
           break;
