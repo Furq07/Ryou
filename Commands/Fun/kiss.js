@@ -28,7 +28,7 @@ module.exports = {
       interaction.reply({
         embeds: [
           EmbedBuilder.from(embed).setDescription(
-            `${interaction.user} kissed himself :skull:`
+            `${interaction.user} kissed themself :skull:`
           ),
         ],
       });
