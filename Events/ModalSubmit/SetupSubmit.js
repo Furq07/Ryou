@@ -9,11 +9,10 @@ const wait = require("util").promisify(setTimeout);
 module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
-    const { guild, type, customId, message, channel, fields, member } =
-      interaction;
+    const { guild, type, customId, message, channel, fields } = interaction;
     if (
       type !== InteractionType.ModalSubmit ||
-      !["LogChannelModal", "VerificationDescModal"].includes(customId)
+      !["VerificationDescModal"].includes(customId)
     )
       return;
     const msg = await channel.messages.fetch(message.id);

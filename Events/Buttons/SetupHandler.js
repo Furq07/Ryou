@@ -241,7 +241,7 @@ module.exports = {
         case "LogsSetup":
           let Buttons = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
-              .setCustomId("LogChannelIDSetup")
+              .setCustomId("LogChannelSetup")
               .setLabel("Log Channel")
               .setStyle(ButtonStyle.Danger),
             new ButtonBuilder()
@@ -253,7 +253,7 @@ module.exports = {
           if (setupData.LogChannelID)
             Buttons = new ActionRowBuilder().addComponents(
               new ButtonBuilder()
-                .setCustomId("LogChannelIDSetupMain")
+                .setCustomId("LogChannelSetup")
                 .setLabel("Log Channel")
                 .setStyle(ButtonStyle.Primary),
               new ButtonBuilder()
@@ -414,6 +414,79 @@ module.exports = {
                 ),
               ],
             });
+          let bttns = new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId("TicketSetupTranscript")
+              .setLabel(
+                setupData.TicketTranscript === true
+                  ? "Transcript: On"
+                  : "Transcript: Off"
+              )
+              .setStyle(
+                setupData.TicketTranscript === true
+                  ? ButtonStyle.Success
+                  : ButtonStyle.Danger
+              ),
+            new ButtonBuilder()
+              .setCustomId("TicketDescription")
+              .setLabel("Change Description")
+              .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+              .setCustomId("MainSetupMenu")
+              .setEmoji("⏩")
+              .setLabel("Back")
+              .setStyle(ButtonStyle.Primary)
+          );
+          if (setupData.TicketTranscript === true)
+            bttns = new ActionRowBuilder().addComponents(
+              new ButtonBuilder()
+                .setCustomId("TicketSetupTranscript")
+                .setLabel(
+                  setupData.TicketTranscript === true
+                    ? "Transcript: On"
+                    : "Transcript: Off"
+                )
+                .setStyle(
+                  setupData.TicketTranscript === true
+                    ? ButtonStyle.Success
+                    : ButtonStyle.Danger
+                ),
+              new ButtonBuilder()
+                .setCustomId("TicketDescription")
+                .setLabel("Change Description")
+                .setStyle(ButtonStyle.Primary),
+              new ButtonBuilder()
+                .setCustomId("TicketTranscriptChannel")
+                .setLabel("Transcript Channel")
+                .setStyle(ButtonStyle.Primary),
+              new ButtonBuilder()
+                .setCustomId("MainSetupMenu")
+                .setEmoji("⏩")
+                .setLabel("Back")
+                .setStyle(ButtonStyle.Primary)
+            );
+
+          interaction.update({
+            embeds: [
+              new EmbedBuilder()
+                .setTitle("__Ticket Settings__")
+                .setDescription(
+                  `
+                  There are things you can enable and disable.
+                  go ahead try it out!`
+                )
+                .setFooter({
+                  text: "Ryou - Utility",
+                  iconURL: client.user.displayAvatarURL(),
+                })
+                .setColor("#800000")
+                .setAuthor({
+                  name: member.user.tag,
+                  iconURL: member.user.displayAvatarURL(),
+                }),
+            ],
+            components: [bttns],
+          });
           break;
       }
     } else if (customId === "MainSetupMenu") {
