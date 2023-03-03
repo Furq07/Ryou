@@ -619,7 +619,7 @@ module.exports = {
                               components: [],
                             });
                             await wait(3000);
-                            interaction.update({
+                            msg.edit({
                               embeds: [
                                 new EmbedBuilder()
                                   .setTitle("__Settings Menu__")
@@ -1029,7 +1029,7 @@ module.exports = {
               components: [],
             });
             await wait(5000);
-            interaction.update({
+            msg.edit({
               embeds: [
                 new EmbedBuilder()
                   .setTitle("__Settings Menu__")
@@ -1238,7 +1238,7 @@ module.exports = {
         components: [],
       });
       await wait(3000);
-      interaction.update({
+      msg.edit({
         embeds: [
           new EmbedBuilder()
             .setTitle("__Settings Menu__")
