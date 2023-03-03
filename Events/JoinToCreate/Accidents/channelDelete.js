@@ -20,6 +20,13 @@ module.exports = {
       setupData.JTCSettingID
     );
     const jtcChannel = channel.guild.channels.cache.get(setupData.JTCChannelID);
+    const jtcAdminSettingChannel = channel.guild.channels.cache.get(
+      setupData.JTCAdminSettingID
+    );
+    const jtcLogsChannel = channel.guild.channels.cache.get(
+      setupData.JTCLogsID
+    );
+
     if (
       setupData.Resetting === true ||
       setupData.Resetting ||
@@ -146,15 +153,36 @@ module.exports = {
             { GuildID: channel.guild.id },
             { JTCCategoryID: categoryName.id }
           );
-          await jtcSettingChannel.setParent(categoryName.id, {
-            lockPermissions: true,
-          });
-          await jtcChannel.setParent(categoryName.id, {
-            lockPermissions: true,
-          });
+          await jtcSettingChannel
+            .setParent(categoryName.id, {
+              lockPermissions: false,
+            })
+            .then(async (channel) => {
+              channel.setPosition(1);
+            });
+
+          await jtcAdminSettingChannel
+            .setParent(categoryName.id, {
+              lockPermissions: false,
+            })
+            .then(async (channel) => {
+              channel.setPosition(2);
+            });
+          if (setupData.JTCLogsEnabled === true) {
+            await jtcLogsChannel.setParent(categoryName.id, {
+              lockPermissions: false,
+            });
+          }
+          await jtcChannel
+            .setParent(categoryName.id, {
+              lockPermissions: true,
+            })
+            .then(async (channel) => {
+              channel.setPosition(setupData.JTCLogsID ? 4 : 3);
+            });
           setupData.JTCInfo.forEach(async (owner) => {
             await channel.guild.channels.cache
-              .find((r) => r.id === owner.channels)
+              .find((r) => r.id === owner.channel)
               .setParent(categoryName.id, {
                 lockPermissions: false,
               });

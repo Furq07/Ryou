@@ -32,12 +32,12 @@ module.exports = {
       });
     const userLimitIsFound = setupData.JTCInfo.find((element) => {
       if (element.owner === interaction.user.id) {
-        return element.channels;
+        return element.channel;
       }
     });
     if (
       !interaction.guild.channels.cache
-        .get(userLimitIsFound.channels)
+        .get(userLimitIsFound.channel)
         .permissionsFor(user.id)
         .has("Connect")
     )
@@ -47,7 +47,7 @@ module.exports = {
       });
     if (userLimitIsFound.hidden === true) {
       interaction.guild.channels.cache
-        .get(userLimitIsFound.channels)
+        .get(userLimitIsFound.channel)
         .permissionOverwrites.edit(user.id, {
           Connect: false,
           Speak: false,
@@ -101,20 +101,20 @@ module.exports = {
           }
           if (
             size >=
-              interaction.guild.channels.cache.get(userLimitIsFound.channels)
+              interaction.guild.channels.cache.get(userLimitIsFound.channel)
                 .userLimit &&
-            interaction.guild.channels.cache.get(userLimitIsFound.channels)
+            interaction.guild.channels.cache.get(userLimitIsFound.channel)
               .userLimit !== 0
           ) {
             if (
-              interaction.guild.channels.cache.get(userLimitIsFound.channels)
+              interaction.guild.channels.cache.get(userLimitIsFound.channel)
                 .userLimit !== 0
             ) {
               interaction.guild.channels.cache
-                .get(userLimitIsFound.channels)
+                .get(userLimitIsFound.channel)
                 .setUserLimit(
                   interaction.guild.channels.cache.get(
-                    userLimitIsFound.channels
+                    userLimitIsFound.channel
                   ).userLimit - 1
                 );
               await setupDB.updateOne(
@@ -126,7 +126,7 @@ module.exports = {
                   $set: {
                     "JTCInfo.$.userLimit":
                       interaction.guild.channels.cache.get(
-                        userLimitIsFound.channels
+                        userLimitIsFound.channel
                       ).userLimit - 1,
                   },
                 }
@@ -141,7 +141,7 @@ module.exports = {
         });
     } else {
       interaction.guild.channels.cache
-        .get(userLimitIsFound.channels)
+        .get(userLimitIsFound.channel)
         .permissionOverwrites.edit(user.id, {
           Connect: false,
           Speak: false,
@@ -194,20 +194,20 @@ module.exports = {
           }
           if (
             size >=
-              interaction.guild.channels.cache.get(userLimitIsFound.channels)
+              interaction.guild.channels.cache.get(userLimitIsFound.channel)
                 .userLimit &&
-            interaction.guild.channels.cache.get(userLimitIsFound.channels)
+            interaction.guild.channels.cache.get(userLimitIsFound.channel)
               .userLimit !== 0
           ) {
             if (
-              interaction.guild.channels.cache.get(userLimitIsFound.channels)
+              interaction.guild.channels.cache.get(userLimitIsFound.channel)
                 .userLimit !== 0
             ) {
               interaction.guild.channels.cache
-                .get(userLimitIsFound.channels)
+                .get(userLimitIsFound.channel)
                 .setUserLimit(
                   interaction.guild.channels.cache.get(
-                    userLimitIsFound.channels
+                    userLimitIsFound.channel
                   ).userLimit - 1
                 );
               await setupDB.updateOne(
@@ -219,7 +219,7 @@ module.exports = {
                   $set: {
                     "JTCInfo.$.userLimit":
                       interaction.guild.channels.cache.get(
-                        userLimitIsFound.channels
+                        userLimitIsFound.channel
                       ).userLimit - 1,
                   },
                 }

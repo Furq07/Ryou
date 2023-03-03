@@ -21,7 +21,7 @@ module.exports = {
       const input = parseInt(newUserLimitInputValue);
       const userChannelIsFound = setupData.JTCInfo.find((element) => {
         if (element.owner === interaction.user.id) {
-          return element.channels;
+          return element.channel;
         }
       });
 
@@ -43,9 +43,10 @@ module.exports = {
           await interaction.reply({
             embeds: [
               new EmbedBuilder()
+                .setColor("#800000")
                 .setTitle("Whoopsi...")
                 .setDescription(
-                  `User limit less than your channels members is not allowed, set some higher limit.`
+                  `Setting User limit less than your channel allowed members is not allowed, set some higher limit.`
                 )
                 .setFooter({
                   iconURL: client.user.displayAvatarURL(),
@@ -106,7 +107,7 @@ module.exports = {
                   .setColor("#800000")
                   .setTitle("Changed Custom VC user limit")
                   .setDescription(
-                    `You have successfully changed your user limit of your Custom VC.`
+                    `You have successfully changed the user limit of your Custom VC.`
                   ),
               ],
               components: [],
@@ -120,11 +121,6 @@ module.exports = {
     }
   },
 };
-
-
-
-
-
 
 // future
 // \n\n**Vc Information**\n**Name**: <#${

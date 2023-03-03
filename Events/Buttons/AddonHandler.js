@@ -383,6 +383,9 @@ module.exports = {
               setupData.JTCAdminSettingID
             );
             const jtcChannel = guild.channels.cache.get(setupData.JTCChannelID);
+            const jtcLogsChannel = guild.channels.cache.get(
+              setupData.JTCLogsID
+            );
             await interaction.update({
               embeds: [
                 new EmbedBuilder()
@@ -579,6 +582,11 @@ module.exports = {
                             userLimit: 1,
                           })
                           .then(async (channel) => {
+                            if (setupData.JTCLogsID) {
+                              jtcLogsChannel.setParent(categoryName.id, {
+                                lockPermissions: false,
+                              });
+                            }
                             await setupDB.findOneAndUpdate(
                               { GuildID: guild.id },
                               { JTCChannelID: channel.id }
@@ -595,6 +603,7 @@ module.exports = {
                                   lockPermissions: false,
                                 });
                             });
+
                             await setupDB.findOneAndUpdate(
                               { GuildID: guild.id },
                               { Resetting: false }
@@ -689,7 +698,10 @@ module.exports = {
           break;
         case "JTCAutoRecover":
           {
-            if (setupData.JTCAutoRecover === false) {
+            if (
+              !setupData.JTCAutoRecover ||
+              setupData.JTCAutoRecover === false
+            ) {
               newActionRow.components[1]
                 .setLabel("Auto Recover: True")
                 .setStyle(ButtonStyle.Success);
@@ -697,7 +709,7 @@ module.exports = {
                 { GuildID: guild.id },
                 { JTCAutoRecover: true }
               );
-            } else {
+            } else if (setupData.JTCAutoRecover === true) {
               newActionRow.components[1]
                 .setLabel("Auto Recover: False")
                 .setStyle(ButtonStyle.Success);
@@ -729,7 +741,6 @@ module.exports = {
                 { GuildID: guild.id },
                 { JTCLogsEnabled: false }
               );
-              interaction.reply({ content: "test", ephemeral: true });
               newActionRow.components[2]
                 .setLabel("JTC Logs: False")
                 .setStyle(ButtonStyle.Success);
