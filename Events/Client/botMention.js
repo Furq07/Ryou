@@ -9,7 +9,6 @@ const {
 // [-------------------[File Initiation]-------------------]
 module.exports = {
   name: "messageCreate",
-
   execute(message, client) {
     const { author, content, guild, channel } = message;
     const { user } = client;

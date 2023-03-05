@@ -15,7 +15,6 @@ module.exports = {
     const data = msg.components[0];
     const newActionRow = ActionRowBuilder.from(data);
     const Value = values.join(", ");
-    const setupData = await setupDB.findOne({ GuildID: guild.id });
     if (customId === "CommunityRoleMenuFirst") customIdE = "CommunityRoleMenu";
     if (customId === "StaffRoleMenuFirst") customIdE = "StaffRoleMenu";
     if (customId === "AdminRoleMenuFirst") customIdE = "AdminRoleMenu";
