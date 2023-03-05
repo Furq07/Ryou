@@ -91,7 +91,7 @@ module.exports = {
                   .setLabel("Admin Role")
                   .setStyle(ButtonStyle.Success),
                 new ButtonBuilder()
-                  .setCustomId("MainSetupMenu")
+                  .setCustomId("SettingsMenu")
                   .setEmoji("⏩")
                   .setLabel("Next")
                   .setStyle(ButtonStyle.Primary)
@@ -117,7 +117,7 @@ module.exports = {
               .setLabel("Log Settings")
               .setStyle(ButtonStyle.Primary),
             new ButtonBuilder()
-              .setCustomId("MainSetupMenu")
+              .setCustomId("SettingsMenu")
               .setEmoji("⏩")
               .setLabel("Back")
               .setStyle(ButtonStyle.Primary)

@@ -15,36 +15,6 @@ module.exports = {
     const { user } = client;
     const { customId, channel, message, member, guild } = interaction;
     if (!interaction.isButton()) return;
-    if (
-      ![
-        "LogChannelSetup",
-        "LogChannelCreateSetup",
-        "LogChannelDeleteSetup",
-        "LogVCJoinSetup",
-        "LogVCLeaveSetup",
-        "LogChannelUpdateSetup",
-        "LogBanSetup",
-        "LogUnbanSetup",
-        "LogKickUserSetup",
-        "LogUpdateUserSetup",
-        "LogInviteCreateSetup",
-        "VerificationModeSetup",
-        "VerificationSetupCreate",
-        "LogMessageDeleteSetup",
-        "LogMessageUpdateSetup",
-        "LogRoleCreateSetup",
-        "LogRoleDeleteSetup",
-        "LogRoleUpdateSetup",
-        "VerificationModeSetup",
-        "VerificationSetupCreate",
-        "VerificationDescSetup",
-        "TicketSetupCreate",
-        "TicketSetupTranscript",
-        "SettingsMenu",
-        "DefaultRolesSetup",
-      ].includes(customId)
-    )
-      return;
     const setupData = await setupDB.findOne({ GuildID: guild.id });
     const msg = await channel.messages.fetch(message.id);
     const data = msg.components[0];
@@ -53,7 +23,11 @@ module.exports = {
     const author = msgEmbed.author.name;
     if (author !== member.user.tag)
       return interaction.reply({
-        embeds: [new EmbedBuilder().setColor("#800000").setDescription(`Sorry, But this is @${author}'s Command`)],
+        embeds: [
+          new EmbedBuilder()
+            .setColor("#800000")
+            .setDescription(`Sorry, But this is @${author}'s Command`),
+        ],
         ephemeral: true,
       });
     // Log Setup
@@ -245,7 +219,7 @@ module.exports = {
                     : ButtonStyle.Danger
                 ),
               new ButtonBuilder()
-                .setCustomId("SettingsMenu")
+                .setCustomId("LogsSetup")
                 .setEmoji("⏩")
                 .setLabel("Back")
                 .setStyle(ButtonStyle.Primary)
@@ -261,132 +235,50 @@ module.exports = {
         const newActionRow3 = ActionRowBuilder.from(data3);
         const newActionRow4 = ActionRowBuilder.from(data4);
         const newActionRow5 = ActionRowBuilder.from(data5);
-        let Number;
-        if (!setupData[customId] || setupData[customId] === false) {
-          if (
-            customId === "LogChannelCreateSetup" ||
-            customId === "LogChannelDeleteSetup" ||
-            customId === "LogVCJoinSetup"
-          ) {
-            if (customId === "LogChannelCreateSetup") Number = 0;
-            if (customId === "LogChannelDeleteSetup") Number = 1;
-            if (customId === "LogVCJoinSetup") Number = 2;
-            newActionRow.components[Number].setStyle(ButtonStyle.Success);
-          } else if (
-            customId === "LogVCLeaveSetup" ||
-            customId === "LogChannelUpdateSetup" ||
-            customId === "LogBanSetup"
-          ) {
-            if (customId === "LogVCLeaveSetup") Number = 0;
-            if (customId === "LogChannelUpdateSetup") Number = 1;
-            if (customId === "LogBanSetup") Number = 2;
-            newActionRow2.components[Number].setStyle(ButtonStyle.Success);
-          } else if (
-            customId === "LogUnbanSetup" ||
-            customId === "LogKickUserSetup" ||
-            customId === "LogUpdateUserSetup"
-          ) {
-            if (customId === "LogUnbanSetup") Number = 0;
-            if (customId === "LogKickUserSetup") Number = 1;
-            if (customId === "LogUpdateUserSetup") Number = 2;
-            newActionRow3.components[Number].setStyle(ButtonStyle.Success);
-          } else if (
-            customId === "LogInviteCreateSetup" ||
-            customId === "LogMessageDeleteSetup" ||
-            customId === "LogMessageUpdateSetup"
-          ) {
-            if (customId === "LogInviteCreateSetup") Number = 0;
-            if (customId === "LogMessageDeleteSetup") Number = 1;
-            if (customId === "LogMessageUpdateSetup") Number = 2;
-            newActionRow4.components[Number].setStyle(ButtonStyle.Success);
-          } else if (
-            customId === "LogRoleCreateSetup" ||
-            customId === "LogRoleDeleteSetup" ||
-            customId === "LogRoleUpdateSetup"
-          ) {
-            if (customId === "LogRoleCreateSetup") Number = 0;
-            if (customId === "LogRoleDeleteSetup") Number = 1;
-            if (customId === "LogRoleUpdateSetup") Number = 2;
-            newActionRow5.components[Number].setStyle(ButtonStyle.Success);
-          }
+        const componentMap = {
+          LogChannelCreateSetup: { row: newActionRow, index: 0 },
+          LogChannelDeleteSetup: { row: newActionRow, index: 1 },
+          LogVCJoinSetup: { row: newActionRow, index: 2 },
+          LogVCLeaveSetup: { row: newActionRow2, index: 0 },
+          LogChannelUpdateSetup: { row: newActionRow2, index: 1 },
+          LogBanSetup: { row: newActionRow2, index: 2 },
+          LogUnbanSetup: { row: newActionRow3, index: 0 },
+          LogKickUserSetup: { row: newActionRow3, index: 1 },
+          LogUpdateUserSetup: { row: newActionRow3, index: 2 },
+          LogInviteCreateSetup: { row: newActionRow4, index: 0 },
+          LogMessageDeleteSetup: { row: newActionRow4, index: 1 },
+          LogMessageUpdateSetup: { row: newActionRow4, index: 2 },
+          LogRoleCreateSetup: { row: newActionRow5, index: 0 },
+          LogRoleDeleteSetup: { row: newActionRow5, index: 1 },
+          LogRoleUpdateSetup: { row: newActionRow5, index: 2 },
+        };
 
+        let row = componentMap[customId].row;
+        let index = componentMap[customId].index;
+
+        if (!setupData[customId] || setupData[customId] === false) {
+          row.components[index].setStyle(ButtonStyle.Success);
           await setupDB.findOneAndUpdate(
             { GuildID: guild.id },
             { [customId]: true }
           );
-
-          interaction.update({
-            components: [
-              newActionRow,
-              newActionRow2,
-              newActionRow3,
-              newActionRow4,
-              newActionRow5,
-            ],
-          });
         } else {
-          if (
-            customId === "LogChannelCreateSetup" ||
-            customId === "LogChannelDeleteSetup" ||
-            customId === "LogVCJoinSetup"
-          ) {
-            if (customId === "LogChannelCreateSetup") Number = 0;
-            if (customId === "LogChannelDeleteSetup") Number = 1;
-            if (customId === "LogVCJoinSetup") Number = 2;
-            newActionRow.components[Number].setStyle(ButtonStyle.Danger);
-          } else if (
-            customId === "LogVCLeaveSetup" ||
-            customId === "LogChannelUpdateSetup" ||
-            customId === "LogBanSetup"
-          ) {
-            if (customId === "LogVCLeaveSetup") Number = 0;
-            if (customId === "LogChannelUpdateSetup") Number = 1;
-            if (customId === "LogBanSetup") Number = 2;
-            newActionRow2.components[Number].setStyle(ButtonStyle.Danger);
-          } else if (
-            customId === "LogUnbanSetup" ||
-            customId === "LogKickUserSetup" ||
-            customId === "LogUpdateUserSetup"
-          ) {
-            if (customId === "LogUnbanSetup") Number = 0;
-            if (customId === "LogKickUserSetup") Number = 1;
-            if (customId === "LogUpdateUserSetup") Number = 2;
-            newActionRow3.components[Number].setStyle(ButtonStyle.Danger);
-          } else if (
-            customId === "LogInviteCreateSetup" ||
-            customId === "LogMessageDeleteSetup" ||
-            customId === "LogMessageUpdateSetup"
-          ) {
-            if (customId === "LogInviteCreateSetup") Number = 0;
-            if (customId === "LogMessageDeleteSetup") Number = 1;
-            if (customId === "LogMessageUpdateSetup") Number = 2;
-            newActionRow4.components[Number].setStyle(ButtonStyle.Danger);
-          } else if (
-            customId === "LogRoleCreateSetup" ||
-            customId === "LogRoleDeleteSetup" ||
-            customId === "LogRoleUpdateSetup"
-          ) {
-            if (customId === "LogRoleCreateSetup") Number = 0;
-            if (customId === "LogRoleDeleteSetup") Number = 1;
-            if (customId === "LogRoleUpdateSetup") Number = 2;
-            newActionRow5.components[Number].setStyle(ButtonStyle.Danger);
-          }
-
+          row.components[index].setStyle(ButtonStyle.Danger);
           await setupDB.findOneAndUpdate(
             { GuildID: guild.id },
             { [customId]: false }
           );
-
-          interaction.update({
-            components: [
-              newActionRow,
-              newActionRow2,
-              newActionRow3,
-              newActionRow4,
-              newActionRow5,
-            ],
-          });
         }
+
+        interaction.update({
+          components: [
+            newActionRow,
+            newActionRow2,
+            newActionRow3,
+            newActionRow4,
+            newActionRow5,
+          ],
+        });
       }
     } else if (
       ["VerificationModeSetup", "VerificationSetupCreate"].includes(customId)

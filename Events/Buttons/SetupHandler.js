@@ -12,23 +12,6 @@ module.exports = {
     const { user } = client;
     const { customId, channel, message, member, guild } = interaction;
     if (!interaction.isButton()) return;
-    if (
-      ![
-        "CommunityRole",
-        "StaffRole",
-        "AdminRole",
-        "CommunityRoleFirst",
-        "StaffRoleFirst",
-        "AdminRoleFirst",
-        "JTCSetup",
-        "VerificationSetup",
-        "LogsSetup",
-        "TicketSetup",
-        "SettingsMenu",
-        "DefaultRolesSetup",
-      ].includes(customId)
-    )
-      return;
     const setupData = await setupDB.findOne({ GuildID: guild.id });
     const msg = await channel.messages.fetch(message.id);
     const data = msg.components[0];
@@ -37,7 +20,11 @@ module.exports = {
     const author = msgEmbed.author.name;
     if (author !== member.user.tag)
       return interaction.reply({
-        embeds: [new EmbedBuilder().setColor("#800000").setDescription(`Sorry, But this is @${author}'s Command`)],
+        embeds: [
+          new EmbedBuilder()
+            .setColor("#800000")
+            .setDescription(`Sorry, But this is @${author}'s Command`),
+        ],
         ephemeral: true,
       });
     if (
@@ -238,8 +225,7 @@ module.exports = {
                 ),
               ],
             });
-          const M = await interaction.update({
-            fetchReply: true,
+          interaction.update({
             embeds: [
               new EmbedBuilder()
                 .setTitle("Verification Setup Menu")
@@ -264,7 +250,11 @@ module.exports = {
               new ActionRowBuilder().addComponents(
                 new ButtonBuilder()
                   .setCustomId("VerificationModeSetup")
-                  .setLabel("Mode: _____")
+                  .setLabel(
+                    setupData.VerificationMode === false
+                      ? "Mode: Normal"
+                      : "Mode: Captcha"
+                  )
                   .setStyle(ButtonStyle.Primary),
                 new ButtonBuilder()
                   .setCustomId("VerificationDescSetup")
@@ -276,19 +266,6 @@ module.exports = {
                   .setLabel("Back")
                   .setStyle(ButtonStyle.Primary)
               ),
-            ],
-          });
-          const data = msg.components[0];
-          const newActionRow = ActionRowBuilder.from(data);
-          M.edit({
-            components: [
-              newActionRow.components[0]
-                .setLabel(
-                  setupData.VerificationMode === false
-                    ? "Mode: Normal"
-                    : "Mode: Captcha"
-                )
-                .setStyle(ButtonStyle.Primary),
             ],
           });
           break;
@@ -467,44 +444,49 @@ module.exports = {
         ],
       });
     } else if (customId === "DefaultRolesSetup") {
-      const Embed = new EmbedBuilder()
-        .setColor("#800000")
-        .setAuthor({
-          name: member.user.tag,
-          iconURL: member.user.displayAvatarURL(),
-        })
-        .setTitle("__Default Roles Menu__")
-        .setDescription(
-          `Click Buttons Below and Provide the Roles!
+      interaction.update({
+        embeds: [
+          new EmbedBuilder()
+            .setColor("#800000")
+            .setAuthor({
+              name: member.user.tag,
+              iconURL: member.user.displayAvatarURL(),
+            })
+            .setTitle("__Default Roles Menu__")
+            .setDescription(
+              `Click Buttons Below and Provide the Roles!
       
         **For Example:**
         If its Community Role, click on it, select it from the Select Menu and its Done!
         Do the same for all of them then click the Next button!`
-        )
-        .setFooter({
-          text: "Ryou - Utility",
-          iconURL: user.displayAvatarURL(),
-        });
-      const Buttons = new ActionRowBuilder().addComponents(
-        new ButtonBuilder()
-          .setCustomId("CommunityRole")
-          .setLabel("Community Role")
-          .setStyle(ButtonStyle.Primary),
-        new ButtonBuilder()
-          .setCustomId("StaffRole")
-          .setLabel("Staff Role")
-          .setStyle(ButtonStyle.Primary),
-        new ButtonBuilder()
-          .setCustomId("AdminRole")
-          .setLabel("Admin Role")
-          .setStyle(ButtonStyle.Primary),
-        new ButtonBuilder()
-          .setCustomId("SettingsMenu")
-          .setEmoji("⏩")
-          .setLabel("Back")
-          .setStyle(ButtonStyle.Primary)
-      );
-      interaction.update({ embeds: [Embed], components: [Buttons] });
+            )
+            .setFooter({
+              text: "Ryou - Utility",
+              iconURL: user.displayAvatarURL(),
+            }),
+        ],
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId("CommunityRole")
+              .setLabel("Community Role")
+              .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+              .setCustomId("StaffRole")
+              .setLabel("Staff Role")
+              .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+              .setCustomId("AdminRole")
+              .setLabel("Admin Role")
+              .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+              .setCustomId("SettingsMenu")
+              .setEmoji("⏩")
+              .setLabel("Back")
+              .setStyle(ButtonStyle.Primary)
+          ),
+        ],
+      });
     }
   },
 };
