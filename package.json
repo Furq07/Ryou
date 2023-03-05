@@ -10,7 +10,6 @@
   "author": "Ryou Devs",
   "license": "ISC",
   "dependencies": {
-    "canvacord": "^5.4.8",
     "canvas": "^2.11.0",
     "chalk": "^4.1.2",
     "discord-html-transcripts": "^3.1.2",
@@ -18,7 +17,6 @@
     "glob": "^8.0.3",
     "moment": "^2.29.4",
     "mongoose": "^6.10.0",
-    "undici": "^5.14.0",
     "util": "^0.12.5"
   }
 }

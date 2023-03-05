@@ -24,7 +24,7 @@ module.exports = {
         "VerificationSetup",
         "LogsSetup",
         "TicketSetup",
-        "MainSetupMenu",
+        "SettingsMenu",
         "DefaultRolesSetup",
       ].includes(customId)
     )
@@ -37,7 +37,7 @@ module.exports = {
     const author = msgEmbed.author.name;
     if (author !== member.user.tag)
       return interaction.reply({
-        content: `These Buttons aren't for You!`,
+        embeds: [new EmbedBuilder().setColor("#800000").setDescription(`Sorry, But this is @${author}'s Command`)],
         ephemeral: true,
       });
     if (
@@ -151,92 +151,6 @@ module.exports = {
     ) {
       switch (customId) {
         case "JTCSetup":
-          if (setupData.JTCChannelID)
-            return interaction.update({
-              embeds: [
-                new EmbedBuilder()
-                  .setTitle("Wanna Re-Setup?")
-                  .setColor("#800000")
-                  .setAuthor({
-                    name: member.user.tag,
-                    iconURL: member.user.displayAvatarURL(),
-                  })
-                  .setFooter({
-                    text: "Ryou - Utility",
-                    iconURL: client.user.displayAvatarURL(),
-                  })
-                  .setDescription(
-                    `Join to Create has Already been Setup on this Server,
-                  If you wanna Re-Setup it, Click on the Button Below!`
-                  ),
-              ],
-              components: [
-                new ActionRowBuilder().addComponents(
-                  new ButtonBuilder()
-                    .setCustomId("JTCResetup")
-                    .setLabel("Re-Setup")
-                    .setEmoji("🔁")
-                    .setStyle(ButtonStyle.Success),
-                  new ButtonBuilder()
-                    .setCustomId("JTCAutoRecover")
-                    .setLabel(
-                      setupData.JTCAutoRecover === true
-                        ? "Auto Recover: True"
-                        : "Auto Recover: False"
-                    )
-                    .setEmoji("🛠️")
-                    .setStyle(ButtonStyle.Success),
-                  new ButtonBuilder()
-                    .setCustomId("JTCLogs")
-                    .setLabel(
-                      setupData.JTCLogsEnabled === true
-                        ? "JTC Logs: True"
-                        : "JTC Logs: False"
-                    )
-                    .setEmoji("📃")
-                    .setStyle(ButtonStyle.Success),
-                  new ButtonBuilder()
-                    .setCustomId("MainSetupMenu")
-                    .setEmoji("⏩")
-                    .setLabel("Back")
-                    .setStyle(ButtonStyle.Primary)
-                ),
-              ],
-            });
-          interaction.update({
-            embeds: [
-              new EmbedBuilder()
-                .setColor("#800000")
-                .setAuthor({
-                  name: member.user.tag,
-                  iconURL: member.user.displayAvatarURL(),
-                })
-                .setTitle("Join to Create Setup Menu!")
-                .setFooter({
-                  text: "Ryou - Utility",
-                  iconURL: client.user.displayAvatarURL(),
-                })
-                .setDescription(
-                  `If you wanna Setup Join to Create on your Server,
-                  Click on the Button Below!`
-                ),
-            ],
-            components: [
-              new ActionRowBuilder().addComponents(
-                new ButtonBuilder()
-                  .setCustomId("JTCSetupB")
-                  .setLabel("Setup JTC")
-                  .setEmoji("✅")
-                  .setStyle(ButtonStyle.Primary),
-                new ButtonBuilder()
-                  .setCustomId("MainSetupMenu")
-                  .setEmoji("⏩")
-                  .setLabel("Back")
-                  .setStyle(ButtonStyle.Primary)
-              ),
-            ],
-          });
-
           break;
         case "LogsSetup":
           let Buttons = new ActionRowBuilder().addComponents(
@@ -245,7 +159,7 @@ module.exports = {
               .setLabel("Log Channel")
               .setStyle(ButtonStyle.Danger),
             new ButtonBuilder()
-              .setCustomId("MainSetupMenu")
+              .setCustomId("SettingsMenu")
               .setEmoji("⏩")
               .setLabel("Back")
               .setStyle(ButtonStyle.Primary)
@@ -261,7 +175,7 @@ module.exports = {
                 .setLabel("Log Settings")
                 .setStyle(ButtonStyle.Primary),
               new ButtonBuilder()
-                .setCustomId("MainSetupMenu")
+                .setCustomId("SettingsMenu")
                 .setEmoji("⏩")
                 .setLabel("Back")
                 .setStyle(ButtonStyle.Primary)
@@ -317,7 +231,7 @@ module.exports = {
                     .setEmoji("✅")
                     .setStyle(ButtonStyle.Primary),
                   new ButtonBuilder()
-                    .setCustomId("MainSetupMenu")
+                    .setCustomId("SettingsMenu")
                     .setEmoji("⏩")
                     .setLabel("Back")
                     .setStyle(ButtonStyle.Primary)
@@ -357,7 +271,7 @@ module.exports = {
                   .setLabel("Change Description")
                   .setStyle(ButtonStyle.Primary),
                 new ButtonBuilder()
-                  .setCustomId("MainSetupMenu")
+                  .setCustomId("SettingsMenu")
                   .setEmoji("⏩")
                   .setLabel("Back")
                   .setStyle(ButtonStyle.Primary)
@@ -407,7 +321,7 @@ module.exports = {
                     .setEmoji("✅")
                     .setStyle(ButtonStyle.Primary),
                   new ButtonBuilder()
-                    .setCustomId("MainSetupMenu")
+                    .setCustomId("SettingsMenu")
                     .setEmoji("⏩")
                     .setLabel("Back")
                     .setStyle(ButtonStyle.Primary)
@@ -432,7 +346,7 @@ module.exports = {
               .setLabel("Change Description")
               .setStyle(ButtonStyle.Primary),
             new ButtonBuilder()
-              .setCustomId("MainSetupMenu")
+              .setCustomId("SettingsMenu")
               .setEmoji("⏩")
               .setLabel("Back")
               .setStyle(ButtonStyle.Primary)
@@ -460,7 +374,7 @@ module.exports = {
                 .setLabel("Transcript Channel")
                 .setStyle(ButtonStyle.Primary),
               new ButtonBuilder()
-                .setCustomId("MainSetupMenu")
+                .setCustomId("SettingsMenu")
                 .setEmoji("⏩")
                 .setLabel("Back")
                 .setStyle(ButtonStyle.Primary)
@@ -489,7 +403,7 @@ module.exports = {
           });
           break;
       }
-    } else if (customId === "MainSetupMenu") {
+    } else if (customId === "SettingsMenu") {
       interaction.update({
         embeds: [
           new EmbedBuilder()
@@ -585,7 +499,7 @@ module.exports = {
           .setLabel("Admin Role")
           .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
-          .setCustomId("MainSetupMenu")
+          .setCustomId("SettingsMenu")
           .setEmoji("⏩")
           .setLabel("Back")
           .setStyle(ButtonStyle.Primary)
