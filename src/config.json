@@ -1,9 +1,7 @@
 {
-  "token": "MTA1NDcyODc0NjA3MjAxNDg5OA.G6CdH6.ftrDXChI5GdSmW5jwG_95se4lcbJpQHucFFyIY",
-  "alphaToken": "MTA1NjE4MDIyMTgwNTYwMDgxOA.GGyp89.tdhFDiJRtHyyHYLWln6OQwjNm3IhrMEoGPuWTs",
-  "MongoDBConnect": "mongodb+srv://Ryou:R273169you@database.wopvio4.mongodb.net/Ryou",
+  "token": "MTA1NDcyODc0NjA3MjAxNDg5OA.G6lrlW.O7Lh32xZSU8K5XumYj7O9jLvGRjkE8FbcxE_jk",
+  "atoken": "MTA1NjE4MDIyMTgwNTYwMDgxOA.GSr511.lqUxcNcQD-XCQ66i-kloI_q4ecJVXDCTLMHPUs",
+  "MongoDBConnect": "mongodb+srv://Ryou:R.27youD.Bot@database.wopvio4.mongodb.net/Ryou",
   "ecoIcon": "<:Yur:1034414003071500320>",
-  "ecoRuby": "<:Ruby:1034416992813326417>",
-  "weatherApiKey": "887c9d1888588329708c4d611129c441",
-  "giphyApiKey": "C8WtQRZvAw6a5lnMKUcLbt9VUNrJ91ox"
+  "ecoRuby": "<:Ruby:1034416992813326417>"
 }
