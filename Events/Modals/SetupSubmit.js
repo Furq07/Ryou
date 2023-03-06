@@ -10,11 +10,7 @@ module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
     const { guild, type, customId, message, channel, fields } = interaction;
-    if (
-      type !== InteractionType.ModalSubmit ||
-      !["VerificationDescModal"].includes(customId)
-    )
-      return;
+    if (type !== InteractionType.ModalSubmit) return;
     const msg = await channel.messages.fetch(message.id);
     const data = msg.components[0];
     const newActionRow = ActionRowBuilder.from(data);
@@ -36,6 +32,24 @@ module.exports = {
               message.edit({ embeds: [editEmbed] });
             });
         });
+      newActionRow.components[1].setStyle(ButtonStyle.Success);
+      interaction.update({
+        components: [newActionRow],
+      });
+    } else if ("TicketDescModal" === customId) {
+      const TicketDesc = fields.getTextInputValue("TicketDescInput");
+      guild.channels.fetch(`${setupData.TicketChannelID}`).then((channel) => {
+        channel.messages
+          .fetch(`${setupData.TicketMessageID}`)
+          .then((message) => {
+            const Embed = message.embeds[0];
+            message.edit({
+              embeds: [
+                EmbedBuilder.from(Embed).setDescription(`${TicketDesc}`),
+              ],
+            });
+          });
+      });
       newActionRow.components[1].setStyle(ButtonStyle.Success);
       interaction.update({
         components: [newActionRow],

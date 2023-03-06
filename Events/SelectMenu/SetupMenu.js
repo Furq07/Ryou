@@ -99,7 +99,7 @@ module.exports = {
           });
         }
       }
-    } else if (["LogChannelMenu"].includes(customIdE)) {
+    } else if ("LogChannelMenu" === customIdE) {
       await setupDB.findOneAndUpdate(
         { GuildID: guild.id },
         { LogChannelID: Value }
@@ -122,6 +122,19 @@ module.exports = {
               .setStyle(ButtonStyle.Primary)
           ),
         ],
+      });
+    } else if ("TicketTranscriptMenu" === customIdE) {
+      await setupDB.findOneAndUpdate(
+        { GuildID: guild.id },
+        { TicketTranscriptID: Value }
+      );
+      newActionRow.components[0].setDisabled(false);
+      newActionRow.components[1].setDisabled(false);
+      newActionRow.components[2]
+        .setStyle(ButtonStyle.Success)
+        .setDisabled(false);
+      interaction.update({
+        components: [newActionRow],
       });
     }
   },

@@ -6,6 +6,9 @@ const {
   ChannelType,
   PermissionFlagsBits,
   ChannelSelectMenuBuilder,
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle,
 } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
 const wait = require("util").promisify(setTimeout);
@@ -281,178 +284,180 @@ module.exports = {
         });
       }
     } else if (
-      ["VerificationModeSetup", "VerificationSetupCreate"].includes(customId)
+      [
+        "VerificationSetupCreate",
+        "VerificationModeSetup",
+        "VerificationDesc",
+      ].includes(customId)
     ) {
       switch (customId) {
         case "VerificationSetupCreate":
-          {
-            guild.channels
-              .create({
-                name: "Verification",
-                type: ChannelType.GuildCategory,
-                permissionOverwrites: [
-                  {
-                    id: guild.id,
-                    allow: [PermissionFlagsBits.ViewChannel],
-                  },
-                  {
-                    id: setupData.CommunityRoleID,
-                    deny: [
-                      PermissionFlagsBits.SendMessages,
-                      PermissionFlagsBits.ViewChannel,
-                    ],
-                  },
-                ],
-              })
-              .then(async (category) => {
-                guild.channels
-                  .create({
-                    name: "verify",
-                    type: ChannelType.GuildText,
-                    parent: category,
-                    permissionOverwrites: [
-                      {
-                        id: guild.id,
-                        allow: [PermissionFlagsBits.ViewChannel],
-                      },
-                      {
-                        id: setupData.CommunityRoleID,
-                        deny: [
-                          PermissionFlagsBits.SendMessages,
-                          PermissionFlagsBits.ViewChannel,
-                        ],
-                      },
-                    ],
-                  })
-                  .then(async (verifyChannel) => {
-                    verifyChannel
-                      .send({
-                        embeds: [
-                          new EmbedBuilder()
-                            .setColor("#800000")
-                            .setTitle(`${guild.name} | Verfication`)
-                            .setDescription(
-                              `In order to get access in \`${guild.name}\`, verify yourself using \n**Verify** Button!`
-                            )
-                            .setFooter({
-                              text: "Ryou - Verification",
-                              iconURL: user.displayAvatarURL(),
-                            }),
-                        ],
-                        components: [
-                          new ActionRowBuilder().addComponents(
-                            new ButtonBuilder()
-                              .setCustomId("VerifyButton")
-                              .setLabel("Verify")
-                              .setEmoji("✅")
-                              .setStyle(ButtonStyle.Success)
-                          ),
-                        ],
-                      })
-                      .then(async (message) => {
-                        await setupDB.findOneAndUpdate(
-                          { GuildID: guild.id },
-                          { VerificationMessageID: message.id }
-                        );
-                        await setupDB.findOneAndUpdate(
-                          { GuildID: guild.id },
-                          { VerificationChannelID: verifyChannel.id }
-                        );
-                        await setupDB.findOneAndUpdate(
-                          { GuildID: guild.id },
-                          { VerificationCategoryID: category.id }
-                        );
-                        await setupDB.findOneAndUpdate(
-                          { GuildID: guild.id },
-                          { VerificationMode: false }
-                        );
-                      });
-                  });
-              });
-            interaction.update({
-              embeds: [
-                new EmbedBuilder()
-                  .setTitle("Verification Setup Complete!")
-                  .setColor("#800000")
-                  .setAuthor({
-                    name: member.user.tag,
-                    iconURL: member.user.displayAvatarURL(),
-                  })
-                  .setDescription(
-                    `Verification has been Setuped!
-                      You can check it out!`
-                  )
-                  .setFooter({
-                    text: "Ryou - Utility",
-                    iconURL: user.displayAvatarURL(),
-                  }),
+          guild.channels
+            .create({
+              name: "Verification",
+              type: ChannelType.GuildCategory,
+              permissionOverwrites: [
+                {
+                  id: guild.id,
+                  allow: [PermissionFlagsBits.ViewChannel],
+                },
+                {
+                  id: setupData.CommunityRoleID,
+                  deny: [
+                    PermissionFlagsBits.SendMessages,
+                    PermissionFlagsBits.ViewChannel,
+                  ],
+                },
               ],
-              components: [],
+            })
+            .then(async (category) => {
+              guild.channels
+                .create({
+                  name: "verify",
+                  type: ChannelType.GuildText,
+                  parent: category,
+                  permissionOverwrites: [
+                    {
+                      id: guild.id,
+                      allow: [PermissionFlagsBits.ViewChannel],
+                    },
+                    {
+                      id: setupData.CommunityRoleID,
+                      deny: [
+                        PermissionFlagsBits.SendMessages,
+                        PermissionFlagsBits.ViewChannel,
+                      ],
+                    },
+                  ],
+                })
+                .then(async (verifyChannel) => {
+                  verifyChannel
+                    .send({
+                      embeds: [
+                        new EmbedBuilder()
+                          .setColor("#800000")
+                          .setTitle(`${guild.name} | Verfication`)
+                          .setDescription(
+                            `In order to get access in \`${guild.name}\`, verify yourself using \n**Verify** Button!`
+                          )
+                          .setFooter({
+                            text: "Ryou - Verification",
+                            iconURL: user.displayAvatarURL(),
+                          }),
+                      ],
+                      components: [
+                        new ActionRowBuilder().addComponents(
+                          new ButtonBuilder()
+                            .setCustomId("VerifyButton")
+                            .setLabel("Verify")
+                            .setEmoji("✅")
+                            .setStyle(ButtonStyle.Success)
+                        ),
+                      ],
+                    })
+                    .then(async (message) => {
+                      await setupDB.findOneAndUpdate(
+                        { GuildID: guild.id },
+                        { VerificationMessageID: message.id }
+                      );
+                      await setupDB.findOneAndUpdate(
+                        { GuildID: guild.id },
+                        { VerificationChannelID: verifyChannel.id }
+                      );
+                      await setupDB.findOneAndUpdate(
+                        { GuildID: guild.id },
+                        { VerificationCategoryID: category.id }
+                      );
+                      await setupDB.findOneAndUpdate(
+                        { GuildID: guild.id },
+                        { VerificationMode: false }
+                      );
+                    });
+                });
             });
-            await wait(5000);
-            msg.edit({
-              embeds: [
-                new EmbedBuilder()
-                  .setTitle("__Settings Menu__")
-                  .setAuthor({
-                    name: member.user.tag,
-                    iconURL: member.user.displayAvatarURL(),
-                  })
-                  .setDescription(
-                    `This is the Settings Menu, you can choose what you want for your server,
+          interaction.update({
+            embeds: [
+              new EmbedBuilder()
+                .setTitle("Verification Setup Complete!")
+                .setColor("#800000")
+                .setAuthor({
+                  name: member.user.tag,
+                  iconURL: member.user.displayAvatarURL(),
+                })
+                .setDescription(
+                  `Verification has been Setuped!
+                      You can check it out!`
+                )
+                .setFooter({
+                  text: "Ryou - Utility",
+                  iconURL: user.displayAvatarURL(),
+                }),
+            ],
+            components: [],
+          });
+          await wait(5000);
+          msg.edit({
+            embeds: [
+              new EmbedBuilder()
+                .setTitle("__Settings Menu__")
+                .setAuthor({
+                  name: member.user.tag,
+                  iconURL: member.user.displayAvatarURL(),
+                })
+                .setDescription(
+                  `This is the Settings Menu, you can choose what you want for your server,
                     and leave things that you don't need!
                     
                     Simply go ahead and click on the Buttons and Complete them,
                     when you have setup the things you want,
                     you can just click on the Confirm Button!`
-                  )
-                  .setFooter({
-                    text: "Ryou - Utility",
-                    iconURL: client.user.displayAvatarURL(),
-                  }),
-              ],
-              components: [
-                new ActionRowBuilder().addComponents(
-                  new ButtonBuilder()
-                    .setCustomId("JTCSetup")
-                    .setLabel("Join to Create")
-                    .setStyle(
-                      setupData.JTCChannelID
-                        ? ButtonStyle.Success
-                        : ButtonStyle.Danger
-                    ),
-                  new ButtonBuilder()
-                    .setCustomId("VerificationSetup")
-                    .setLabel("Verification")
-                    .setStyle(
-                      setupData.VerificationChannelID
-                        ? ButtonStyle.Success
-                        : ButtonStyle.Danger
-                    ),
-                  new ButtonBuilder()
-                    .setCustomId("LogsSetup")
-                    .setLabel("Logs")
-                    .setStyle(
-                      setupData.LogChannelID
-                        ? ButtonStyle.Success
-                        : ButtonStyle.Danger
-                    ),
-                  new ButtonBuilder()
-                    .setCustomId("TicketSetup")
-                    .setLabel("Ticket")
-                    .setStyle(
-                      setupData.TicketParentID
-                        ? ButtonStyle.Success
-                        : ButtonStyle.Danger
-                    ),
-                  new ButtonBuilder()
-                    .setCustomId("DefaultRolesSetup")
-                    .setLabel("Default Roles")
-                    .setStyle(ButtonStyle.Primary)
-                ),
-              ],
-            });
-          }
+                )
+                .setFooter({
+                  text: "Ryou - Utility",
+                  iconURL: client.user.displayAvatarURL(),
+                }),
+            ],
+            components: [
+              new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                  .setCustomId("JTCSetup")
+                  .setLabel("Join to Create")
+                  .setStyle(
+                    setupData.JTCChannelID
+                      ? ButtonStyle.Success
+                      : ButtonStyle.Danger
+                  ),
+                new ButtonBuilder()
+                  .setCustomId("VerificationSetup")
+                  .setLabel("Verification")
+                  .setStyle(
+                    setupData.VerificationChannelID
+                      ? ButtonStyle.Success
+                      : ButtonStyle.Danger
+                  ),
+                new ButtonBuilder()
+                  .setCustomId("LogsSetup")
+                  .setLabel("Logs")
+                  .setStyle(
+                    setupData.LogChannelID
+                      ? ButtonStyle.Success
+                      : ButtonStyle.Danger
+                  ),
+                new ButtonBuilder()
+                  .setCustomId("TicketSetup")
+                  .setLabel("Ticket")
+                  .setStyle(
+                    setupData.TicketParentID
+                      ? ButtonStyle.Success
+                      : ButtonStyle.Danger
+                  ),
+                new ButtonBuilder()
+                  .setCustomId("DefaultRolesSetup")
+                  .setLabel("Default Roles")
+                  .setStyle(ButtonStyle.Primary)
+              ),
+            ],
+          });
           break;
         case "VerificationModeSetup":
           if (setupData.VerificationMode === false) {
@@ -474,247 +479,298 @@ module.exports = {
           }
           interaction.update({ components: [newActionRow] });
           break;
+        case "VerificationDesc":
+          const VerificationDescModal = new ModalBuilder()
+            .setCustomId(`VerificationDescModal`)
+            .setTitle(`Write Custom Descripton Here`);
+          const VerificationDescInput = new TextInputBuilder()
+            .setCustomId(`VerificationDescInput`)
+            .setLabel(`Write Amazing Description Below:`)
+            .setRequired(true)
+            .setStyle(TextInputStyle.Paragraph)
+            .setPlaceholder(
+              `In order to get access in ${guild.name}, verify yourself using Verify Button!`
+            );
+          VerificationDescModal.addComponents(
+            new ActionRowBuilder().addComponents(VerificationDescInput)
+          );
+          await interaction.showModal(VerificationDescModal);
+          break;
       }
     } else if (
-      ["TicketSetupCreate", "TicketSetupTranscript"].includes(customId)
+      [
+        "TicketSetupCreate",
+        "TicketSetupTranscript",
+        "TicketDesc",
+        "TicketTranscriptChannel",
+      ].includes(customId)
     ) {
       switch (customId) {
         case "TicketSetupCreate":
-          {
-            guild.channels
-              .create({
-                name: "Tickets",
-                type: ChannelType.GuildCategory,
-                permissionOverwrites: [
-                  {
-                    id: setupData.CommunityRoleID,
-                    deny: [PermissionFlagsBits.ViewChannel],
-                  },
-                  {
-                    id: setupData.StaffRoleID,
-                    allow: [PermissionFlagsBits.ViewChannel],
-                  },
-                ],
-              })
-              .then(async (categoryName) => {
-                await setupDB.findOneAndUpdate(
-                  { GuildID: guild.id },
-                  { TicketParentID: categoryName.id }
-                );
-              });
-            guild.channels
-              .create({
-                name: "Support Area",
-                type: ChannelType.GuildCategory,
-                permissionOverwrites: [
-                  {
-                    id: setupData.CommunityRoleID,
-                    allow: [
-                      PermissionFlagsBits.ViewChannel,
-                      PermissionFlagsBits.ReadMessageHistory,
-                    ],
-                    deny: [PermissionFlagsBits.SendMessages],
-                  },
-                ],
-              })
-              .then(async (categoryName) => {
-                guild.channels
-                  .create({
-                    name: "create-ticket",
-                    type: ChannelType.GuildText,
-                    parent: categoryName,
-                    permissionOverwrites: [
-                      {
-                        id: setupData.CommunityRoleID,
-                        deny: [PermissionFlagsBits.SendMessages],
-                        allow: [
-                          PermissionFlagsBits.ViewChannel,
-                          PermissionFlagsBits.ReadMessageHistory,
-                        ],
-                      },
-                    ],
-                  })
-                  .then(async (channel) => {
-                    channel
-                      .send({
-                        embeds: [
-                          new EmbedBuilder()
-                            .setAuthor({
-                              name: `${guild.name} | Ticket System`,
-                              iconURL: guild.iconURL({ dynamic: true }),
-                            })
-                            .setDescription(
-                              `Hey, this is an Ticket System,
-                          use the Button Below to create an Ticket!`
-                            )
-                            .setColor("#800000")
-                            .setFooter({
-                              text: `Ryou - Ticket System`,
-                              iconURL: user.displayAvatarURL(),
-                            }),
-                        ],
-                        components: [
-                          new ActionRowBuilder().addComponents(
-                            new ButtonBuilder()
-                              .setCustomId("TicketButton")
-                              .setLabel("Click to make Ticket!")
-                              .setStyle(ButtonStyle.Danger)
-                              .setEmoji("🎫")
-                          ),
-                        ],
-                      })
-                      .then(async (message) => {
-                        await setupDB.findOneAndUpdate(
-                          { GuildID: guild.id },
-                          { TicketMessageID: message.id }
-                        );
-                      });
-                    await setupDB.findOneAndUpdate(
-                      { GuildID: guild.id },
-                      { TicketChannelID: channel.id }
-                    );
-                  });
-              });
-            await interaction.update({
-              embeds: [
-                new EmbedBuilder()
-                  .setTitle("Ticket Setup Complete!")
-                  .setColor("#800000")
-                  .setAuthor({
-                    name: member.user.tag,
-                    iconURL: member.user.displayAvatarURL(),
-                  })
-                  .setDescription(
-                    "Ticket has been setup You can go ahead and Use it!"
-                  )
-                  .setFooter({
-                    text: "Ryou - Utility",
-                    iconURL: user.displayAvatarURL(),
-                  }),
+          guild.channels
+            .create({
+              name: "Tickets",
+              type: ChannelType.GuildCategory,
+              permissionOverwrites: [
+                {
+                  id: setupData.CommunityRoleID,
+                  deny: [PermissionFlagsBits.ViewChannel],
+                },
+                {
+                  id: setupData.StaffRoleID,
+                  allow: [PermissionFlagsBits.ViewChannel],
+                },
               ],
-              components: [],
+            })
+            .then(async (categoryName) => {
+              await setupDB.findOneAndUpdate(
+                { GuildID: guild.id },
+                { TicketParentID: categoryName.id }
+              );
             });
-            await wait(3000);
-            msg.edit({
-              embeds: [
-                new EmbedBuilder()
-                  .setTitle("__Settings Menu__")
-                  .setAuthor({
-                    name: member.user.tag,
-                    iconURL: member.user.displayAvatarURL(),
-                  })
-                  .setDescription(
-                    `This is the Settings Menu, you can choose what you want for your server,
+          guild.channels
+            .create({
+              name: "Support Area",
+              type: ChannelType.GuildCategory,
+              permissionOverwrites: [
+                {
+                  id: setupData.CommunityRoleID,
+                  allow: [
+                    PermissionFlagsBits.ViewChannel,
+                    PermissionFlagsBits.ReadMessageHistory,
+                  ],
+                  deny: [PermissionFlagsBits.SendMessages],
+                },
+              ],
+            })
+            .then(async (categoryName) => {
+              guild.channels
+                .create({
+                  name: "create-ticket",
+                  type: ChannelType.GuildText,
+                  parent: categoryName,
+                  permissionOverwrites: [
+                    {
+                      id: setupData.CommunityRoleID,
+                      deny: [PermissionFlagsBits.SendMessages],
+                      allow: [
+                        PermissionFlagsBits.ViewChannel,
+                        PermissionFlagsBits.ReadMessageHistory,
+                      ],
+                    },
+                  ],
+                })
+                .then(async (channel) => {
+                  channel
+                    .send({
+                      embeds: [
+                        new EmbedBuilder()
+                          .setAuthor({
+                            name: `${guild.name} | Ticket System`,
+                            iconURL: guild.iconURL({ dynamic: true }),
+                          })
+                          .setDescription(
+                            `Hey, this is an Ticket System,
+                          use the Button Below to create an Ticket!`
+                          )
+                          .setColor("#800000")
+                          .setFooter({
+                            text: `Ryou - Ticket System`,
+                            iconURL: user.displayAvatarURL(),
+                          }),
+                      ],
+                      components: [
+                        new ActionRowBuilder().addComponents(
+                          new ButtonBuilder()
+                            .setCustomId("TicketButton")
+                            .setLabel("Click to make Ticket!")
+                            .setStyle(ButtonStyle.Danger)
+                            .setEmoji("🎫")
+                        ),
+                      ],
+                    })
+                    .then(async (message) => {
+                      await setupDB.findOneAndUpdate(
+                        { GuildID: guild.id },
+                        { TicketMessageID: message.id }
+                      );
+                    });
+                  await setupDB.findOneAndUpdate(
+                    { GuildID: guild.id },
+                    { TicketChannelID: channel.id }
+                  );
+                });
+            });
+          await interaction.update({
+            embeds: [
+              new EmbedBuilder()
+                .setTitle("Ticket Setup Complete!")
+                .setColor("#800000")
+                .setAuthor({
+                  name: member.user.tag,
+                  iconURL: member.user.displayAvatarURL(),
+                })
+                .setDescription(
+                  "Ticket has been setup You can go ahead and Use it!"
+                )
+                .setFooter({
+                  text: "Ryou - Utility",
+                  iconURL: user.displayAvatarURL(),
+                }),
+            ],
+            components: [],
+          });
+          await wait(3000);
+          msg.edit({
+            embeds: [
+              new EmbedBuilder()
+                .setTitle("__Settings Menu__")
+                .setAuthor({
+                  name: member.user.tag,
+                  iconURL: member.user.displayAvatarURL(),
+                })
+                .setDescription(
+                  `This is the Settings Menu, you can choose what you want for your server,
                   and leave things that you don't need!
                   
                   Simply go ahead and click on the Buttons and Complete them,
                   when you have setup the things you want,
                   you can just click on the Confirm Button!`
-                  )
-                  .setFooter({
-                    text: "Ryou - Utility",
-                    iconURL: client.user.displayAvatarURL(),
-                  }),
-              ],
+                )
+                .setFooter({
+                  text: "Ryou - Utility",
+                  iconURL: client.user.displayAvatarURL(),
+                }),
+            ],
+            components: [
+              new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                  .setCustomId("JTCSetup")
+                  .setLabel("Join to Create")
+                  .setStyle(
+                    setupData.JTCChannelID
+                      ? ButtonStyle.Success
+                      : ButtonStyle.Danger
+                  ),
+                new ButtonBuilder()
+                  .setCustomId("VerificationSetup")
+                  .setLabel("Verification")
+                  .setStyle(
+                    setupData.VerificationChannelID
+                      ? ButtonStyle.Success
+                      : ButtonStyle.Danger
+                  ),
+                new ButtonBuilder()
+                  .setCustomId("LogsSetup")
+                  .setLabel("Logs")
+                  .setStyle(
+                    setupData.LogChannelID
+                      ? ButtonStyle.Success
+                      : ButtonStyle.Danger
+                  ),
+                new ButtonBuilder()
+                  .setCustomId("TicketSetup")
+                  .setLabel("Ticket")
+                  .setStyle(
+                    setupData.TicketParentID
+                      ? ButtonStyle.Success
+                      : ButtonStyle.Danger
+                  ),
+                new ButtonBuilder()
+                  .setCustomId("DefaultRolesSetup")
+                  .setLabel("Default Roles")
+                  .setStyle(ButtonStyle.Primary)
+              ),
+            ],
+          });
+
+          break;
+        case "TicketSetupTranscript":
+          if (setupData.TicketTranscript === true) {
+            await setupDB.findOneAndUpdate(
+              { GuildID: guild.id },
+              { TicketTranscript: false }
+            );
+            interaction.update({
               components: [
                 new ActionRowBuilder().addComponents(
                   new ButtonBuilder()
-                    .setCustomId("JTCSetup")
-                    .setLabel("Join to Create")
-                    .setStyle(
-                      setupData.JTCChannelID
-                        ? ButtonStyle.Success
-                        : ButtonStyle.Danger
-                    ),
+                    .setCustomId("TicketSetupTranscript")
+                    .setLabel("Transcript: Off")
+                    .setStyle(ButtonStyle.Danger),
                   new ButtonBuilder()
-                    .setCustomId("VerificationSetup")
-                    .setLabel("Verification")
-                    .setStyle(
-                      setupData.VerificationChannelID
-                        ? ButtonStyle.Success
-                        : ButtonStyle.Danger
-                    ),
+                    .setCustomId("TicketDesc")
+                    .setLabel("Change Description")
+                    .setStyle(ButtonStyle.Primary),
                   new ButtonBuilder()
-                    .setCustomId("LogsSetup")
-                    .setLabel("Logs")
-                    .setStyle(
-                      setupData.LogChannelID
-                        ? ButtonStyle.Success
-                        : ButtonStyle.Danger
-                    ),
+                    .setCustomId("SettingsMenu")
+                    .setEmoji("⏩")
+                    .setLabel("Back")
+                    .setStyle(ButtonStyle.Primary)
+                ),
+              ],
+            });
+          } else {
+            await setupDB.findOneAndUpdate(
+              { GuildID: guild.id },
+              { TicketTranscript: true }
+            );
+            interaction.update({
+              components: [
+                new ActionRowBuilder().addComponents(
                   new ButtonBuilder()
-                    .setCustomId("TicketSetup")
-                    .setLabel("Ticket")
-                    .setStyle(
-                      setupData.TicketParentID
-                        ? ButtonStyle.Success
-                        : ButtonStyle.Danger
-                    ),
+                    .setCustomId("TicketSetupTranscript")
+                    .setLabel("Transcript: On")
+                    .setStyle(ButtonStyle.Success),
                   new ButtonBuilder()
-                    .setCustomId("DefaultRolesSetup")
-                    .setLabel("Default Roles")
+                    .setCustomId("TicketDesc")
+                    .setLabel("Change Description")
+                    .setStyle(ButtonStyle.Primary),
+                  new ButtonBuilder()
+                    .setCustomId("TicketTranscriptChannel")
+                    .setLabel("Transcript Channel")
+                    .setStyle(ButtonStyle.Primary),
+                  new ButtonBuilder()
+                    .setCustomId("SettingsMenu")
+                    .setEmoji("⏩")
+                    .setLabel("Back")
                     .setStyle(ButtonStyle.Primary)
                 ),
               ],
             });
           }
           break;
-        case "TicketSetupTranscript":
-          {
-            if (setupData.TicketTranscript === true) {
-              await setupDB.findOneAndUpdate(
-                { GuildID: guild.id },
-                { TicketTranscript: false }
-              );
-              interaction.update({
-                components: [
-                  new ActionRowBuilder().addComponents(
-                    new ButtonBuilder()
-                      .setCustomId("TicketSetupTranscript")
-                      .setLabel("Transcript: Off")
-                      .setStyle(ButtonStyle.Danger),
-                    new ButtonBuilder()
-                      .setCustomId("TicketDescription")
-                      .setLabel("Change Description")
-                      .setStyle(ButtonStyle.Primary),
-                    new ButtonBuilder()
-                      .setCustomId("SettingsMenu")
-                      .setEmoji("⏩")
-                      .setLabel("Back")
-                      .setStyle(ButtonStyle.Primary)
-                  ),
-                ],
-              });
-            } else {
-              await setupDB.findOneAndUpdate(
-                { GuildID: guild.id },
-                { TicketTranscript: true }
-              );
-              interaction.update({
-                components: [
-                  new ActionRowBuilder().addComponents(
-                    new ButtonBuilder()
-                      .setCustomId("TicketSetupTranscript")
-                      .setLabel("Transcript: On")
-                      .setStyle(ButtonStyle.Success),
-                    new ButtonBuilder()
-                      .setCustomId("TicketDescription")
-                      .setLabel("Change Description")
-                      .setStyle(ButtonStyle.Primary),
-                    new ButtonBuilder()
-                      .setCustomId("TicketTranscriptChannel")
-                      .setLabel("Transcript Channel")
-                      .setStyle(ButtonStyle.Primary),
-                    new ButtonBuilder()
-                      .setCustomId("SettingsMenu")
-                      .setEmoji("⏩")
-                      .setLabel("Back")
-                      .setStyle(ButtonStyle.Primary)
-                  ),
-                ],
-              });
-            }
-          }
+        case "TicketDesc":
+          const TicketDescModal = new ModalBuilder()
+            .setCustomId(`TicketDescModal`)
+            .setTitle(`Write Custom Descripton Here`);
+          const TicketDescInput = new TextInputBuilder()
+            .setCustomId(`TicketDescInput`)
+            .setLabel(`Write Amazing Description Below:`)
+            .setRequired(true)
+            .setStyle(TextInputStyle.Paragraph)
+            .setPlaceholder(
+              `Hey, this is an Ticket System,\nuse the Button Below to create an Ticket!`
+            );
+          TicketDescModal.addComponents(
+            new ActionRowBuilder().addComponents(TicketDescInput)
+          );
+          await interaction.showModal(TicketDescModal);
+          break;
+        case "TicketTranscriptChannel":
+          newActionRow.components[0].setDisabled(true);
+          newActionRow.components[1].setDisabled(true);
+          newActionRow.components[2].setDisabled(true);
+          interaction.update({
+            components: [
+              newActionRow,
+              new ActionRowBuilder().addComponents(
+                new ChannelSelectMenuBuilder()
+                  .setCustomId("TicketTranscriptMenu")
+                  .setPlaceholder("Choose the Transcript Channel!")
+              ),
+            ],
+          });
           break;
       }
     }

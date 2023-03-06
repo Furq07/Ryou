@@ -257,7 +257,7 @@ module.exports = {
                   )
                   .setStyle(ButtonStyle.Primary),
                 new ButtonBuilder()
-                  .setCustomId("VerificationDescSetup")
+                  .setCustomId("VerificationDesc")
                   .setLabel("Change Description")
                   .setStyle(ButtonStyle.Primary),
                 new ButtonBuilder()
@@ -319,7 +319,7 @@ module.exports = {
                   : ButtonStyle.Danger
               ),
             new ButtonBuilder()
-              .setCustomId("TicketDescription")
+              .setCustomId("TicketDesc")
               .setLabel("Change Description")
               .setStyle(ButtonStyle.Primary),
             new ButtonBuilder()
@@ -343,7 +343,7 @@ module.exports = {
                     : ButtonStyle.Danger
                 ),
               new ButtonBuilder()
-                .setCustomId("TicketDescription")
+                .setCustomId("TicketDesc")
                 .setLabel("Change Description")
                 .setStyle(ButtonStyle.Primary),
               new ButtonBuilder()
