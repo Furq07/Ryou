@@ -11,7 +11,23 @@ module.exports = {
   async execute(interaction, client) {
     const { user } = client;
     const { customId, channel, message, member, guild } = interaction;
-    if (!interaction.isButton()) return;
+    if (
+      !interaction.isButton() ||
+      ![
+        "CommunityRole",
+        "StaffRole",
+        "AdminRole",
+        "CommunityRoleFirst",
+        "StaffRoleFirst",
+        "AdminRoleFirst",
+        "JTCSetup",
+        "VerificationSetup",
+        "LogsSetup",
+        "TicketSetup",
+        "DefaultRolesSetup",
+      ].includes(customId)
+    )
+      return;
     let setupData = await setupDB.findOne({ GuildID: guild.id });
     const msg = await channel.messages.fetch(message.id);
     const data = msg.components[0];

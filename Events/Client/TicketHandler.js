@@ -12,6 +12,7 @@ const {
 const setupDB = require("../../src/models/setupDB");
 const ticketDB = require("../../src/models/ticketDB");
 const { createTranscript } = require("discord-html-transcripts");
+const wait = require("util").promisify(setTimeout);
 module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
@@ -214,47 +215,57 @@ module.exports = {
           });
           break;
         case "TicketClose":
-          const attachment = await createTranscript(channel, {
-            limit: -1,
-            returnBuffer: false,
-            fileName: `Ticket - ${ticketData.TicketID}.html`,
-          });
-          guild.members.fetch(ticketData.MemberID).then(async (user) => {
-            const msg = await guild.channels.cache
-              .get(setupData.TicketTranscriptID)
-              .send({
+          if (setupData.TicketTranscript === true) {
+            const attachment = await createTranscript(channel, {
+              limit: -1,
+              returnBuffer: false,
+              fileName: `Ticket - ${ticketData.TicketID}.html`,
+            });
+            guild.members.fetch(ticketData.MemberID).then(async (user) => {
+              const msg = await guild.channels.cache
+                .get(setupData.TicketTranscriptID)
+                .send({
+                  embeds: [
+                    new EmbedBuilder()
+                      .setAuthor({
+                        name: `${user.user.tag}`,
+                        iconURL: user.displayAvatarURL(),
+                      })
+                      .setColor("#800000")
+                      .setDescription(
+                        `**Ticket User:** ${user}
+                      **Ticket ID:** ${ticketData.TicketID}`
+                      )
+                      .setFooter({
+                        text: "Ryou - Ticket System",
+                        iconURL: client.user.displayAvatarURL(),
+                      }),
+                  ],
+                  files: [attachment],
+                });
+              interaction.reply({
                 embeds: [
                   new EmbedBuilder()
-                    .setAuthor({
-                      name: `${user.user.tag}`,
-                      iconURL: user.displayAvatarURL(),
-                    })
                     .setColor("#800000")
                     .setDescription(
-                      `**Ticket User:** ${user}
-                      **Ticket ID:** ${ticketData.TicketID}`
-                    )
-                    .setFooter({
-                      text: "Ryou - Ticket System",
-                      iconURL: client.user.displayAvatarURL(),
-                    }),
+                      `The Transcript is now saved [Click Here](${msg.url})!`
+                    ),
                 ],
-                files: [attachment],
               });
+            });
+          } else {
             interaction.reply({
               embeds: [
                 new EmbedBuilder()
                   .setColor("#800000")
-                  .setDescription(
-                    `The Transcript is now saved [TRANSCRIPT](${msg.url})`
-                  ),
+                  .setDescription(`This is Ticket is being Closed!`),
               ],
             });
-          });
-          setTimeout(async () => {
-            channel.delete();
-            await ticketDB.findOneAndDelete({ ChannelID: channel.id });
-          }, 5 * 1000);
+          }
+
+          await wait(5000);
+          channel.delete();
+          await ticketDB.findOneAndDelete({ ChannelID: channel.id });
           break;
       }
     }
