@@ -718,7 +718,7 @@ module.exports = {
           if (setupData.TicketTranscript === true) {
             await setupDB.findOneAndUpdate(
               { GuildID: guild.id },
-              { TicketTranscript: false }
+              { TicketTranscript: false, $unset: { TicketTranscriptID: "" } }
             );
             interaction.update({
               components: [
@@ -740,30 +740,29 @@ module.exports = {
               ],
             });
           } else {
-            await setupDB.findOneAndUpdate(
-              { GuildID: guild.id },
-              { TicketTranscript: true }
-            );
             interaction.update({
               components: [
                 new ActionRowBuilder().addComponents(
                   new ButtonBuilder()
                     .setCustomId("TicketSetupTranscript")
                     .setLabel("Transcript: On")
+                    .setDisabled(true)
                     .setStyle(ButtonStyle.Success),
                   new ButtonBuilder()
                     .setCustomId("TicketDesc")
                     .setLabel("Change Description")
-                    .setStyle(ButtonStyle.Primary),
-                  new ButtonBuilder()
-                    .setCustomId("TicketTranscriptChannel")
-                    .setLabel("Transcript Channel")
+                    .setDisabled(true)
                     .setStyle(ButtonStyle.Primary),
                   new ButtonBuilder()
                     .setCustomId("SettingsMenu")
                     .setEmoji("⏩")
                     .setLabel("Back")
                     .setStyle(ButtonStyle.Primary)
+                ),
+                new ActionRowBuilder().addComponents(
+                  new ChannelSelectMenuBuilder()
+                    .setCustomId("TicketTranscriptMenu")
+                    .setPlaceholder("Choose the Transcript Channel!")
                 ),
               ],
             });

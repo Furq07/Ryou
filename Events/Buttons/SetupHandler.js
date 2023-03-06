@@ -24,6 +24,7 @@ module.exports = {
         "VerificationSetup",
         "LogsSetup",
         "TicketSetup",
+        "SettingsMenu",
         "DefaultRolesSetup",
       ].includes(customId)
     )
@@ -359,13 +360,18 @@ module.exports = {
                     : ButtonStyle.Danger
                 ),
               new ButtonBuilder()
+                .setCustomId("TicketTranscriptChannel")
+                .setLabel("Transcript Channel")
+                .setStyle(
+                  setupData.TicketTranscriptID
+                    ? ButtonStyle.Success
+                    : ButtonStyle.Danger
+                ),
+              new ButtonBuilder()
                 .setCustomId("TicketDesc")
                 .setLabel("Change Description")
                 .setStyle(ButtonStyle.Primary),
-              new ButtonBuilder()
-                .setCustomId("TicketTranscriptChannel")
-                .setLabel("Transcript Channel")
-                .setStyle(ButtonStyle.Primary),
+
               new ButtonBuilder()
                 .setCustomId("SettingsMenu")
                 .setEmoji("⏩")

@@ -1,9 +1,4 @@
-const {
-  ActionRowBuilder,
-  ButtonStyle,
-  ButtonBuilder,
-  EmbedBuilder,
-} = require("discord.js");
+const { ActionRowBuilder, ButtonStyle, ButtonBuilder } = require("discord.js");
 const setupDB = require("../../src/models/setupDB");
 module.exports = {
   name: "interactionCreate",
@@ -14,6 +9,17 @@ module.exports = {
     const msg = await channel.messages.fetch(message.id);
     const data = msg.components[0];
     const newActionRow = ActionRowBuilder.from(data);
+    const msgEmbed = msg.embeds[0];
+    const author = msgEmbed.author.name;
+    if (author !== member.user.tag)
+      return interaction.reply({
+        embeds: [
+          new EmbedBuilder()
+            .setColor("#800000")
+            .setDescription(`Sorry, But this is @${author}'s Command`),
+        ],
+        ephemeral: true,
+      });
     const Value = values.join(", ");
     if (customId === "CommunityRoleMenuFirst") customIdE = "CommunityRoleMenu";
     if (customId === "StaffRoleMenuFirst") customIdE = "StaffRoleMenu";
@@ -126,15 +132,30 @@ module.exports = {
     } else if ("TicketTranscriptMenu" === customIdE) {
       await setupDB.findOneAndUpdate(
         { GuildID: guild.id },
-        { TicketTranscriptID: Value }
+        { TicketTranscript: true, TicketTranscriptID: Value }
       );
-      newActionRow.components[0].setDisabled(false);
-      newActionRow.components[1].setDisabled(false);
-      newActionRow.components[2]
-        .setStyle(ButtonStyle.Success)
-        .setDisabled(false);
       interaction.update({
-        components: [newActionRow],
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId("TicketSetupTranscript")
+              .setLabel("Transcript: On")
+              .setStyle(ButtonStyle.Success),
+            new ButtonBuilder()
+              .setCustomId("TicketTranscriptChannel")
+              .setLabel("Transcript Channel")
+              .setStyle(ButtonStyle.Success),
+            new ButtonBuilder()
+              .setCustomId("TicketDesc")
+              .setLabel("Change Description")
+              .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+              .setCustomId("SettingsMenu")
+              .setEmoji("⏩")
+              .setLabel("Back")
+              .setStyle(ButtonStyle.Primary)
+          ),
+        ],
       });
     }
   },

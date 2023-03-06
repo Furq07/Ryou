@@ -48,11 +48,17 @@ module.exports = {
                 EmbedBuilder.from(Embed).setDescription(`${TicketDesc}`),
               ],
             });
+            interaction.reply({
+              embeds: [
+                new EmbedBuilder()
+                  .setColor("#800000")
+                  .setDescription(
+                    `Ticket [Description](${message.url}) Have Been Updated!`
+                  ),
+              ],
+              ephemeral: true,
+            });
           });
-      });
-      newActionRow.components[1].setStyle(ButtonStyle.Success);
-      interaction.update({
-        components: [newActionRow],
       });
     }
   },
