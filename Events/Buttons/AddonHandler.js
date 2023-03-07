@@ -650,6 +650,7 @@ module.exports = {
             components: [],
           });
           await wait(3000);
+          let setupData = await setupDB.findOne({ GuildID: guild.id });
           msg.edit({
             embeds: [
               new EmbedBuilder()

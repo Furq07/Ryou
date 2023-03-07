@@ -7,6 +7,7 @@ const setupDB = require("../../src/models/setupDB");
 module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
+    if (!interaction.isChatInputCommand()) return;
     // [-------------------[Leveling System]-------------------]
     let { member, channel, guild } = interaction;
     let channelToSend = channel;
