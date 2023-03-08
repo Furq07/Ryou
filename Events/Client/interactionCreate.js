@@ -24,7 +24,7 @@ module.exports = {
       const setupData = await setupDB.findOne({ GuildID: guild.id });
       const ecoData = await ecoDB.findOne({ MemberID: member.id });
       const embed = new EmbedBuilder()
-        .setTitle("🙀 Whoopsi...")
+        .setTitle("Whoopsi...")
         .setColor("#800000")
         .setFooter({
           iconURL: user.displayAvatarURL(),

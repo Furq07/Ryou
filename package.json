@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Ryou: Reliable, Young, One-Stop, User-Friendly",
   "main": "src/bot.js",
+  
   "scripts": {
     "test": "node ."
   },
