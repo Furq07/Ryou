@@ -6,34 +6,20 @@ const {
 } = require("discord.js");
 const mongoose = require("mongoose");
 const chalk = require("chalk");
-const {
-  Guilds,
-  GuildMembers,
-  GuildMessages,
-  MessageContent,
-  GuildVoiceStates,
-  GuildInvites,
-} = GatewayIntentBits;
-const { User, Message, GuildMember, ThreadMember } = Partials;
+const logs = require("discord-logs");
 const { loadEvents } = require("../src/Handlers/eventHandler");
 const client = new Client({
-  intents: [
-    Guilds,
-    GuildMembers,
-    GuildMessages,
-    MessageContent,
-    GuildVoiceStates,
-    GuildInvites,
-    GuildVoiceStates,
-  ],
-  partials: [User, Message, GuildMember, ThreadMember],
+  intents: [Object.keys(GatewayIntentBits)],
+  partials: [Object.keys(Partials)],
 });
 client.config = require("./config.json");
 client.events = new Collection();
 client.commands = new Collection();
 client.subCommands = new Collection();
 client.setMaxListeners(0);
-
+logs(client, {
+  debug: true,
+});
 loadEvents(client)
   .then(() =>
     console.log(chalk.gray("Events Initiation:"), chalk.green("Successful"))
