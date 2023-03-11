@@ -72,8 +72,8 @@ module.exports = {
         .setTitle(`Solve the Captcha!`);
 
       const textInput = new TextInputBuilder()
-        .setCustomId(`CaptchaInput`)
-        .setLabel(`Enter the Code Below:`)
+        .setCustomId("CaptchaInput")
+        .setLabel("Enter the Code Below:")
         .setMinLength(6)
         .setMaxLength(6)
         .setRequired(true)

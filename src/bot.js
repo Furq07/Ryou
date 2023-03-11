@@ -6,7 +6,6 @@ const {
 } = require("discord.js");
 const mongoose = require("mongoose");
 const chalk = require("chalk");
-const logs = require("discord-logs");
 const { loadEvents } = require("../src/Handlers/eventHandler");
 const client = new Client({
   intents: [Object.keys(GatewayIntentBits)],
@@ -17,9 +16,6 @@ client.events = new Collection();
 client.commands = new Collection();
 client.subCommands = new Collection();
 client.setMaxListeners(0);
-logs(client, {
-  debug: true,
-});
 loadEvents(client)
   .then(() =>
     console.log(chalk.gray("Events Initiation:"), chalk.green("Successful"))

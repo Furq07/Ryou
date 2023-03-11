@@ -47,7 +47,7 @@ module.exports = {
       ].includes(customId)
     )
       return;
-    let setupData = await setupDB.findOne({ GuildID: guild.id });
+    const setupData = await setupDB.findOne({ GuildID: guild.id });
     const msg = await channel.messages.fetch(message.id);
     const data = msg.components[0];
     const newActionRow = ActionRowBuilder.from(data);
@@ -650,7 +650,6 @@ module.exports = {
             components: [],
           });
           await wait(3000);
-          let setupData = await setupDB.findOne({ GuildID: guild.id });
           msg.edit({
             embeds: [
               new EmbedBuilder()
