@@ -1,7 +1,7 @@
 {
-  "token": "MTA1NDcyODc0NjA3MjAxNDg5OA.G6lrlW.O7Lh32xZSU8K5XumYj7O9jLvGRjkE8FbcxE_jk",
-  "atoken": "MTA1NjE4MDIyMTgwNTYwMDgxOA.GSr511.lqUxcNcQD-XCQ66i-kloI_q4ecJVXDCTLMHPUs",
-  "MongoDBConnect": "mongodb+srv://Ryou:R.27youD.Bot@database.wopvio4.mongodb.net/Ryou",
+  "token": "REDACTED",
+  "atoken": "REDACTED",
+  "MongoDBConnect": "REDACTED",
   "ecoIcon": "<:Yur:1034414003071500320>",
   "ecoRuby": "<:Ruby:1034416992813326417>"
 }
